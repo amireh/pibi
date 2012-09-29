@@ -1,0 +1,13 @@
+<% content_for :title do %> 404 - Not Found | PageHub <% end %>
+
+<h2>404</h2>
+
+<p>
+<% error = response.body.first || "" %>
+<% if !error.to_s.include?("\n") then %>
+  <%= error %>
+<% else %>
+  The page you were looking for does not exist!
+<% end %>
+
+</p>

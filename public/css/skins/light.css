@@ -1,0 +1,31 @@
+a {
+  /*color: #008cdd;*/
+}
+
+a.listlike { border-bottom: 1px solid rgba(0,0,0,0.35); }
+
+a:hover,
+.highlighted,
+.selected { color: red; }
+
+body {
+}
+
+#flashes {
+  box-shadow: 0 0 1px 1px #fff;
+}
+
+#flashes button {
+  background: #eee;
+  border: none;
+  top: 0;
+  right: 0;
+  color: #333;
+  font-size: 14px;
+  line-height: inherit;
+  height: 100%;
+}
+
+footer {
+  border-color: #ddd;
+}

@@ -1,0 +1,30 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body * {
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.stuff {
+  width: 720px;
+  margin: 10px auto;
+  position: relative;
+}
+
+#content { width: 720px; }
+
+nav {
+  position: absolute;
+  width: 220px;
+  left: -220px;
+  top: 0;
+}
+
+nav > span:first-of-type {
+  display: block;
+  margin-bottom: 10px;
+}
