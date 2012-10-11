@@ -1,0 +1,13 @@
+{
+  "production": {
+    "username": "root",
+    "password": "tuonela",
+    "db": "pibi"
+  },
+  
+  "test": {
+    "username": "root",
+    "password": "tuonela",
+    "db": "pibi_test"
+  }
+}

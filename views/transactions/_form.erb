@@ -1,0 +1,6 @@
+<form action="<%= request.path.gsub(/(\/\w+)$/, '') %>" method="POST">
+  <label>Amount: <input type="text" name="amount" /></label>
+  <label>Currency: <input type="text" name="currency" /></label>
+
+  <input type="submit" />
+</form>

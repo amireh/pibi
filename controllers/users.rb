@@ -1,5 +1,6 @@
 require 'json'
 require 'uuid'
+require 'base64'
 
 private
 
@@ -32,9 +33,9 @@ post '/users' do
   # Validate input
   {
     "That email is already registered" => User.first(email: p[:email]),
-    "You must fill in your name" => !p[:name] || p[:name].empty?,
     "You must fill in your email address" => !p[:email] || p[:email].empty?,
     "That email doesn't appear to be valid" => !p[:email].is_email?,
+    "You must fill in your name" => !p[:name] || p[:name].empty?,
     "You must type the same password twice" => p[:password].empty? || p[:password_confirmation].empty?,
     "The passwords you entered do not match" => p[:password] != p[:password_confirmation],
     "Passwords must be at least 5 characters long." => p[:password].length <= 4
@@ -46,7 +47,7 @@ post '/users' do
   }
 
   # Encrypt the password
-  params[:password] = Digest::SHA1.hexdigest(params[:password])
+  params[:password] = User.encrypt(params[:password])
 
   nickname = params[:name].to_s.sanitize
   auto_nn = false

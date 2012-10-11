@@ -1,7 +1,7 @@
 module SessionsHelper
 
   def logged_in?
-    session[:id]
+    !current_user.nil?
   end
 
   def restricted
@@ -20,13 +20,19 @@ module SessionsHelper
       if roles.include? :user
         restricted!
         @scope = current_user
+
+        if params[:account] then
+          unless @account = current_user.accounts.get(params[:account])
+            halt 500, "No such account."
+          end
+        end
       end
     end
   end
 
   def current_user
     return @user if @user
-    return nil unless logged_in?
+    return nil unless session[:id]
 
     @user = User.get(session[:id])
   end

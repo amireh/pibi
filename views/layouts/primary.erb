@@ -44,6 +44,8 @@
       <span>Hi <%= current_user.nickname %></span>
       <a class="listlike icon help" href="/help" title="Help">Help</a>
       <%= partial "layouts/nav/_help_links" %>
+      <a href="/transactions/deposits/new" title="Create a new deposit transie">Deposit</a>
+      <a href="/transactions/withdrawals/new" title="Create a new deposit transie">Withdraw</a>
       <a class="listlike icon settings" href="/settings" title="Your account">Account</a>
       <%= partial "layouts/nav/_account_links" %>
     </nav>

@@ -22,6 +22,9 @@ class User
   property :created_at,     DateTime, default: lambda { |*_| DateTime.now }
 
   has n, :email_verifications, :constraint => :destroy
+  has n, :accounts
+  has n, :transactions, :through => :accounts
+  has n, :deposits, :through => :accounts
 
   validates_presence_of :name, :provider, :uid
 
@@ -73,6 +76,10 @@ class User
     if ev = self.email_verifications.first({ address: address })
       return ev.pending?
     end
+  end
+
+  def self.encrypt(pw)
+    Digest::SHA1.hexdigest pw
   end
 
   private

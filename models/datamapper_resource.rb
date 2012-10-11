@@ -12,5 +12,7 @@ module DataMapper
     def persisted?
       !self.id.nil?
     end
+
+    alias_method :persistent?, :persisted?
   end
 end
