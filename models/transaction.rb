@@ -17,7 +17,7 @@ class Transaction
   # Transactions can be either deposits, withdrawals, or transfers
   property :type, Discriminator
 
-  property :date,         DateTime, default: lambda { |*_| DateTime.now }
+  property :occured_on,   DateTime, default: lambda { |*_| DateTime.now }
   property :created_at,   DateTime, default: lambda { |*_| DateTime.now }
 
   belongs_to :account

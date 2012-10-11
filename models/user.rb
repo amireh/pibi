@@ -22,7 +22,7 @@ class User
   property :created_at,     DateTime, default: lambda { |*_| DateTime.now }
 
   has n, :email_verifications, :constraint => :destroy
-  has n, :accounts
+  has n, :accounts, :constraint => :destroy
   has n, :transactions, :through => :accounts
   has n, :deposits, :through => :accounts
 

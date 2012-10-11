@@ -16,9 +16,10 @@ class Account
   property :created_at,   DateTime, default: lambda { |*_| DateTime.now }
 
   belongs_to :user
-  has n, :transactions
+  has n, :transactions, :constraint => :destroy
   has n, :deposits
   has n, :withdrawals
+  has n, :recurrings
 
   # Accepted options:
   # => :with_transactions: the account transactions will be dumped
