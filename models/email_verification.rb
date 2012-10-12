@@ -16,9 +16,11 @@ class EmailVerification
   def expired?
     status == :expired
   end
+
   def pending?
     status == :pending
   end
+  
   def verified?
     status == :verified
   end

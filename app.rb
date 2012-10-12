@@ -98,12 +98,12 @@ configure do
   DataMapper.setup(:default, "mysql://#{dbc['username']}:#{dbc['password']}@localhost/#{dbc['db']}")
 
   # load the models and controllers
-  def load(directory)
+  def load_all(directory)
     Dir.glob("#{directory}/*.rb").each { |f| require f }
   end
 
-  load "helpers"
-  load "models"
+  load_all "helpers"
+  load_all "models"
 
   # load "controllers"
   require 'controllers/sessions'
@@ -150,11 +150,11 @@ error do
 end
 
 get '/' do
-  destination = "welcome/index"
+  pass unless logged_in?
 
-  if logged_in?
-    destination = "transactions/index"
-  end
+  erb "transactions/index"
+end
 
-  erb destination.to_sym
+get '/' do
+  erb "welcome"
 end

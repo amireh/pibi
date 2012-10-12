@@ -1,17 +1,4 @@
-ENV['RACK_ENV'] = 'test'
-
-require 'app'
-set :environment, :test
-
-module DataMapper
-  module Resource
-    def refresh
-      self.class.get(self.id)
-    end
-  end
-end
-
-describe Transaction do
+describe "Recurring Transactions" do
   
   before do
     User.destroy

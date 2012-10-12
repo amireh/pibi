@@ -23,8 +23,9 @@ class User
 
   has n, :email_verifications, :constraint => :destroy
   has n, :accounts, :constraint => :destroy
-  has n, :transactions, :through => :accounts
-  has n, :deposits, :through => :accounts
+  # has n, :transactions, :through => :accounts
+  # has n, :deposits,     :through => :accounts
+  has n, :categories, :constraint => :destroy
 
   validates_presence_of :name, :provider, :uid
 

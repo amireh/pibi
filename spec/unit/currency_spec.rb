@@ -1,6 +1,3 @@
-require 'app'
-set :environment, :test
-
 describe 'Currency' do
   it "should convert from JOD to USD" do
     Currency['JOD'].from('USD', 10).to_f.should == 7.0

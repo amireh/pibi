@@ -22,6 +22,14 @@ class Transaction
 
   belongs_to :account
 
+  has n, :categories, :through => Resource, :constraint => :skip
+
+  before :destroy do
+    CategoryTransaction.all({ transaction_id: self.id }).destroy!
+
+    true
+  end
+
   [ :update, :destroy ].each do |advice|
     before advice do
       # puts "Deducting my current amount #{self.amount.to_f}(#{self.currency}) from the account balance (#{self.account.balance.to_f}"

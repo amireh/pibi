@@ -1,14 +1,7 @@
-ENV['RACK_ENV'] = 'test'
-
-require 'app'
-set :environment, :test
-
 describe Transaction do
   
   before do
     User.destroy
-    Transaction.destroy
-    Account.destroy
 
     @user = User.create({
       name: "Ahmad Amireh",
