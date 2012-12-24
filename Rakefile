@@ -7,8 +7,6 @@
 
 require 'rake'
 
-ENV['RACK_ENV'] = 'test'
-
 # replace this with however your app configures DataMapper repositor(ies)
 task :environment do
   require File.expand_path('app', File.dirname(__FILE__))
