@@ -42,12 +42,18 @@
 
     <nav>
       <span>Hi <%= current_user.nickname %></span>
-      <a class="listlike icon help" href="/help" title="Help">Help</a>
-      <%= partial "layouts/nav/_help_links" %>
-      <a href="/transactions/deposits/new" title="Create a new deposit transie">Deposit</a>
-      <a href="/transactions/withdrawals/new" title="Create a new deposit transie">Withdraw</a>
-      <a class="listlike icon settings" href="/settings" title="Your account">Account</a>
-      <%= partial "layouts/nav/_account_links" %>
+      <h3>Transactions</h3>
+      <ol>
+        <li><a href="/transactions/deposits/new" title="Create a new deposit transie">Deposit</a></li>
+        <li><a href="/transactions/withdrawals/new" title="Create a new withdrawal tx">Withdraw</a></li>
+        <li><a href="/transactions/recurrings/new" title="Create a new recurring tx (bills, etc.)">Recurring</a></li>
+      </ol>
+      <h3>Account</h3>
+      <ol>
+        <!-- <li><a href="/pages/public">Public pages</a></li> -->
+        <li><a href="/settings">Settings</a></li>
+        <li><a href="/sessions/destroy">Sign out</a></li>
+      </ol>
     </nav>
 
     <div id="status"></div>

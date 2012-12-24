@@ -1,8 +1,14 @@
 
-[ 'deposits', 'withdrawals' ].each do |type|
+[ 'deposits', 'withdrawals', 'recurrings' ].each do |type|
 
   get "/transactions/#{type}/new", auth: :user do
-    erb :"transactions/new"
+    begin
+      # see if there's a custom form for this transaction type (ie, recurrings)
+      erb :"transactions/#{type}/new"
+    rescue
+      # nope, use the generic one
+      erb :"transactions/new"
+    end
   end
 
   post "/transactions/#{type}", auth: :user do
@@ -14,14 +20,19 @@
       end
     }
 
-    c = type == 'deposits' ? @account.deposits : @account.withdrawals
+    c = case type
+      when 'deposits' then @account.deposits
+      when 'withdrawals' then @account.withdrawals
+      when 'recurrings' then @account.recurrings
+    end
+
     t = c.create({
       amount: params["amount"].to_f,
       currency: params["currency"].to_s,
       note: params["note"],
       account: @account
     })
-    
+
     if t.saved?
       flash[:notice] = "Transaction created."
 
@@ -44,7 +55,7 @@
 
     t.amount = params["amount"] if params.has_key?("amount")
     t.currency = params["currency"] if params.has_key?("currency")
-    
+
     unless t.save
       halt 500, t.collect_errors
     end
