@@ -3,46 +3,20 @@
 $ROOT ||= File.dirname(__FILE__)
 $LOAD_PATH << $ROOT
 
-gem 'sinatra'
-gem 'sinatra-contrib'
-gem 'sinatra-flash'
-gem "dm-core", ">=1.2.0"
-gem "dm-serializer", ">=1.2.0"
-gem "dm-migrations", ">=1.2.0"
-gem "dm-types", ">=1.2.0"
-gem 'multi_json'
-gem 'addressable'
-gem 'gravatarify', ">= 3.1.0"
+require 'rubygems'
+require 'bundler/setup'
 
-require 'sinatra'
-require 'sinatra/content_for'
-require 'sinatra/flash'
-require 'data_mapper'
-# require 'dm-serializer'
-require 'dm-migrations'
-require 'dm-migrations/migration_runner'
-# require 'dm-constraints'
-require 'dm-mysql-adapter'
-require "digest/sha1"
-require 'json'
-require 'lib/common'
+Bundler.require(:default)
+
 require 'config/initializer'
 require 'config/credentials'
-require 'gravatarify'
-# require 'openid/store/filesystem'
+
+configure :development do
+  Bundler.require(:development)
+end
 
 configure :production do
-  gem 'omniauth'
-  gem 'omniauth-facebook'
-  gem 'omniauth-twitter', '0.0.9'
-  gem 'omniauth-google-oauth2', '0.1.13'
-  gem "pony"
-
-  require 'omniauth'
-  require 'omniauth-facebook'
-  require 'omniauth-twitter'
-  require 'omniauth-google-oauth2'
-  require 'pony'
+  Bundler.require(:production)
 
   use OmniAuth::Builder do
     provider :developer if settings.development?
@@ -89,10 +63,7 @@ configure do
   })
 
   # DataMapper::Logger.new($stdout, :debug)
-  if settings.environment == "test" then
-    puts "Running in a TEST environment"
-  end
-  
+
   dbc = JSON.parse(File.read(File.join($ROOT, 'config', 'database.json')))
   dbc = dbc[settings.environment.to_s] || dbc["production"]
   # DataMapper::Logger.new($stdout, :debug)
@@ -103,6 +74,7 @@ configure do
     Dir.glob("#{directory}/*.rb").each { |f| require f }
   end
 
+  load_all "lib"
   load_all "helpers"
   load_all "models"
   load_all "controllers"
@@ -111,8 +83,6 @@ configure do
   #  require 'controllers/users'
   #  require 'controllers/transactions'
   #  require 'controllers/categories'
-
-  require 'lib/migrations'
 
   DataMapper.finalize
   DataMapper.auto_upgrade!
