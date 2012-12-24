@@ -20,6 +20,7 @@ module SessionsHelper
       if roles.include? :user
         restricted!
         @scope = current_user
+        @account ||= @user.accounts.first
 
         if params[:account] then
           unless @account = current_user.accounts.get(params[:account])

@@ -95,6 +95,7 @@ configure do
   
   dbc = JSON.parse(File.read(File.join($ROOT, 'config', 'database.json')))
   dbc = dbc[settings.environment.to_s] || dbc["production"]
+  # DataMapper::Logger.new($stdout, :debug)
   DataMapper.setup(:default, "mysql://#{dbc['username']}:#{dbc['password']}@localhost/#{dbc['db']}")
 
   # load the models and controllers
@@ -104,11 +105,12 @@ configure do
 
   load_all "helpers"
   load_all "models"
+  load_all "controllers"
 
-  # load "controllers"
-  require 'controllers/sessions'
-  require 'controllers/users'
-  require 'controllers/transactions'
+  #  require 'controllers/sessions'
+  #  require 'controllers/users'
+  #  require 'controllers/transactions'
+  #  require 'controllers/categories'
 
   require 'lib/migrations'
 
@@ -117,6 +119,8 @@ configure do
 
   set :config_path, File.join($ROOT, "config")
   set :default_preferences, JSON.parse(File.read(File.join(settings.config_path, "preferences.json")))
+
+  Currencies = Currency.all_names
 end
 
 before do
@@ -156,5 +160,5 @@ get '/' do
 end
 
 get '/' do
-  erb "welcome"
+  erb "welcome/index"
 end

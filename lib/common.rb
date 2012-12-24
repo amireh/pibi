@@ -73,7 +73,7 @@ module Sinatra
 
   module Templates
     def erb(template, options={}, locals={})
-      render :erb, template, { layout: @layout }.merge(options), locals
+      render :erb, template.to_sym, { layout: @layout }.merge(options), locals
     end
 
     def partial(template, options={}, locals={})

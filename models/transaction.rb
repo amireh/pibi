@@ -20,7 +20,7 @@ class Transaction
   property :occured_on,   DateTime, default: lambda { |*_| DateTime.now }
   property :created_at,   DateTime, default: lambda { |*_| DateTime.now }
 
-  belongs_to :account
+  belongs_to :account, required: true
 
   has n, :categories, :through => Resource, :constraint => :skip
 
@@ -41,7 +41,7 @@ class Transaction
 
     before advice do |ctx|
       unless Currency.valid?(ctx.currency)
-        ctx.errors.add :currency, "Currency must be one of #{Currency::Accepted.join(', ')}"
+        ctx.errors.add :currency, "Currency must be one of #{Currencies.join(', ')}"
         throw :halt
       end
     end

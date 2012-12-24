@@ -1,28 +1,43 @@
 
-# [ 'deposit', 'withdrawal' ].each do |type|
+[ 'deposits', 'withdrawals' ].each do |type|
 
-  get '/accounts/:account/transactions/deposits/new', auth: :user do |account|
-    erb "transactions/new"
+  get "/transactions/#{type}/new", auth: :user do
+    erb :"transactions/new"
   end
 
-  post '/accounts/:account/transactions/deposits', auth: :user do |account|
-    puts params.inspect
+  post "/transactions/#{type}", auth: :user do
 
-    t = @account.transactions.create({
+    { "You must specify an amount" => params["amount"].empty? }.each_pair {|msg,cnd|
+      if cnd
+        flash[:error] = msg
+        return redirect back
+      end
+    }
+
+    c = type == 'deposits' ? @account.deposits : @account.withdrawals
+    t = c.create({
       amount: params["amount"].to_f,
       currency: params["currency"].to_s,
-      type: 'Deposit'
+      note: params["note"],
+      account: @account
     })
-    unless t.valid? && t.persistent?
-      flash[:error] = t.collect_errors
+    
+    if t.saved?
+      flash[:notice] = "Transaction created."
+
+      if params["categories"] && params["categories"].any?
+        params["categories"].each { |cid| t.categories << Category.get(cid) }
+        t.save
+      end
+
     else
-      flash[:notice] = "Transie stored: #{t.collect_errors}."
+      flash[:error] = t.collect_errors
     end
 
     redirect back
   end
 
-  put '/accounts/:account/transactions/deposits/:tid', auth: :user do |a,tid|
+  put "/transactions/#{type}/:tid", auth: :user do |tid|
     unless t = @account.transactions.get(tid)
       halt 400
     end
@@ -37,7 +52,7 @@
     t
   end
 
-  delete '/accounts/:account/transactions/deposits/:tid', auth: :user do |a,tid|
+  delete "/transactions/#{type}/:tid", auth: :user do |tid|
     unless t = @account.transactions.get(tid)
       halt 400
     end
@@ -49,4 +64,4 @@
     true
   end
 
-# end
+end

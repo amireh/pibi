@@ -40,6 +40,10 @@ class User
     true
   end
 
+  after :create do
+    self.accounts.create
+  end
+
   def namespace
     ""
   end

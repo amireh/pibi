@@ -7,12 +7,15 @@ class Currency
 
   class << self
     def valid?(cur)
-      # !Currency.first({ name: cur }).nil?
-      true
+      Currency.all({ name: cur }).count == 1
     end
 
     def [](name)
       Currency.first({ name: name })
+    end
+
+    def all_names
+      n = []; Currency.all.each { |c| n << c.name }; n
     end
   end
 

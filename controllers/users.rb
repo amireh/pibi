@@ -59,7 +59,7 @@ post '/users' do
   params.delete("password_confirmation")
 
   # Create the user with a UUID
-  unless u = User.create!(params.merge({
+  unless u = User.create(params.merge({
     uid: UUID.generate,
     nickname: nickname,
     auto_nickname: auto_nn,

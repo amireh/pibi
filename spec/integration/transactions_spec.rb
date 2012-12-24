@@ -14,6 +14,14 @@ describe Transaction do
     @account = @user.accounts.create()
   end
 
+  it "should reject an unknown currency" do
+    t = @account.deposits.create({ amount: 5, currency: "HEH", account: @account })
+    puts t.inspect
+    t.saved?.should be_false
+    t.errors.count.should > 0
+    puts t.collect_errors
+  end
+
   it "should create a deposit transaction" do
     @account.deposits.all.count.should == 0
     @account.deposits.create({ amount: 5, account: @account })

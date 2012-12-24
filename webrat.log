@@ -1,0 +1,25 @@
+# Logfile created on 2012-10-12 20:30:23 +0300 by logger.rb/31641
+D, [2012-10-12T20:30:23.631920 #11889] DEBUG -- : REQUESTING PAGE: GET /users/new with {} and HTTP headers {}
+D, [2012-10-12T20:30:23.809837 #11889] DEBUG -- : REQUESTING PAGE: POST /users with {"email"=>"ahmad@amireh.net", "name"=>"Ahmad Amireh", "password"=>"", "password_confirmation"=>""} and HTTP headers {"HTTP_REFERER"=>"/users/new"}
+D, [2012-10-12T20:30:23.830029 #11889] DEBUG -- : REQUESTING PAGE: GET /users/new with {} and HTTP headers {}
+D, [2012-10-12T20:30:23.842927 #11889] DEBUG -- : REQUESTING PAGE: POST /users with {"email"=>"ahmad@amireh.net", "name"=>"Ahmad Amireh", "password"=>"foobar", "password_confirmation"=>"foo"} and HTTP headers {"HTTP_REFERER"=>"/users/new"}
+D, [2012-10-12T20:30:23.891925 #11889] DEBUG -- : REQUESTING PAGE: GET /users/new with {} and HTTP headers {}
+D, [2012-10-12T20:30:23.904976 #11889] DEBUG -- : REQUESTING PAGE: POST /users with {"email"=>"ahmad@amireh.net", "name"=>"", "password"=>"", "password_confirmation"=>""} and HTTP headers {"HTTP_REFERER"=>"/users/new"}
+D, [2012-10-12T20:30:23.922881 #11889] DEBUG -- : REQUESTING PAGE: GET /users/new with {} and HTTP headers {}
+D, [2012-10-12T20:30:23.934190 #11889] DEBUG -- : REQUESTING PAGE: POST /users with {"email"=>"foobar", "name"=>"", "password"=>"", "password_confirmation"=>""} and HTTP headers {"HTTP_REFERER"=>"/users/new"}
+D, [2012-10-12T20:30:24.331646 #11889] DEBUG -- : REQUESTING PAGE: GET /users/new with {} and HTTP headers {}
+D, [2012-10-12T20:30:24.348656 #11889] DEBUG -- : REQUESTING PAGE: POST /users with {"email"=>"foo@bar.com", "name"=>"", "password"=>"", "password_confirmation"=>""} and HTTP headers {"HTTP_REFERER"=>"/users/new"}
+D, [2012-10-12T20:30:24.373159 #11889] DEBUG -- : REQUESTING PAGE: GET /users/new with {} and HTTP headers {}
+D, [2012-10-12T20:30:24.383226 #11889] DEBUG -- : REQUESTING PAGE: POST /users with {"email"=>"", "name"=>"", "password"=>"", "password_confirmation"=>""} and HTTP headers {"HTTP_REFERER"=>"/users/new"}
+D, [2012-10-12T20:30:49.070273 #11913] DEBUG -- : REQUESTING PAGE: GET /users/new with {} and HTTP headers {}
+D, [2012-10-12T20:30:49.167221 #11913] DEBUG -- : REQUESTING PAGE: POST /users with {"email"=>"ahmad@amireh.net", "name"=>"Ahmad Amireh", "password"=>"", "password_confirmation"=>""} and HTTP headers {"HTTP_REFERER"=>"/users/new"}
+D, [2012-10-12T20:30:49.187036 #11913] DEBUG -- : REQUESTING PAGE: GET /users/new with {} and HTTP headers {}
+D, [2012-10-12T20:30:49.199671 #11913] DEBUG -- : REQUESTING PAGE: POST /users with {"email"=>"ahmad@amireh.net", "name"=>"Ahmad Amireh", "password"=>"foobar", "password_confirmation"=>"foo"} and HTTP headers {"HTTP_REFERER"=>"/users/new"}
+D, [2012-10-12T20:30:49.245672 #11913] DEBUG -- : REQUESTING PAGE: GET /users/new with {} and HTTP headers {}
+D, [2012-10-12T20:30:49.257724 #11913] DEBUG -- : REQUESTING PAGE: POST /users with {"email"=>"ahmad@amireh.net", "name"=>"", "password"=>"", "password_confirmation"=>""} and HTTP headers {"HTTP_REFERER"=>"/users/new"}
+D, [2012-10-12T20:30:49.273901 #11913] DEBUG -- : REQUESTING PAGE: GET /users/new with {} and HTTP headers {}
+D, [2012-10-12T20:30:49.284895 #11913] DEBUG -- : REQUESTING PAGE: POST /users with {"email"=>"foobar", "name"=>"", "password"=>"", "password_confirmation"=>""} and HTTP headers {"HTTP_REFERER"=>"/users/new"}
+D, [2012-10-12T20:30:49.389161 #11913] DEBUG -- : REQUESTING PAGE: GET /users/new with {} and HTTP headers {}
+D, [2012-10-12T20:30:49.400190 #11913] DEBUG -- : REQUESTING PAGE: POST /users with {"email"=>"foo@bar.com", "name"=>"", "password"=>"", "password_confirmation"=>""} and HTTP headers {"HTTP_REFERER"=>"/users/new"}
+D, [2012-10-12T20:30:49.423915 #11913] DEBUG -- : REQUESTING PAGE: GET /users/new with {} and HTTP headers {}
+D, [2012-10-12T20:30:49.433624 #11913] DEBUG -- : REQUESTING PAGE: POST /users with {"email"=>"", "name"=>"", "password"=>"", "password_confirmation"=>""} and HTTP headers {"HTTP_REFERER"=>"/users/new"}
