@@ -28,8 +28,8 @@
     <script src="/js/ugly/all.js"></script>
   <% end %>
 
-  <% yield_content :js %>
-  <% yield_content :scripts %>
+  <%= yield_content :js %>
+  <%= yield_content :scripts %>
 </head>
 
 <body class="<%= @layout.to_s.split('/').last %>">

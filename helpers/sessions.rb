@@ -38,6 +38,15 @@ module SessionsHelper
     @user = User.get(session[:id])
   end
 
+  def current_account
+    return @account if @account
+    return nil unless session[:account]
+
+    @account = current_user.accounts.first({ id: session[:account] })
+  end
+
+
+
 end
 
 helpers do

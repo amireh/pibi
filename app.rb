@@ -115,13 +115,13 @@ error 403 do
   erb :"403"
 end
 
-error do
-  if request.xhr?
-    halt 500, "500 - internal error: " + env['sinatra.error'].name + " => " + env['sinatra.error'].message
-  end
+# error do
+#   if request.xhr?
+#     halt 500, "500 - internal error: " + env['sinatra.error'].name + " => " + env['sinatra.error'].message
+#   end
 
-  erb :"500"
-end
+#   erb :"500"
+# end
 
 get '/' do
   pass unless logged_in?

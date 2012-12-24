@@ -22,6 +22,9 @@ gem 'gravatarify', ">= 3.1.0"
 
 group :development do
   gem 'thin'
+  gem 'rspec'
+  gem 'rspec-core'
+  gem 'rake'
 end
 
 group :production do

@@ -1,6 +1,17 @@
+<% @t ||= Transaction.new %>
+<% editing = @t.persisted? %>
+
+<h2>
+  <% if editing %>
+    <%= "Editing #{@t.type.to_s.downcase} tx" %>
+  <% else %>
+    <%= "Creating a new #{@t.type.to_s.downcase} tx" %>
+  <% end %>
+</h2>
+
 <form action="<%= request.path.gsub(/(\/\w+)$/, '') %>" method="POST">
   <label>Amount: <input type="text" name="amount" /></label>
-  <label>Currency: 
+  <label>Currency:
     <select name="currency">
       <% Currencies.each do |c| %>
         <option value="<%= c %>"><%= c %></option>

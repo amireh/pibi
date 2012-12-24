@@ -9,8 +9,6 @@ class Category
 
   before :destroy do
     CategoryTransaction.all({ category_id: self.id }).destroy!
-
     true
   end
-
 end

@@ -1,7 +1,8 @@
 describe Category do
-  
+
   before do
     User.destroy
+    Category.destroy
 
     @user = User.create({
       name: "Ahmad Amireh",
@@ -21,7 +22,7 @@ describe Category do
     c.saved?.should be_true
     @user.categories.count.should == 1
   end
-  
+
   it "should attach a category to a tx" do
     @user.categories.count.should == 0
     c = @user.categories.create({ name: "Utility" })
@@ -66,7 +67,7 @@ describe Category do
     t.should be_true
     t.categories.count.should == 0
 
-    Category.all.count.should == 0
+    Category.count.should == 0
     Transaction.all.count.should == 1
   end
 

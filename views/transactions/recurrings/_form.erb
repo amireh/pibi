@@ -1,19 +1,95 @@
+<h2>
+  <% if @t.persisted? %>
+    <%= "Editing #{@t.type.to_s.downcase} tx ##{@t.id}" %>
+  <% else %>
+    <%= "Creating a new #{@t.type.to_s.downcase} tx" %>
+  <% end %>
+</h2>
+
+<% @t ||= Recurring.new %>
+<% content_for :js do %>
+  <script>
+    $(function() {
+      $("input[name=frequency]").change(function() {
+        var me = $("input[name=frequency]:checked").attr('value');
+        if (me == 'yearly') {
+          $("#monthly_frequency_recurrence").hide();
+          $("#yearly_frequency_recurrence").show();
+        }
+        else if (me == 'monthly') {
+          $("#monthly_frequency_recurrence").show();
+          $("#yearly_frequency_recurrence").hide();
+        }
+        else {
+          $("#monthly_frequency_recurrence").hide();
+          $("#yearly_frequency_recurrence").hide();
+        }
+      })
+    });
+  </script>
+<% end %>
+
 <form action="<%= request.path.gsub(/(\/\w+)$/, '') %>" method="POST">
-  <label>Amount: <input type="text" name="amount" /></label>
-  <label>Currency:
+
+  <label>
+    Name: <input type="text" name="note" placeholder="Salary" value="<%= @t.note %>" />
+  </label>
+  <br />
+
+  <fieldset>
+    <legend>Flow type</legend>
+    <label>
+      <input type="radio" name="flow_type" value="positive"
+             <%= 'checked="checked"' if @t.flow_type == :positive %> />Positive
+      <span>(ie, a salary)</span>
+    </label>
+    <br />
+    <label>
+      <input type="radio" name="flow_type" value="negative"
+             <%= 'checked="checked"' if @t.flow_type == :negative %> />Negative
+      <span>(ie, a bill)</span>
+    </label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Amount</legend>
+    <input type="text" name="amount" placeholder="5" size="6" value="<%= @t.amount %>" />
     <select name="currency">
       <% Currencies.each do |c| %>
-        <option value="<%= c %>"><%= c %></option>
+        <option value="<%= c %>" <%= 'selected="selected"' if @t.currency == c %>><%= c %></option>
       <% end %>
     </select>
-  </label>
-  <br />
-  <label>
-    Note: <br />
-    <textarea name="note" rows="3" cols="40" placeholder="An optional note to remind you of this transaction"></textarea>
-  </label>
+  </fieldset>
 
-  <br />
+  <fieldset>
+    <legend>Frequency</legend>
+    <p>How often does the transaction occur?</p>
+    <label><input type="radio" name="frequency" value="daily" <%= 'checked="checked"' if @t.frequency == :daily %> />Daily</label>
+    <label><input type="radio" name="frequency" value="monthly" <%= 'checked="checked"' if @t.frequency == :monthly %> />Monthly</label>
+    <label><input type="radio" name="frequency" value="yearly" <%= 'checked="checked"' if @t.frequency == :yearly %> />Yearly</label>
+  </fieldset>
+
+  <fieldset id="monthly_frequency_recurrence">
+    <legend>Time of occurence</legend>
+    <p>On which day of the month does it occur?</p>
+    <input type="number" name="monthly_recurs_on_day" min="1" max="28" value="<%= @t.recurs_on.day %>" />
+    <span class="hint">Allowed range: 1 to 28.</span>
+  </fieldset>
+
+  <fieldset id="yearly_frequency_recurrence">
+    <legend>Time of occurence</legend>
+    <p>On which day and month does it occur?</p>
+    <label>Day: <input type="number" name="yearly_recurs_on_day" min="1" max="28" value="<%= @t.recurs_on.day %>" /></label>
+    <span class="hint">Allowed range: 1 to 28.</span>
+    <br />
+    <label>Month:
+      <select name="yearly_recurs_on_month">
+        <% for i in 1..12 do %>
+          <option value="<%= i %>" <%= 'selected="selected"' if @t.recurs_on.month == i %>><%= Date.new(0, i, 1).strftime("%b") %></option>
+        <% end %>
+      </select>
+    </label>
+  </fieldset>
 
   <h3>Categories</h3>
   <% if @user.categories.empty? %>
@@ -23,7 +99,7 @@
   <% end %>
   <% @user.categories.each do |c| %>
     <label>
-      <input type="checkbox" name="categories[]" value="<%= c.id %>" />
+      <input type="checkbox" name="categories[]" value="<%= c.id %>" <%= 'checked="checked"' if @t.categories.count({ id: c.id }) > 0 %> />
       <%= c.name %>
     </label>
   <% end %>

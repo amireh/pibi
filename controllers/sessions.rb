@@ -20,11 +20,13 @@ post '/sessions' do
   end
 
   session[:id] = u.id
+  session[:account] = u.accounts.first.id
   redirect '/'
 end
 
 delete '/sessions' do
   session[:id] = nil
+  session[:account] = nil
 
   flash[:notice] = "Successfully logged out."
   redirect '/'
