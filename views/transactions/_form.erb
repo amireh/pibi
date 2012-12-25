@@ -1,6 +1,18 @@
 <% @t ||= Transaction.new %>
 <% editing = @t.persisted? %>
 
+<% content_for :js do %>
+  <script>
+    $(function() {
+      $("input[name=occured_on]").datepicker({
+            showOn: "both",
+            buttonImage: "images/calendar.gif",
+            buttonImageOnly: true
+        });
+    })
+  </script>
+<% end %>
+
 <h2>
   <% if editing %>
     <%= "Editing #{@t.type.to_s.downcase} tx" %>
@@ -22,6 +34,12 @@
   <label>
     Note: <br />
     <textarea name="note" rows="3" cols="40" placeholder="An optional note to remind you of this transaction"></textarea>
+  </label>
+
+  <br />
+
+  <label>Date of transaction: <br />
+    <input type="text" name="occured_on" />
   </label>
 
   <br />

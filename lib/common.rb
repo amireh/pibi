@@ -49,6 +49,12 @@ class String
     Vowels.include?(self[0]) ? "an #{self}" : "a #{self}"
   end
 
+  # expected format: "MM/DD/YYYY"
+  def to_date
+    m,d,y = self.split('/')
+    DateTime.new(y.to_i,m.to_i,d.to_i)
+  end
+
   alias_method :blank?, :empty?
 
   private

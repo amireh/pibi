@@ -1,5 +1,5 @@
 <ul>
   <% current_account.transactions.each do |t| %>
-    <li><%= t.type %>: <%= t.amount.to_f %> <%= t.currency %> on <%= pretty_time t.created_at %></li>
+    <li><%= t.type %>: <%= t.amount.to_f %> <%= t.currency %> on <%= pretty_time t.occured_on %></li>
   <% end %>
 </ul>

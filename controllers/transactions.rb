@@ -53,15 +53,14 @@
       puts p
     end
 
-    puts "inb4 creation"
     t = c.create({
       amount: params["amount"].to_f,
       currency: params["currency"].to_s,
       note: params["note"],
+      occured_on: params["occured_on"].to_date,
       account: @account
     }.merge(p))
 
-    puts "inb4 saving"
     if t.saved?
       flash[:notice] = "Transaction created."
 
@@ -73,7 +72,6 @@
       flash[:error] = t.collect_errors
     end
 
-    puts "inb4 redirect"
     redirect back
   end
 

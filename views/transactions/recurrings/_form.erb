@@ -10,6 +10,7 @@
 <% content_for :js do %>
   <script>
     $(function() {
+      $("fieldset[id*=recurrence]").hide();
       $("input[name=frequency]").change(function() {
         var me = $("input[name=frequency]:checked").attr('value');
         if (me == 'yearly') {
@@ -24,7 +25,7 @@
           $("#monthly_frequency_recurrence").hide();
           $("#yearly_frequency_recurrence").hide();
         }
-      })
+      }).change();
     });
   </script>
 <% end %>

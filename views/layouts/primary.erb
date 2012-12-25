@@ -6,6 +6,7 @@
 
   <link href="/css/common.css" rel="stylesheet" type="text/css" />
   <link href="/css/skins/<%= preferences["pibi"]["skin"] %>.css" rel="stylesheet" type="text/css" />
+  <link href="/js/jquery-ui/css/ui-darkness/jquery-ui-1.9.2.custom.min.css" rel="stylesheet" type="text/css" />
   <!-- <link href="/js/bootstrap/css/bootstrap.css" rel="stylesheet" type="text/css" /> -->
 
   <% yield_content :css %>
@@ -24,6 +25,7 @@
     <script src="/js/dynamism.js"></script>
     <script src="/js/pibi.js"></script>
     <script src="/js/pibi_ui.js"></script>
+    <script src="/js/jquery-ui/js/jquery-ui-1.9.2.custom.min.js"></script>
   <% else %>
     <script src="/js/ugly/all.js"></script>
   <% end %>
@@ -37,21 +39,30 @@
   <div class="stuff">
     <header>
       <h1><a href="/"><%= AppName %></a></h1>
-      <div class="subheader"><% yield_content :subheader %></div>
+      <div class="subheader">
+        Your account balance is <%= current_account.balance.to_f %>
+        <% yield_content :subheader %>
+      </div>
     </header>
 
     <nav>
       <span>Hi <%= current_user.nickname %></span>
+      <h3>Activity</h3>
+      <ol>
+        <li><a href="/">Current month</a></li>
+        <li>Yearly reports</li>
+        <li>Monthly reports</li>
+      </ol>
       <h3>Transactions</h3>
       <ol>
         <li><a href="/transactions/deposits/new" title="Create a new deposit transie">Deposit</a></li>
         <li><a href="/transactions/withdrawals/new" title="Create a new withdrawal tx">Withdraw</a></li>
         <li><a href="/transactions/recurrings/new" title="Create a new recurring tx (bills, etc.)">Recurring</a></li>
       </ol>
-      <h3>Account</h3>
+      <h3>Manage</h3>
       <ol>
-        <!-- <li><a href="/pages/public">Public pages</a></li> -->
-        <li><a href="/settings">Settings</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/settings">Account</a></li>
         <li><a href="/sessions/destroy">Sign out</a></li>
       </ol>
     </nav>

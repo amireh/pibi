@@ -2,6 +2,14 @@ get '/categories', auth: :user do
   erb :"categories/index"
 end
 
+get '/categories/:id', auth: :user do |cid|
+  unless @c = current_user.categories.first({id: cid})
+    halt 404, "No such category"
+  end
+
+  erb :"categories/show"
+end
+
 post '/categories', auth: :user do
 
   { "You must specify a name" => params["name"].empty? }.each_pair {|msg,cnd|
@@ -43,7 +51,7 @@ put '/categories/:cid', auth: :user do |cid|
 
     c.name = params["name"] if params.has_key?("name")
   end
-  
+
   unless c.save
     halt 500, c.collect_errors
   end
