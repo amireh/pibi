@@ -2,6 +2,6 @@
 <p><%= @c.transactions.count %> transaction(s) have been categorized as <%= @c.name %>.</p>
 <ol>
 <% @c.transactions.each do |t| %>
-  <li><%= t %></li>
+  <li><%= tx_to_html t %></li>
 <% end %>
 </ol>

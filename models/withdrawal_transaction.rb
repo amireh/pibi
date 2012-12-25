@@ -4,12 +4,14 @@ class Withdrawal < Transaction
 
   def add_to_account
     converted_amount = to_account_currency
-    self.account.update({ balance: self.account.balance - converted_amount })
+    account.balance -= converted_amount
+    account.save
   end
-  
+
   def deduct
     deductible_amount = to_account_currency
-    self.account.update({ balance: self.account.balance + deductible_amount })
+    account.balance += deductible_amount
+    account.save
   end
 
 end

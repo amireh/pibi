@@ -80,5 +80,5 @@ class Transaction
     mc = Currency[self.currency]
 
     ac.from(mc, self.amount)
-  end  
+  end
 end

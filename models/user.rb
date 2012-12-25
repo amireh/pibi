@@ -17,6 +17,7 @@ class User
   property :oauth_token,    Text
   property :oauth_secret,   Text
   property :extra,          Text
+  property :auto_password,   Boolean, default: false
   property :auto_nickname,  Boolean, default: false
   property :verified,       Boolean, default: false
   property :created_at,     DateTime, default: lambda { |*_| DateTime.now }
@@ -42,6 +43,10 @@ class User
 
   after :create do
     self.accounts.create
+  end
+
+  def categories
+    Category.all({ conditions: { user_id: id }, :order => [ :name.asc ] })
   end
 
   def namespace

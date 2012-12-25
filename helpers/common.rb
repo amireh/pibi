@@ -33,4 +33,8 @@ helpers do
   def pretty_time(datetime)
     datetime.strftime("%D")
   end
+
+  def tx_to_html(t)
+    "#{t.type}: #{t.currency} #{t.amount.to_f} #{t.categories.collect { |c| c.name }} on #{pretty_time t.occured_on} - #{t.note}"
+  end
 end

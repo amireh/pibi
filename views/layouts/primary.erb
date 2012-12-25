@@ -40,7 +40,7 @@
     <header>
       <h1><a href="/"><%= AppName %></a></h1>
       <div class="subheader">
-        Your account balance is <%= current_account.balance.to_f %>
+        Your account balance is <%= current_account.balance.to_f %> <%= current_account.currency %>
         <% yield_content :subheader %>
       </div>
     </header>

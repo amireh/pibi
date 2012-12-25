@@ -92,18 +92,7 @@
     </label>
   </fieldset>
 
-  <h3>Categories</h3>
-  <% if @user.categories.empty? %>
-    <p>You do not have any categories set up yet. You can use
-      <a href="/categories">this page</a> to manage your categories.
-    </p>
-  <% end %>
-  <% @user.categories.each do |c| %>
-    <label>
-      <input type="checkbox" name="categories[]" value="<%= c.id %>" <%= 'checked="checked"' if @t.categories.count({ id: c.id }) > 0 %> />
-      <%= c.name %>
-    </label>
-  <% end %>
+  <%= partial "/transactions/_category_listing" %>
 
   <br />
   <br />

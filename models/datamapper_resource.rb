@@ -13,6 +13,10 @@ module DataMapper
       !self.id.nil?
     end
 
+    def refresh
+      self.class.get(self.id)
+    end
+
     alias_method :persistent?, :persisted?
   end
 end

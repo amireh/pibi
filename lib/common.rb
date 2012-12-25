@@ -52,7 +52,11 @@ class String
   # expected format: "MM/DD/YYYY"
   def to_date
     m,d,y = self.split('/')
-    DateTime.new(y.to_i,m.to_i,d.to_i)
+    begin
+      DateTime.new(y.to_i,m.to_i,d.to_i)
+    rescue ArgumentError => e
+      DateTime.now
+    end
   end
 
   alias_method :blank?, :empty?

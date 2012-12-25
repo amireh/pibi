@@ -28,3 +28,8 @@ nav > span:first-of-type {
   display: block;
   margin-bottom: 10px;
 }
+
+section.category_listing label {
+  display: inline-block;
+  width: 31%;
+}
