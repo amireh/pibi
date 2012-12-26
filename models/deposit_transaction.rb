@@ -1,6 +1,7 @@
 require 'models/transaction'
 
 class Deposit < Transaction
+  belongs_to :account, required: true
 
   def add_to_account
     converted_amount = to_account_currency

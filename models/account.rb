@@ -17,9 +17,9 @@ class Account
 
   belongs_to :user
   has n, :transactions, :constraint => :destroy
-  has n, :deposits
-  has n, :withdrawals
-  has n, :recurrings
+  has n, :deposits,     :constraint => :destroy
+  has n, :withdrawals, :constraint => :destroy
+  has n, :recurrings,   :constraint => :destroy
 
   # Accepted options:
   # => :with_transactions: the account transactions will be dumped

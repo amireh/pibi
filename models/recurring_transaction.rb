@@ -1,6 +1,8 @@
 require 'models/transaction'
 
 class Recurring < Transaction
+  belongs_to :account, required: true
+
   property :flow_type,  Enum[ :positive, :negative ],      default: :positive
   property :frequency,  Enum[ :daily, :monthly, :yearly ], default: :monthly
   property :recurs_on,  DateTime, default: lambda { |*_| DateTime.now }
@@ -20,15 +22,15 @@ class Recurring < Transaction
     when :monthly
       # is it the day of the month the tx should be committed on?
       if recurs_on.day == now.day
-        # committed already for this month? 
+        # committed already for this month?
         return !last_commit ||
           last_commit.year  < now.year ||
-          last_commit.month < now.month 
+          last_commit.month < now.month
       end
     when :yearly
       # is it the day and month of the year the tx should be committed on?
       if recurs_on.day == now.day && recurs_on.month == now.month
-        # committed already for this year? 
+        # committed already for this year?
         return !last_commit || last_commit.year < now.year
       end
     end
@@ -43,7 +45,7 @@ class Recurring < Transaction
     now ||= DateTime.now
 
     c = nil
-    
+
     # get the transaction collection we'll be generating from/into
     if self.flow_type == :positive
       c = self.account.deposits

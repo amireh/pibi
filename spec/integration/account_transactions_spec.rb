@@ -1,4 +1,4 @@
-describe Transaction do
+describe "Account Transactions" do
 
   before do
     User.destroy
@@ -11,7 +11,7 @@ describe Transaction do
       password: User.encrypt('hello world')
     })
 
-    @account = @user.accounts.create()
+    @account = @user.accounts.first
   end
 
   it "should reject an unknown currency" do
@@ -80,6 +80,27 @@ describe Transaction do
     @account.withdrawals.all.count.should == 0
     @account = Account.get(@account.id)
     @account.balance.to_f.should == 0.0
+  end
+
+  it "should create many transactions and delete them cleanly" do
+    @account.transactions.count.should == 0
+
+    for i in 0..9 do
+      @account = @account.refresh
+      unless tx = @account.withdrawals.create({ amount: 5 })
+        raise RuntimeError.new "tx couldn't be created: #{tx.collect_errors}"
+      end
+    end
+
+    @account.transactions.count.should == 10
+    @account.balance.should == -50.0
+
+    @account.transactions.each { |t| t.destroy }
+    @account = @account.refresh
+
+    @account.balance.should == 0.0
+
+    @account.transactions.count.should == 0
   end
 
 end

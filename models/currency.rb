@@ -7,7 +7,7 @@ class Currency
 
   class << self
     def valid?(cur)
-      Currency.all({ name: cur }).count == 1
+      Currency.all({ conditions: { name: cur }, fields: [ :id ] }).count == 1
     end
 
     def [](name)

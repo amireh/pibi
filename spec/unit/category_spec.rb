@@ -2,7 +2,6 @@ describe Category do
 
   before do
     User.destroy
-    Category.destroy
 
     @user = User.create({
       name: "Ahmad Amireh",

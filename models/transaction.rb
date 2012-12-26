@@ -30,22 +30,25 @@ class Transaction
     true
   end
 
+  validates_with_method :currency, :method => :check_currency
+
+  def check_currency
+    unless Currency.valid?(self.currency)
+      return [ false, "Currency must be one of #{Currencies.join(', ')}" ]
+    end
+
+    true
+  end
+
+
   [ :update, :destroy ].each do |advice|
     before advice do
-      # puts "Deducting my current amount #{self.amount.to_f}(#{self.currency}) from the account balance (#{self.account.balance.to_f}"
+      # puts "Deducting my current amount #{self.amount.to_f}(#{self.currency}) from the account balance (#{self.account.balance.to_f} #{self.account.currency})"
       deduct
     end
   end
 
   [ :update, :create ].each do |advice|
-
-    before advice do |ctx|
-      unless Currency.valid?(ctx.currency)
-        ctx.errors.add :currency, "Currency must be one of #{Currencies.join(', ')}"
-        throw :halt
-      end
-    end
-
     after advice do
       add_to_account
     end
