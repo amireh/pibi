@@ -1,3 +1,8 @@
+PATH
+  remote: ~/Workspace/Projects/timetastic
+  specs:
+    timetastic (0.1.2)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -155,4 +160,5 @@ DEPENDENCIES
   sinatra-contrib
   sinatra-flash
   thin
+  timetastic (>= 0.1.2)!
   uuid

@@ -19,6 +19,7 @@ gem 'multi_json'
 gem 'addressable'
 gem 'uuid'
 gem 'gravatarify', ">= 3.1.0"
+gem 'timetastic', '>= 0.1.2', path: '~/Workspace/Projects/timetastic'
 
 group :development do
   gem 'thin'
