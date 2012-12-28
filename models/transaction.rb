@@ -32,6 +32,11 @@ class Transaction
 
   validates_with_method :currency, :method => :check_currency
 
+  [ 'withdrawal', 'deposit', 'recurring' ].each { |t|
+    define_method("#{t}?") { self.type.to_s == t.capitalize }
+    alias_method :"is_#{t}?", :"#{t}?"
+  }
+
   def check_currency
     unless Currency.valid?(self.currency)
       return [ false, "Currency must be one of #{Currencies.join(', ')}" ]
