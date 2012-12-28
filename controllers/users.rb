@@ -17,11 +17,11 @@ end
 
 public
 
-before do
-  if current_user && current_user.auto_nickname && flash.empty?
-    flash[:notice] = "You have an auto-generated nickname, please go to your profile page and update it."
-  end
-end
+# before do
+#   if current_user && current_user.auto_nickname && flash.empty?
+#     flash[:notice] = "You have an auto-generated nickname, please go to your profile page and update it."
+#   end
+# end
 
 get '/users/new' do
   erb :"/users/new"
