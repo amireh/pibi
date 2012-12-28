@@ -21,6 +21,11 @@ class Account
   has n, :withdrawals, :constraint => :destroy
   has n, :recurrings,   :constraint => :destroy
 
+  def latest_transactions
+    now = DateTime.now
+    transactions.all({ :occured_on.gte => Timetastic.this.month, :occured_on.lt => Timetastic.next.month })
+  end
+
   # Accepted options:
   # => :with_transactions: the account transactions will be dumped
   # => :with_transaction_notes: the account transaction notes will be dumped
