@@ -9,19 +9,19 @@ body * {
           box-sizing: border-box;
 }
 
-.stuff {
+/*.stuff {
   width: 720px;
   margin: 10px auto;
   position: relative;
 }
-
-#content { width: 720px; }
-
+*/
+#content { width: 720px; margin-left: 260px; }
+/*header {                 margin-left: 260px;}*/
 nav {
-  position: absolute;
-  width: 220px;
-  left: -220px;
-  top: 0;
+  /*position: absolute;*/
+  /*width: 220px;*/
+  /*left: -220px;*/
+  /*top: 0;*/
 }
 
 nav > span:first-of-type {
@@ -32,4 +32,15 @@ nav > span:first-of-type {
 section.category_listing label {
   display: inline-block;
   width: 31%;
+}
+
+.sidebar {
+  position: fixed;
+  width: 240px;
+  height: 100%;
+  left: 0;
+  top: 0;
+  background: #343434;
+  padding: 20px;
+  padding-top: 0;
 }

@@ -1,5 +1,6 @@
+<h1>Activity for <%= Time.now.strftime("%B, %Y") %></h1>
 <ul>
-  <% current_account.transactions.each do |t| %>
+  <% current_account.latest_transactions.each do |t| %>
     <li><%= tx_to_html t %></li>
   <% end %>
 </ul>

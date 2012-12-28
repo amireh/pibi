@@ -36,17 +36,18 @@
 
 <body class="<%= @layout.to_s.split('/').last %>">
 
-  <div class="stuff">
+  <!-- <div class="stuff"> -->
+
+  <div class="sidebar">
     <header>
       <h1><a href="/"><%= AppName %></a></h1>
       <div class="subheader">
-        Your account balance is <%= current_account.balance.to_f %> <%= current_account.currency %>
+        Balance: <%= current_account.balance.to_f %> <%= current_account.currency %>
         <% yield_content :subheader %>
       </div>
     </header>
-
     <nav>
-      <span>Hi <%= current_user.nickname %></span>
+      <!-- <span>Hi <%= current_user.nickname %></span> -->
       <h3>Activity</h3>
       <ol>
         <li><a href="/">Current month</a></li>
@@ -68,10 +69,11 @@
     </nav>
 
     <div id="status"></div>
+  </div>
 
-    <%= partial "layouts/_flashes" %>
 
     <div id="content" class="<%= request.path.gsub('/', ' ').strip.sanitize.split('-').first %>">
+      <%= partial "layouts/_flashes" %>
       <%= yield %>
     </div>
 
@@ -92,7 +94,7 @@
     </aside>
 
     <%= partial "footer" %>
-  </div>
+  <!-- </div> -->
 
 </body>
 

@@ -1,15 +1,17 @@
+body {
+  background: #545454;
+  color: #eaeaea;
+}
 a {
-  /*color: #008cdd;*/
+  color: #FFD000;
 }
 
 a.listlike { border-bottom: 1px solid rgba(0,0,0,0.35); }
 
 a:hover,
 .highlighted,
-.selected { color: red; }
+.selected { color: #9E8A2F; }
 
-body {
-}
 
 #flashes {
   box-shadow: 0 0 1px 1px #fff;
@@ -28,4 +30,7 @@ body {
 
 footer {
   border-color: #ddd;
+}
+
+.sidebar h3 { background: #FFD000; color: #111; padding: 10px 10px 10px 20px; position: relative; left: -20px; width: 240px;
 }
