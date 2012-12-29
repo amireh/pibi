@@ -82,6 +82,8 @@ end
 
 [ "account", "editing", "notifications" ].each { |domain|
   get "/settings/#{domain}", auth: :user do
+    current_page("manage")
+
     erb :"/users/settings/#{domain}"
   end
 }

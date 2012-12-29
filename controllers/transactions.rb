@@ -1,6 +1,8 @@
 [ 'deposits', 'withdrawals', 'recurrings' ].each do |type|
 
   get "/transactions/#{type}/new", auth: :user do
+    current_page(type)
+
     @tx = @account.send(type).new
     begin
       # see if there's a custom form for this transaction type (ie, recurrings)
@@ -12,6 +14,8 @@
   end
 
   get "/transactions/#{type}/:tid/edit", auth: :user do |tid|
+    current_page(type)
+
     unless @tx = @account.send(type).get(tid)
       halt 400, "No such transaction."
     end
@@ -158,6 +162,8 @@
 end
 
 get '/transactions/recurrings', auth: :user do
+  current_page("manage")
+
   @transies = current_account.recurrings.all
   erb :"/transactions/recurrings/index"
 end

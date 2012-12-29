@@ -121,6 +121,8 @@ end
 get '/' do
   pass unless logged_in?
 
+  current_page("feed")
+
   erb "transactions/index"
 end
 

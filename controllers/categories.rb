@@ -1,8 +1,12 @@
 get '/categories', auth: :user do
+  current_page("manage")
+
   erb :"categories/index"
 end
 
 get '/categories/:id', auth: :user do |cid|
+  current_page("manage")
+
   unless @c = current_user.categories.first({id: cid})
     halt 404, "No such category"
   end

@@ -5,6 +5,11 @@ helpers do
     request.referer.scan(/http:\/\/[^\/]*\//).first[0..-2]
   end
 
+  def current_page(page = nil)
+    session[:current_page] = page if page
+    session[:current_page]
+  end
+
   # Loads the user's preferences merging them with the defaults
   # for any that were not overridden.
   #
