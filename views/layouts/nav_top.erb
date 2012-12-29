@@ -1,0 +1,56 @@
+<% content_for :deferred_js do %>
+  <script>
+    $(function() {
+      $("nav li a[href^='<%= request.path %>']:first").addClass("selected");
+    })
+  </script>
+<% end %>
+
+<div class="stuff">
+
+  <header>
+    <h1><a href="/"><%= AppName %></a></h1>
+    <div class="subheader">
+      <span class="account_balance">Balance:
+        <span class="<%= current_account.balance > 0 ? 'positive' : 'negative' %>"><%= current_account.refresh.balance.to_f %></span> <%= current_account.currency %>
+      </span>
+      <% yield_content :subheader %>
+      <%= partial "layouts/_flashes" %>
+    </div>
+  </header>
+
+  <nav>
+    <!-- <span>Hi <%= current_user.nickname %></span> -->
+    <!-- <h3>Transactions</h3> -->
+    <ol>
+      <li><a href="/">Transactions</a></li>
+      <!-- <li>Monthly reports</li> -->
+    <!-- </ol> -->
+    <!-- <h3>Actions</h3> -->
+    <!-- <ol> -->
+      <li><a href="/transactions/deposits/new" title="Create a new deposit transie">Deposit</a></li>
+      <li><a href="/transactions/withdrawals/new" title="Create a new withdrawal tx">Withdraw</a></li>
+      <li><a href="/reports">Reports</a></li>
+      <li><a href="/transactions/recurrings/new" title="Create a new recurring tx (bills, etc.)">Recurring</a></li>
+    <!-- </ol> -->
+    <!-- <h3>Manage</h3> -->
+    <!-- <ol> -->
+      <li>
+        <ol class="meta">
+          <li><a href="/categories">Categories</a></li>
+          <!-- <li><a href="/transactions/recurrings" title="Manage &amp; create recurring transies (bills, etc.)">Bills</a></li> -->
+          <li><a href="/settings">Account</a></li>
+          <li><a href="/sessions/destroy">Sign out</a></li>
+        </ol>
+      </li>
+    </ol>
+  </nav>
+
+  <div id="content" class="<%= request.path.gsub('/', ' ').strip.sanitize.split('-').first %>">
+    <%= yield_content :content %>
+  </div>
+
+  <%= partial "shared/_skin_switcher" %>
+
+  <%= partial "footer" %>
+</div>

@@ -34,68 +34,26 @@
   <%= yield_content :scripts %>
 </head>
 
+<% content_for :content do %> <%= yield %> <% end %>
+
 <body class="<%= @layout.to_s.split('/').last %>">
+  <%= partial "layouts/#{preferences['pibi']['layout']}" %>
 
-  <!-- <div class="stuff"> -->
+  <img class="loader" hidden="hidden" src="/images/ajax-loader-615B4E.gif" />
 
-  <div class="sidebar">
-    <header>
-      <h1><a href="/"><%= AppName %></a></h1>
-      <div class="subheader">
-        Balance: <%= current_account.balance.to_f %> <%= current_account.currency %>
-        <% yield_content :subheader %>
-      </div>
-    </header>
-    <nav>
-      <!-- <span>Hi <%= current_user.nickname %></span> -->
-      <h3>Activity</h3>
-      <ol>
-        <li><a href="/">Current month</a></li>
-        <li>Yearly reports</li>
-        <li>Monthly reports</li>
-      </ol>
-      <h3>Transactions</h3>
-      <ol>
-        <li><a href="/transactions/deposits/new" title="Create a new deposit transie">Deposit</a></li>
-        <li><a href="/transactions/withdrawals/new" title="Create a new withdrawal tx">Withdraw</a></li>
-        <li><a href="/transactions/recurrings/new" title="Create a new recurring tx (bills, etc.)">Recurring</a></li>
-      </ol>
-      <h3>Manage</h3>
-      <ol>
-        <li><a href="/categories">Categories</a></li>
-        <li><a href="/settings">Account</a></li>
-        <li><a href="/sessions/destroy">Sign out</a></li>
-      </ol>
-    </nav>
+  <aside class="modal alert" hidden="hidden" id="html5_compatibility_notice">
+    <h2>Unsupported Browser</h2>
 
-    <div id="status"></div>
-  </div>
+    <p>The brower you are currently using does not appear to support
+      the latest HTML5 standards which are required for PageHub to
+      function correctly.
+    </p>
+    <p>Please update your browser or use a recent version of the
+      officially supported browsers: Google Chrome, Safari 5, or Mozilla Firefox.
+    </p>
+  </aside>
 
-
-    <div id="content" class="<%= request.path.gsub('/', ' ').strip.sanitize.split('-').first %>">
-      <%= partial "layouts/_flashes" %>
-      <%= yield %>
-    </div>
-
-    <%= partial "shared/_skin_switcher" %>
-
-    <img class="loader" hidden="hidden" src="/images/ajax-loader-615B4E.gif" />
-
-    <aside class="modal alert" hidden="hidden" id="html5_compatibility_notice">
-      <h2>Unsupported Browser</h2>
-
-      <p>The brower you are currently using does not appear to support
-        the latest HTML5 standards which are required for PageHub to
-        function correctly.
-      </p>
-      <p>Please update your browser or use a recent version of the
-        officially supported browsers: Google Chrome, Safari 5, or Mozilla Firefox.
-      </p>
-    </aside>
-
-    <%= partial "footer" %>
-  <!-- </div> -->
-
+  <%= yield_content :deferred_js %>
 </body>
 
 </html>

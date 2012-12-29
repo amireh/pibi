@@ -79,11 +79,6 @@ configure do
   load_all "models"
   load_all "controllers"
 
-  #  require 'controllers/sessions'
-  #  require 'controllers/users'
-  #  require 'controllers/transactions'
-  #  require 'controllers/categories'
-
   DataMapper.finalize
   DataMapper.auto_upgrade!
 

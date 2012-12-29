@@ -1,5 +1,6 @@
 {
   "pibi": {
-    "skin": "light"
+    "layout": "nav_top",
+    "skin": "rainbow"
   }
 }

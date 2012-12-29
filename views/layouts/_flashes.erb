@@ -1,4 +1,12 @@
 <% if !flash.empty? %>
+  <% content_for :deferred_js do %>
+    <script>
+      $(function() {
+        $("#flashes button").click(function() { $(this).parent().hide(); });
+      });
+    </script>
+  <% end %>
+
   <div id="flashes">
     <% if flash.size > 1 then %>
       <ol>
