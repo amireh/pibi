@@ -1,5 +1,5 @@
-<% @t ||= Transaction.new %>
-<% editing = @t.persisted? %>
+<% @tx ||= Transaction.new %>
+<% editing = @tx.persisted? %>
 
 <% content_for :js do %>
   <script>
@@ -15,38 +15,34 @@
 
 <h2>
   <% if editing %>
-    <%= "Editing #{@t.type.to_s.downcase} tx" %>
+    <%= "Editing #{@tx.type.to_s.downcase} tx" %>
   <% else %>
-    <%= "Creating a new #{@t.type.to_s.downcase} tx" %>
+    <%= "Creating a new #{@tx.type.to_s.downcase} tx" %>
   <% end %>
 </h2>
 
 <form action="<%= request.path.gsub(/(\/\w+)$/, '') %>" method="POST">
-  <label>Amount: <input type="text" name="amount" /></label>
-  <label>Currency:
+  <fieldset>
+    <legend>Amount</legend>
+    <input type="text" name="amount" placeholder="5.0" value="<%= @tx.persisted? ? @tx.amount.to_f : '' %>" />
     <select name="currency">
       <% Currencies.each do |c| %>
-        <option value="<%= c %>" <%= 'selected="selected"' if @t.currency == c %>><%= c %></option>
+        <option value="<%= c %>" <%= 'selected="selected"' if @tx.currency == c %>><%= c %></option>
       <% end %>
     </select>
-  </label>
-  <br />
-  <label>
-    Note: <br />
-    <textarea name="note" rows="3" cols="40" placeholder="An optional note to remind you of this transaction"></textarea>
-  </label>
+  </fieldset>
+  <fieldset>
+    <legend>Note</legend>
+    <textarea name="note" rows="3" cols="120" placeholder="Something to remind you of this transaction"><%= @tx.note %></textarea>
+  </fieldset>
 
-  <br />
-
-  <label>Date of transaction: <br />
-    <input type="text" name="occured_on" />
-  </label>
-
-  <br />
+  <fieldset>
+    <legend>Date of transaction</legend>
+    <input type="text" name="occured_on" value="<%= to_jQueryUI_date @tx.occured_on %>" />
+  </fieldset>
 
   <%= partial "/transactions/_category_listing" %>
 
   <br />
-  <br />
-  <input type="submit" />
+  <input type="submit" value="store transaction" />
 </form>
