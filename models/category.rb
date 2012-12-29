@@ -11,4 +11,8 @@ class Category
     CategoryTransaction.all({ category_id: self.id }).destroy!
     true
   end
+
+  def url
+    "/categories/#{id}"
+  end
 end

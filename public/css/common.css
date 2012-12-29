@@ -29,9 +29,16 @@ nav > span:first-of-type {
   margin-bottom: 10px;
 }
 
-section.category_listing label {
+.category_listing label {
   display: inline-block;
   width: 31%;
+  vertical-align: top;
+}
+.category_listing input {
+  vertical-align: middle;
+}
+.category_listing {
+  font-size: 0.9em;
 }
 
 nav {

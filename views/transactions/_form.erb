@@ -4,15 +4,16 @@
 <% content_for :js do %>
   <script>
     $(function() {
-      $("input[name=occured_on]").datepicker({
-            showOn: "both",
-            buttonImage: "images/calendar.gif",
-            buttonImageOnly: true
+      $("#datepicker").datepicker({
+            // showOn: "both",
+            altField: "#tx_occured_on"
+            // buttonImage: "images/calendar.gif",
+            // buttonImageOnly: true
         });
     })
   </script>
 <% end %>
-
+<% if false %>
 <h2>
   <% if editing %>
     <%= "Editing #{@tx.type.to_s.downcase} tx" %>
@@ -20,29 +21,28 @@
     <%= "Creating a new #{@tx.type.to_s.downcase} tx" %>
   <% end %>
 </h2>
+<% end %>
 
 <form action="<%= request.path.gsub(/(\/\w+)$/, '') %>" method="POST">
   <fieldset>
-    <legend>Amount</legend>
-    <input type="text" name="amount" placeholder="5.0" value="<%= @tx.persisted? ? @tx.amount.to_f : '' %>" />
-    <select name="currency">
-      <% Currencies.each do |c| %>
-        <option value="<%= c %>" <%= 'selected="selected"' if @tx.currency == c %>><%= c %></option>
-      <% end %>
-    </select>
-  </fieldset>
-  <fieldset>
-    <legend>Note</legend>
-    <textarea name="note" rows="3" cols="120" placeholder="Something to remind you of this transaction"><%= @tx.note %></textarea>
+    <legend><%= @tx.type %> transie</legend>
+    <ol>
+      <li><label for="tx_amt">Amount*</label></li>
+      <li><input type="text" id="tx_amt" name="amount" placeholder="5.0" value="<%= @tx.persisted? ? @tx.amount.to_f : '' %>" />
+        <select name="currency">
+          <% Currencies.each do |c| %>
+            <option value="<%= c %>" <%= 'selected="selected"' if @tx.currency == c %>><%= c %></option>
+          <% end %>
+        </select>
+      </li>
+      <li>Note*</li>
+      <li><textarea name="note" rows="3" cols="80" placeholder="Something to remind you of this transaction"><%= @tx.note %></textarea></li>
+      <li>Date of transaction</li>
+      <li><input type="text" id="tx_occured_on" name="occured_on" value="<%= to_jQueryUI_date @tx.occured_on %>" /> <span class="hint">(Format: MM/DD/YYYY)</span><div id="datepicker"></div></li>
+      <%= partial "/transactions/_category_listing" %>
+    </ol>
+
   </fieldset>
 
-  <fieldset>
-    <legend>Date of transaction</legend>
-    <input type="text" name="occured_on" value="<%= to_jQueryUI_date @tx.occured_on %>" />
-  </fieldset>
-
-  <%= partial "/transactions/_category_listing" %>
-
-  <br />
   <input type="submit" value="store transaction" />
 </form>

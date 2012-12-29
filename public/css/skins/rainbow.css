@@ -197,12 +197,15 @@ header .account_balance .negative { color: #D54421; }
  * Forms & Input
  * ---- */
 
+fieldset {
+  /*max-width: 80%;*/
+}
 textarea {
   vertical-align: middle;
   display: block;
   margin: 0;
   padding: 10px;
-  max-width: 930px;
+  max-width: 100%;
 }
 
 input[type=submit],
@@ -229,7 +232,7 @@ a.button {
   border-color: #C60 #C60 #AD5700;
   border-color: rgba(0, 0, 0, 0.10) rgba(0, 0, 0, 0.10) rgba(0, 0, 0, 0.3);
 
-  text-transform: lowercase;
+  text-transform: capitalize;
   text-decoration: none;
   font-weight: bold;
 
@@ -270,6 +273,7 @@ input[type=email],
 input[type=password],
 textarea,
 select {
+  margin: 0;
   border-radius: 2px;
   border: 1px solid #ddd;
   padding: 10px;
@@ -327,3 +331,169 @@ textarea:focus {
 }
 .flash.notice { color: #98bf0d; }
 .flash.error  { color: #D54421; }
+
+form fieldset {
+  padding-left: 15px;
+  background: #F4F4F4;
+}
+form fieldset legend {
+  margin-bottom: 10px;
+  margin-left: -5px;
+  width: 100%;
+  display: block;
+  background: #EFEFEF;
+  background: -webkit-gradient(linear, left top, left bottom, from(#EFEFEF), to(#DFE1E2));
+  background: -moz-linear-gradient(-90deg, #EFEFEF, #DFE1E2);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#efefef', endColorstr='#dfe1e2');
+  -ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#efefef', endColorstr='#dfe1e2');
+  text-shadow: white 0 1px 0;
+  border: solid 1px #CDCDCD;
+  border-color: #D4D4D4;
+  border-top-color: #E6E6E6;
+  border-right-color: #D4D4D4;
+  border-bottom-color: #CDCDCD;
+  border-left-color: #D4D4D4;
+  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+  font-size: 1.0em;
+  font-weight: bold;
+  line-height: 24px;
+  /*margin-bottom: 0.5em;*/
+  color: #5E6469;
+  padding: 5px 10px 5px 10px;
+}
+
+form fieldset ol {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+form fieldset ol li {
+  display: inline-block;
+  vertical-align: top;
+  margin-bottom: 10px;
+}
+form fieldset ol li:nth-of-type(odd) {
+  width: 25%;
+  font-weight: bold;
+  color: #555;
+  font-size: 0.9em;
+}
+form fieldset ol li:nth-of-type(even) {
+  width: 74%;
+  clear: right;
+}
+form fieldset ol li input[type=checkbox] {
+  margin-left: 0;
+}
+
+form #tx_occured_on { width: 285px; }
+#datepicker {
+  display: block;
+  margin-top: 10px;
+}
+
+form span.hint {
+  font-size: 11px;
+  color: #999;
+  font-style: italic;
+  font-weight: normal;
+}
+
+/* DatePicker widget */
+div.ui-datepicker {
+  font-size: 12px;
+  line-height: 12px;
+  border-radius: 0;
+  width: auto;
+  display: inline-block !important;
+  border: none;
+  background: transparent;
+  color: black;
+}
+
+div.ui-datepicker td {
+  text-align: center;
+}
+div.ui-datepicker td a { padding: 10px; }
+
+div.ui-datepicker .ui-corner-all {
+  border-radius: 0;
+}
+
+div.ui-datepicker .ui-widget-header {
+  background: #01B0EC;
+  background: rgba(0,0,0, 0.75);
+  color: white;
+  /*border-color: #615B4E;*/
+  border-radius: 2px;
+  padding: 0;
+}
+
+div.ui-datepicker .ui-state-default,
+div.ui-datepicker .ui-widget-content .ui-state-default,
+div.ui-datepicker .ui-widget-header .ui-state-default {
+  background: rgba(0,0,0,0.75);
+}
+
+div.ui-datepicker .ui-state-default:hover {
+  /*background: #F2AA03;*/
+  background: #222;
+  color: white;
+}
+div.ui-datepicker .ui-state-active {
+  background: #98BF0D;
+  color: white;
+  border-color: black;
+
+  background: #98bf0d; /* Old browsers */
+  background: -moz-linear-gradient(top, #98bf0d 0%, #78960a 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#98bf0d), color-stop(100%,#78960a)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, #98bf0d 0%,#78960a 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, #98bf0d 0%,#78960a 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top, #98bf0d 0%,#78960a 100%); /* IE10+ */
+  background: linear-gradient(to bottom, #98bf0d 0%,#78960a 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#98bf0d', endColorstr='#78960a',GradientType=0 ); /* IE6-9 */
+
+}
+div.ui-datepicker .ui-state-highlight {
+  background: #01B0EC;
+  border-color: black;
+  color: white;
+
+  background: #01B0EC;
+  background: #01b0ec; /* Old browsers */
+  background: -moz-linear-gradient(top, #01b0ec 0%, #0193c4 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#01b0ec), color-stop(100%,#0193c4)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, #01b0ec 0%,#0193c4 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, #01b0ec 0%,#0193c4 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top, #01b0ec 0%,#0193c4 100%); /* IE10+ */
+  background: linear-gradient(to bottom, #01b0ec 0%,#0193c4 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#01b0ec', endColorstr='#0193c4',GradientType=0 ); /* IE6-9 */
+}
+
+div.ui-datepicker .ui-datepicker-prev,
+div.ui-datepicker .ui-datepicker-prev:hover,
+div.ui-datepicker .ui-datepicker-next,
+div.ui-datepicker .ui-datepicker-next:hover {
+  top: 0;
+}
+
+div.ui-datepicker .ui-datepicker-prev,
+div.ui-datepicker .ui-datepicker-prev:hover {
+  left: 0;
+}
+div.ui-datepicker .ui-datepicker-next,
+div.ui-datepicker .ui-datepicker-next:hover {
+  right: 0;
+}
+
+div.ui-datepicker .ui-state-hover {
+  background: rgba(0,0,0,0.5);
+  cursor: pointer;
+  border-color: black;
+}
+div.ui-datepicker .ui-datepicker-header .ui-state-hover {
+  border: none;
+}
+
