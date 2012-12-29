@@ -1,14 +1,23 @@
 body {
   font: 14px/18px Arial, Verdana, Helvetica, sans-serif;
-  background: #222;
+  /*background: #222;*/
+  /*background: #222 url(/images/bgs/twinkle_twinkle/twinkle_twinkle.png) repeat;*/
+  /*background: #222 url(/images/bgs/twinkle_twinkle/twinkle_twinkle2.png) repeat;*/
+  /*background: #222 url(/images/bgs/subtle_carbon/subtle_carbon.png) repeat;*/
+  /*background: #222 url(/images/bgs/debut_dark/debut_dark.png) repeat;*/
+  /*background: #222 url(/images/bgs/pinstriped_suit/pinstriped_suit.png) repeat;*/
+  background: #222 url(/images/bgs/dark_brick_wall/dark_brick_wall.png) repeat;
 }
 
+h1,h2,h3,h4,h5,h6 {
+  font-family: 'UbuntuLight';
+}
 /*a { color: #01B0EC;}*/
 a { color: #007399;}
 a:hover { color: #B147A3;}
 
 footer {
-  background: #383438;
+  border-top: none;
   padding: 15px;
   width: 962px;
   margin-left: -1px;
@@ -16,6 +25,13 @@ footer {
   border-bottom-left-radius:  5px;
   color: white;
   margin-bottom: 10px;
+}
+
+footer, nav {
+  background: #383438;
+  background: rgba(0,0,0,0.5);
+  /*border: 1px solid rgba(50,50,50,0.5);*/
+  border: 1px solid #383438;
 }
 
 .stuff {
@@ -28,14 +44,19 @@ nav {
   left: auto;
   padding: 5px;
   text-align: center;
-  border-bottom: 10px solid #484448;
+  /*border-bottom: 10px solid #383438;*/
+  border-color: #383438;
+  position: relative;
+  width: auto;
+  width: 1000px; margin-left: -20px;
 }
 
 #content {
   /*background: #E7FFE6;*/
+  background: #fff url(/images/bgs/debut_light/debut_light.png) repeat;
+  background: #fff url(/images/bgs/grey/grey.png) repeat;
   border-top: 2px solid #888;
   border-bottom: 2px solid #888;
-  background: #fff;
   color: #333;
   margin-left: 0;
   padding: 10px;
@@ -50,15 +71,9 @@ nav a.listlike > span {
   transition:         all 0.2s ease 0s;
 }
 
-nav {
-  background: #383438;
-  position: relative;
-  width: auto;
-}
-
 nav ol li {
   display: inline-block;
-  width: 153px;
+  width: 157px;
   text-align: center;
   vertical-align: middle;
   position: relative;
@@ -404,7 +419,8 @@ textarea:focus {
 
 form fieldset {
   padding-left: 15px;
-  background: #F4F4F4;
+  /*background: #F4F4F4;*/
+  background: rgba(255, 255, 255, 0.5);
 }
 form fieldset legend {
   margin-bottom: 10px;
@@ -575,3 +591,32 @@ nav a.listlike {
 
 }
 nav a.listlike + ol { display: none; }
+
+footer {
+  font-size: 0.75em;
+  /*text-align: center;*/
+}
+footer p > strong:first-child {
+  clear: both;
+  display: block;
+  text-decoration: underline;
+}
+footer p {
+  max-width: 31%;
+  display: inline-block;
+  vertical-align: top;
+  margin: 0 6% 0 0;
+  text-align: left;
+}
+footer p:nth-child(2) {
+  margin-left: 1%;
+}
+footer p:last-of-type {
+  width: auto;
+  margin-right: 0;
+  margin-left: 4%;
+}
+footer img {
+  border: none;
+  margin: 10px 0 0 0;
+}

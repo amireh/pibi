@@ -9,7 +9,7 @@
       </p>
     <% end %>
     <% @user.categories.each do |c| %>
-      <label><input type="checkbox" name="categories[]" value="<%= c.id %>" <%= 'checked="checked"' if @tx.categories.all({ id: c.id }).count > 0 %> />
+      <label><input type="checkbox" name="categories[]" value="<%= c.id %>" <%= 'checked="checked"' if @tx && @tx.categories.all({ id: c.id }).count > 0 %> />
         <a href="<%= c.url %>" target="_blank"><%= c.name %></a></label>
     <% end %>
 
