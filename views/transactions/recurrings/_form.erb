@@ -1,15 +1,17 @@
-<h2>
-  <% if @tx.persisted? %>
-    <%= "Editing #{@tx.type.to_s.downcase} tx ##{@tx.id}" %>
-  <% else %>
-    <%= "Creating a new #{@tx.type.to_s.downcase} tx" %>
-  <% end %>
-</h2>
 
 <% @tx ||= Recurring.new %>
+<% unless @tx.persisted? %>
+  <% @tx.recurs_on = Timetastic.this.month %>
+<% end %>
+
 <% content_for :js do %>
   <script>
     $(function() {
+      $("form").submit(function() {
+        if ($("#yearly_frequency_recurrence").is(":hidden")) {
+          $("input[name=yearly_recurs_on_day]").get(0)['required'] = false;
+        }
+      })
       $("fieldset[id*=recurrence]").hide();
       $("input[name=frequency]").change(function() {
         var me = $("input[name=frequency]:checked").attr('value');
@@ -31,70 +33,73 @@
 <% end %>
 
 <form action="<%= request.path.gsub(/(\/\w+)$/, '') %>" method="POST">
-
-  <label>
-    Name: <input type="text" name="note" placeholder="Salary" value="<%= @tx.note %>" />
-  </label>
-  <br />
-
   <fieldset>
-    <legend>Flow type</legend>
-    <label>
-      <input type="radio" name="flow_type" value="positive"
-             <%= 'checked="checked"' if @tx.flow_type == :positive %> />Positive
-      <span>(ie, a salary)</span>
-    </label>
-    <br />
-    <label>
-      <input type="radio" name="flow_type" value="negative"
-             <%= 'checked="checked"' if @tx.flow_type == :negative %> />Negative
-      <span>(ie, a bill)</span>
-    </label>
+    <legend>Recurring transie</legend>
+    <ol>
+      <li><label for="tx_name">Name*</label></li>
+      <li><input type="text" id="tx_name" name="note" placeholder="Salary" value="<%= @tx.note %>" /></li>
+
+      <li><label>Flow type*</label></li>
+      <li>
+        <label><input type="radio" name="flow_type" value="positive" <%= 'checked="checked"' if @tx.flow_type == :positive %> />Positive
+          <span class="hint">(ie, a salary)</span>
+        </label>
+        <label>
+          <input type="radio" name="flow_type" value="negative" <%= 'checked="checked"' if @tx.flow_type == :negative %> />Negative
+          <span class="hint">(ie, a bill)</span>
+        </label>
+      </li>
+
+      <li><label for="tx_amount">Amount</label></li>
+      <li><input type="text" id="tx_amount" name="amount" placeholder="5" size="6" value="<%= @tx.persisted? ? @tx.amount.to_f : '' %>" />
+        <select name="currency">
+          <% Currencies.each do |c| %>
+            <option value="<%= c %>" <%= 'selected="selected"' if @tx.currency == c %>><%= c %></option>
+          <% end %>
+        </select>
+      </li>
+
+      <li>
+        <label>Frequency</label>
+        <br />
+        <span class="hint">How often does the transaction occur?</span>
+      </li>
+      <li>
+        <label><input type="radio" name="frequency" value="daily" <%= 'checked="checked"' if @tx.frequency == :daily %> />Daily</label>
+        <label><input type="radio" name="frequency" value="monthly" <%= 'checked="checked"' if @tx.frequency == :monthly %> />Monthly</label>
+        <label><input type="radio" name="frequency" value="yearly" <%= 'checked="checked"' if @tx.frequency == :yearly %> />Yearly</label>
+      </li>
+
+      <div id="monthly_frequency_recurrence">
+        <li>Time of occurence
+          <br />
+          <span class="hint">On which day of the month does it occur?</p>
+        </li>
+        <!-- <legend>Time of occurence</legend> -->
+        <li><input type="number" name="monthly_recurs_on_day" min="1" max="28" value="<%= @tx.recurs_on.day %>" /> <span class="hint">Allowed range: 1 to 28.</span>
+        </li>
+      </div>
+
+      <div id="yearly_frequency_recurrence">
+        <li>Time of occurence
+          <br />
+          <span class="hint">On which day of which month does it occur?</span>
+        </li>
+        <li>
+          <input type="number" name="yearly_recurs_on_day" min="1" max="28" value="<%= @tx.recurs_on.day %>" />
+            <select name="yearly_recurs_on_month">
+              <% for i in 1..12 do %>
+                <option value="<%= i %>" <%= 'selected="selected"' if @tx.recurs_on.month == i %>><%= Date.new(0, i, 1).strftime("%B") %></option>
+              <% end %>
+            </select>
+          <br />
+          <span class="hint">Allowed day range: 1 to 28.</span>
+        </li>
+      </div>
+
+      <%= partial "/transactions/_category_listing" %>
+    </ol>
   </fieldset>
 
-  <fieldset>
-    <legend>Amount</legend>
-    <input type="text" name="amount" placeholder="5" size="6" value="<%= @tx.persisted? ? @tx.amount.to_f : '' %>" />
-    <select name="currency">
-      <% Currencies.each do |c| %>
-        <option value="<%= c %>" <%= 'selected="selected"' if @tx.currency == c %>><%= c %></option>
-      <% end %>
-    </select>
-  </fieldset>
-
-  <fieldset>
-    <legend>Frequency</legend>
-    <p>How often does the transaction occur?</p>
-    <label><input type="radio" name="frequency" value="daily" <%= 'checked="checked"' if @tx.frequency == :daily %> />Daily</label>
-    <label><input type="radio" name="frequency" value="monthly" <%= 'checked="checked"' if @tx.frequency == :monthly %> />Monthly</label>
-    <label><input type="radio" name="frequency" value="yearly" <%= 'checked="checked"' if @tx.frequency == :yearly %> />Yearly</label>
-  </fieldset>
-
-  <fieldset id="monthly_frequency_recurrence">
-    <legend>Time of occurence</legend>
-    <p>On which day of the month does it occur?</p>
-    <input type="number" name="monthly_recurs_on_day" min="1" max="28" value="<%= @tx.recurs_on.day %>" />
-    <span class="hint">Allowed range: 1 to 28.</span>
-  </fieldset>
-
-  <fieldset id="yearly_frequency_recurrence">
-    <legend>Time of occurence</legend>
-    <p>On which day and month does it occur?</p>
-    <label>Day: <input type="number" name="yearly_recurs_on_day" min="1" max="28" value="<%= @tx.recurs_on.day %>" /></label>
-    <span class="hint">Allowed range: 1 to 28.</span>
-    <br />
-    <label>Month:
-      <select name="yearly_recurs_on_month">
-        <% for i in 1..12 do %>
-          <option value="<%= i %>" <%= 'selected="selected"' if @tx.recurs_on.month == i %>><%= Date.new(0, i, 1).strftime("%b") %></option>
-        <% end %>
-      </select>
-    </label>
-  </fieldset>
-
-  <%= partial "/transactions/_category_listing" %>
-
-  <br />
-  <br />
   <input type="submit" value="store transaction" />
 </form>

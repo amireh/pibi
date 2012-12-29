@@ -3,7 +3,8 @@ body {
   background: #222;
 }
 
-a { color: #01B0EC;}
+/*a { color: #01B0EC;}*/
+a { color: #007399;}
 a:hover { color: #B147A3;}
 
 footer {
@@ -56,7 +57,7 @@ nav {
 
 nav ol li {
   display: inline-block;
-  width: 150px;
+  width: 153px;
   text-align: center;
   vertical-align: middle;
 }
@@ -96,7 +97,8 @@ nav li:nth-child(1) a {
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ef7901', endColorstr='#c66401',GradientType=0 ); /* IE6-9 */
 }
 /* Green */
-nav li:nth-child(2) a {
+nav li:nth-child(2) a,
+#flashes.notice {
   background: #98BF0D;
   background: #98bf0d; /* Old browsers */
   background: -moz-linear-gradient(top, #98bf0d 0%, #78960a 100%); /* FF3.6+ */
@@ -108,7 +110,8 @@ nav li:nth-child(2) a {
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#98bf0d', endColorstr='#78960a',GradientType=0 ); /* IE6-9 */
 }
 /* Red */
-nav li:nth-child(3) a {
+nav li:nth-child(3) a,
+#flashes.error {
   background: #D54421;
   background: #d54421; /* Old browsers */
   background: -moz-linear-gradient(top, #d54421 0%, #a5341a 100%); /* FF3.6+ */
@@ -175,7 +178,7 @@ nav ol.meta li { margin: 0; display: block; }
 nav ol.meta li a {       padding: 5px 0; font-size: 75%; }
 nav ol.meta li a:hover { padding: 5px 0; }
 nav ol.meta li:nth-of-type(1) a { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
-nav ol.meta li:nth-of-type(2) a { border-radius: 0; width: 150px; }
+nav ol.meta li:nth-of-type(2) a { border-radius: 0; }
 nav ol.meta li:nth-of-type(3) a { border-top-left-radius: 0; border-top-right-radius: 0; }
 
 header h1 { display: none; }
@@ -269,6 +272,7 @@ input[type=submit]:focus:not(:disabled) {
 }
 
 input[type=text],
+input[type=number],
 input[type=email],
 input[type=password],
 textarea,
@@ -316,7 +320,6 @@ textarea:focus {
   border-bottom-left-radius: 3px;
   border-bottom-right-radius: 3px;
   padding: 12px 10px;
-  min-height: 50px;
 }
 #flashes > span {
   width: 900px;
@@ -325,12 +328,12 @@ textarea:focus {
 #flashes button {
   display: inline-block;
   position: absolute;
-  right: 10px;
+  right: 8px;
   padding: 5px;
-  top: 9px;
+  top: 7px;
 }
-.flash.notice { color: #98bf0d; }
-.flash.error  { color: #D54421; }
+/*.flash.notice { color: #98bf0d; }*/
+/*.flash.error  { color: #D54421; }*/
 
 form fieldset {
   padding-left: 15px;
@@ -371,7 +374,7 @@ form fieldset ol {
 form fieldset ol li {
   display: inline-block;
   vertical-align: top;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 form fieldset ol li:nth-of-type(odd) {
   width: 25%;
@@ -387,7 +390,7 @@ form fieldset ol li input[type=checkbox] {
   margin-left: 0;
 }
 
-form #tx_occured_on { width: 285px; }
+form #tx_occured_on { width: 292px; }
 #datepicker {
   display: block;
   margin-top: 10px;
@@ -408,8 +411,11 @@ div.ui-datepicker {
   width: auto;
   display: inline-block !important;
   border: none;
-  background: transparent;
+  background: rgba(0, 0, 0, 0.025);
   color: black;
+  border: 1px solid #ddd;
+  padding: 5px 5px 1px 5px;
+  border-radius: 2px;
 }
 
 div.ui-datepicker td {
