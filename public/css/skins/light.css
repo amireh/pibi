@@ -32,5 +32,7 @@ footer {
   border-color: #ddd;
 }
 
-.sidebar h3 { background: #FFD000; color: #111; padding: 10px 10px 10px 20px; position: relative; left: -20px; width: 240px;
+.sidebar {
+  background: #343434;
 }
+.sidebar h3 { background: #FFD000; color: #111; }

@@ -15,7 +15,7 @@ body * {
   position: relative;
 }
 */
-#content { width: 720px; margin-left: 260px; }
+#content { margin-left: 260px; }
 /*header {                 margin-left: 260px;}*/
 nav {
   /*position: absolute;*/
@@ -34,13 +34,17 @@ section.category_listing label {
   width: 31%;
 }
 
-.sidebar {
+nav {
   position: fixed;
   width: 240px;
   height: 100%;
   left: 0;
   top: 0;
-  background: #343434;
   padding: 20px;
   padding-top: 0;
+}
+nav ol { list-style-type: none; padding: 0; }
+nav ol li { margin: 0 0 10px 0; }
+nav h3 {
+  padding: 10px 10px 10px 20px; position: relative; left: -20px; width: 240px;
 }
