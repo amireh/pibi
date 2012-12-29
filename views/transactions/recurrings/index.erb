@@ -1,0 +1,26 @@
+<table>
+  <thead>
+    <th>Name</th>
+    <th>Amount</th>
+    <th>Flow type</th>
+    <th>Frequency</th>
+    <th>Recurs on</th>
+    <th>Active?</th>
+    <th>Actions</th>
+  </thead>
+  <tbody>
+    <% @transies.each do |t| %>
+      <tr>
+        <td><%= t.note %></td>
+        <td><%= t.amount.to_f %></td>
+        <td><%= t.flow_type.capitalize %></td>
+        <td><%= t.frequency.capitalize %></td>
+        <td><%= natural_recurrence_date(t) %></td>
+        <td><%= t.active ? 'Yes' : 'No' %></td>
+        <td>
+          <%= actions_for(t) %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

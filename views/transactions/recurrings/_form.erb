@@ -1,12 +1,12 @@
 <h2>
-  <% if @t.persisted? %>
-    <%= "Editing #{@t.type.to_s.downcase} tx ##{@t.id}" %>
+  <% if @tx.persisted? %>
+    <%= "Editing #{@tx.type.to_s.downcase} tx ##{@tx.id}" %>
   <% else %>
-    <%= "Creating a new #{@t.type.to_s.downcase} tx" %>
+    <%= "Creating a new #{@tx.type.to_s.downcase} tx" %>
   <% end %>
 </h2>
 
-<% @t ||= Recurring.new %>
+<% @tx ||= Recurring.new %>
 <% content_for :js do %>
   <script>
     $(function() {
@@ -33,7 +33,7 @@
 <form action="<%= request.path.gsub(/(\/\w+)$/, '') %>" method="POST">
 
   <label>
-    Name: <input type="text" name="note" placeholder="Salary" value="<%= @t.note %>" />
+    Name: <input type="text" name="note" placeholder="Salary" value="<%= @tx.note %>" />
   </label>
   <br />
 
@@ -41,23 +41,23 @@
     <legend>Flow type</legend>
     <label>
       <input type="radio" name="flow_type" value="positive"
-             <%= 'checked="checked"' if @t.flow_type == :positive %> />Positive
+             <%= 'checked="checked"' if @tx.flow_type == :positive %> />Positive
       <span>(ie, a salary)</span>
     </label>
     <br />
     <label>
       <input type="radio" name="flow_type" value="negative"
-             <%= 'checked="checked"' if @t.flow_type == :negative %> />Negative
+             <%= 'checked="checked"' if @tx.flow_type == :negative %> />Negative
       <span>(ie, a bill)</span>
     </label>
   </fieldset>
 
   <fieldset>
     <legend>Amount</legend>
-    <input type="text" name="amount" placeholder="5" size="6" value="<%= @t.amount %>" />
+    <input type="text" name="amount" placeholder="5" size="6" value="<%= @tx.persisted? ? @tx.amount.to_f : '' %>" />
     <select name="currency">
       <% Currencies.each do |c| %>
-        <option value="<%= c %>" <%= 'selected="selected"' if @t.currency == c %>><%= c %></option>
+        <option value="<%= c %>" <%= 'selected="selected"' if @tx.currency == c %>><%= c %></option>
       <% end %>
     </select>
   </fieldset>
@@ -65,28 +65,28 @@
   <fieldset>
     <legend>Frequency</legend>
     <p>How often does the transaction occur?</p>
-    <label><input type="radio" name="frequency" value="daily" <%= 'checked="checked"' if @t.frequency == :daily %> />Daily</label>
-    <label><input type="radio" name="frequency" value="monthly" <%= 'checked="checked"' if @t.frequency == :monthly %> />Monthly</label>
-    <label><input type="radio" name="frequency" value="yearly" <%= 'checked="checked"' if @t.frequency == :yearly %> />Yearly</label>
+    <label><input type="radio" name="frequency" value="daily" <%= 'checked="checked"' if @tx.frequency == :daily %> />Daily</label>
+    <label><input type="radio" name="frequency" value="monthly" <%= 'checked="checked"' if @tx.frequency == :monthly %> />Monthly</label>
+    <label><input type="radio" name="frequency" value="yearly" <%= 'checked="checked"' if @tx.frequency == :yearly %> />Yearly</label>
   </fieldset>
 
   <fieldset id="monthly_frequency_recurrence">
     <legend>Time of occurence</legend>
     <p>On which day of the month does it occur?</p>
-    <input type="number" name="monthly_recurs_on_day" min="1" max="28" value="<%= @t.recurs_on.day %>" />
+    <input type="number" name="monthly_recurs_on_day" min="1" max="28" value="<%= @tx.recurs_on.day %>" />
     <span class="hint">Allowed range: 1 to 28.</span>
   </fieldset>
 
   <fieldset id="yearly_frequency_recurrence">
     <legend>Time of occurence</legend>
     <p>On which day and month does it occur?</p>
-    <label>Day: <input type="number" name="yearly_recurs_on_day" min="1" max="28" value="<%= @t.recurs_on.day %>" /></label>
+    <label>Day: <input type="number" name="yearly_recurs_on_day" min="1" max="28" value="<%= @tx.recurs_on.day %>" /></label>
     <span class="hint">Allowed range: 1 to 28.</span>
     <br />
     <label>Month:
       <select name="yearly_recurs_on_month">
         <% for i in 1..12 do %>
-          <option value="<%= i %>" <%= 'selected="selected"' if @t.recurs_on.month == i %>><%= Date.new(0, i, 1).strftime("%b") %></option>
+          <option value="<%= i %>" <%= 'selected="selected"' if @tx.recurs_on.month == i %>><%= Date.new(0, i, 1).strftime("%b") %></option>
         <% end %>
       </select>
     </label>
@@ -96,5 +96,5 @@
 
   <br />
   <br />
-  <input type="submit" />
+  <input type="submit" value="store transaction" />
 </form>
