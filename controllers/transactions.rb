@@ -1,7 +1,7 @@
 [ 'deposits', 'withdrawals', 'recurrings' ].each do |type|
 
   get "/transactions/#{type}/new", auth: :user do
-    @t = @account.send(type).new
+    @tx = @account.send(type).new
     begin
       # see if there's a custom form for this transaction type (ie, recurrings)
       erb :"transactions/#{type}/new"
@@ -11,6 +11,19 @@
     end
   end
 
+  get "/transactions/#{type}/:tid/edit", auth: :user do |tid|
+    unless @tx = @account.send(type).get(tid)
+      halt 400, "No such transaction."
+    end
+
+    begin
+      # see if there's a custom form for this transaction type (ie, recurrings)
+      erb :"transactions/#{type}/edit"
+    rescue Errno::ENOENT => e
+      # nope, use the generic one
+      erb :"transactions/edit"
+    end
+  end
 
   post "/transactions/#{type}", auth: :user do
     { "You must specify an amount" => params["amount"].empty? }.each_pair {|msg,cnd|
@@ -49,15 +62,16 @@
         # the day and month are used in this case
         p[:recurs_on] = DateTime.new(0, params[:yearly_recurs_on_month].to_i, params[:yearly_recurs_on_day].to_i)
       end
+    end
 
-      puts p
+    if params["occured_on"]
+      p[:occured_on] = params["occured_on"].to_date
     end
 
     t = c.create({
       amount: params["amount"].to_f,
       currency: params["currency"].to_s,
       note: params["note"],
-      occured_on: params["occured_on"].to_date,
       account: @account
     }.merge(p))
 
@@ -77,18 +91,55 @@
 
 
   put "/transactions/#{type}/:tid", auth: :user do |tid|
-    unless t = @account.transactions.get(tid)
+    unless tx = @account.transactions.get(tid)
       halt 400
     end
 
-    t.amount = params["amount"] if params.has_key?("amount")
-    t.currency = params["currency"] if params.has_key?("currency")
-
-    unless t.save
-      halt 500, t.collect_errors
+    def update(tx, params, fields)
+      fields = [ fields ] unless fields.is_a?(Array)
+      fields.each { |field|
+        tx.send("#{field}=", params[field]) if params.has_key?(field)
+      }
     end
 
-    t
+    update(tx, params, [ 'amount', 'currency', 'note' ])
+
+    if params["occured_on"]
+      tx.occured_on = params["occured_on"].to_date
+    end
+
+    if tx.recurring?
+      tx.flow_type = params["flow_type"].to_sym if params.has_key?("flow_type")
+      if params.has_key?("frequency")
+        tx.frequency = params["frequency"].to_sym
+        if tx.frequency == :monthly
+          # only the day is used in this case
+          tx.recurs_on = DateTime.new(0, 1,
+            params["monthly_recurs_on_day"].to_i)
+        elsif tx.frequency == :yearly
+          # the day and month are used in this case
+          tx.recurs_on = DateTime.new(0,
+            params["yearly_recurs_on_month"].to_i,
+            params["yearly_recurs_on_day"].to_i)
+        end
+      end
+    end
+
+    tx.categories = []
+    params["categories"] && params["categories"].each { |cid|
+      tx.categories << current_user.categories.get(cid)
+    }
+
+    unless tx.valid?
+      flash[:error] = "Transaction #{tx.id} could not be updated: #{tx.collect_errors}, #{tx.account.collect_errors}."
+      # halt 500, tx.collect_errors
+    else
+      tx.save
+      tx.account.save!
+      flash[:notice] = "Transaction #{tx.id} was updated successfully."
+    end
+
+    redirect back
   end
 
   delete "/transactions/#{type}/:tid", auth: :user do |tid|
@@ -100,7 +151,32 @@
       halt 500, t.collect_errors
     end
 
-    true
+    flash[:notice] = "Transaction was successfully removed."
+
+    redirect back
+  end
+end
+
+get '/transactions/recurrings', auth: :user do
+  @transies = current_account.recurrings.all
+  erb :"/transactions/recurrings/index"
+end
+
+get '/transactions/recurrings/:id/toggle_activity', auth: :user do |tid|
+  unless tx = current_account.recurrings.get(tid)
+    halt 400, "No such recurring transaction."
   end
 
+  if tx.update({ active: !tx.active? })
+    if tx.active?
+      flash[:notice] = "The recurring transaction #{tx.note} will once again recur."
+    else
+      flash[:notice] = "The recurring transaction #{tx.note} will no longer recur."
+    end
+  else
+    flash[:error] =  "Something went wrong while updating the transaction, "
+    flash[:error] += "here's the technical response: #{tx.collect_errors}."
+  end
+
+  redirect back
 end

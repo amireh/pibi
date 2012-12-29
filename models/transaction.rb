@@ -37,6 +37,10 @@ class Transaction
     alias_method :"is_#{t}?", :"#{t}?"
   }
 
+  def url
+    "/transactions/#{self.type.to_s.downcase}s/#{self.id}"
+  end
+
   def check_currency
     unless Currency.valid?(self.currency)
       return [ false, "Currency must be one of #{Currencies.join(', ')}" ]
@@ -45,17 +49,32 @@ class Transaction
     true
   end
 
-
   [ :update, :destroy ].each do |advice|
-    before advice do
-      # puts "Deducting my current amount #{self.amount.to_f}(#{self.currency}) from the account balance (#{self.account.balance.to_f} #{self.account.currency})"
-      deduct
+    before advice do |ctx|
+      puts "[ before #{advice} ] #{self.id} #{self.type} Deducting my current amount (#{to_account_currency.to_f}) from the account balance (#{self.account.balance.to_f} #{self.account.currency})"
+      deduct# if persisted?
+      puts "[ before #{advice} ] \t#{self.id} #{self.type} account balance = (#{self.account.balance.to_f} #{self.account.currency})"
+      true
     end
   end
 
   [ :update, :create ].each do |advice|
     after advice do
-      add_to_account
+      puts "[ after #{advice} ] #{self.id} #{self.type} Adding my current amount (#{to_account_currency.to_f}) to the account balance (#{self.account.balance.to_f} #{self.account.currency})"
+
+      # if account.dirty? || dirty?
+      #   raise RuntimeError.new "Account is already dirty before adding: #{account.dirty_attributes}, #{dirty_attributes}"
+      # end
+
+      add_to_account# if persisted?
+
+      puts "[ after #{advice} ] \t#{self.id} #{self.type} account balance = (#{self.account.balance.to_f} #{self.account.currency})"
+
+      # if account.dirty? || dirty?
+      #   raise RuntimeError.new "Account is still dirty after adding: #{account.dirty_attributes}, #{dirty_attributes}"
+      # end
+
+      true
     end
   end
 
@@ -87,6 +106,8 @@ class Transaction
     ac = Currency[self.account.currency]
     mc = Currency[self.currency]
 
-    ac.from(mc, self.amount)
+    # ac.from(mc, self.amount)
+    amt = (Transaction.get(self.id) || self).amount
+    ac.from(mc, amt)
   end
 end

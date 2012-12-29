@@ -5,14 +5,24 @@ class Deposit < Transaction
 
   def add_to_account
     converted_amount = to_account_currency
-    account.balance += converted_amount
-    account.save
+    new_balance = account.balance + converted_amount
+    account.balance = new_balance
+    account.save!
+    # account = self.account.refresh
+    # unless account.update!({ balance: new_balance })
+    #   raise RuntimeError.new "Unable to update the account: #{account.dirty?} => #{account.collect_errors}"
+    # end
   end
 
   def deduct
     deductible_amount = to_account_currency
-    account.balance -= deductible_amount
-    account.save
+    new_balance = account.balance - deductible_amount
+    account.balance = new_balance
+    account.save!
+    # account = self.account.refresh
+    # unless account.update!({ balance: new_balance })
+      # raise RuntimeError.new "Unable to update the account: #{account.dirty?} => #{account.collect_errors}"
+    # end
   end
 
 end
