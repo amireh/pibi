@@ -66,6 +66,21 @@ class String
   Vowels = ['a','o','u','i','e']
 end
 
+class Fixnum
+  def ordinalize
+    if (11..13).include?(self % 100)
+      "#{self}th"
+    else
+      case self % 10
+        when 1; "#{self}st"
+        when 2; "#{self}nd"
+        when 3; "#{self}rd"
+        else    "#{self}th"
+      end
+    end
+  end
+end
+
 module Sinatra
   class Base
     class << self
@@ -76,6 +91,11 @@ module Sinatra
       def delete(path, opts={}, &bk)
         route 'GET'   , "#{path}/destroy",  opts, &bk
         route 'DELETE', path,               opts, &bk
+      end
+
+      def put(path, opts={}, &bk)
+        route 'PUT' , path,  opts, &bk
+        route 'POST', path,  opts, &bk
       end
 
     end
