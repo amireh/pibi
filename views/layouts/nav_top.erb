@@ -11,7 +11,7 @@
     <h1><a href="/"><%= AppName %></a></h1>
     <div class="subheader">
       <span class="account_balance">Balance:
-        <span class="<%= current_account.balance > 0 ? 'positive' : 'negative' %>"><%= current_account.refresh.balance.to_f %></span> <%= current_account.currency %>
+        <span class="<%= current_account.balance > 0 ? 'positive' : 'negative' %>"><%= current_account.balance.to_f %></span> <%= current_account.currency %>
       </span>
       <% yield_content :subheader %>
       <%= partial "layouts/_flashes" %>

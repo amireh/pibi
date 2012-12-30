@@ -30,7 +30,9 @@
   end
 
   post "/transactions/#{type}", auth: :user do
-    { "You must specify an amount" => params["amount"].empty? }.each_pair {|msg,cnd|
+    { "You must specify an amount" => params["amount"].empty?,
+      "Amount must be greater than 0" => params["amount"].to_f <= 0.0
+    }.each_pair {|msg,cnd|
       if cnd
         flash[:error] = msg
         return redirect back
@@ -42,14 +44,11 @@
 
     if type == 'recurrings' then
       # validate parameters
-      puts "inb4 recurrings"
       unless ['positive','negative'].include? params[:flow_type]
-        puts "bad flow type"
         halt 400, "flow_type must be either 'positive' or 'negative', got #{params[:flow_type]}."
       end
 
       unless ['daily', 'monthly', 'yearly'].include? params[:frequency]
-        puts "bad frequency"
         halt 400, "frequency must be one of 'daily', 'monthly', or 'yearly', got #{params[:frequency]}."
       end
 
@@ -80,6 +79,7 @@
     }.merge(p))
 
     if t.saved?
+      t.account.save!
       flash[:notice] = "Transaction created."
 
       if params["categories"] && params["categories"].any?
