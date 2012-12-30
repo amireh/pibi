@@ -1,73 +1,70 @@
 <% content_for :title do %> Account Settings | <%= current_user.nickname %> | <%= AppName %> <% end %>
 
-<%= partial :"users/settings/_nav" %>
 <% content_for :js do %>
 <script>
-  $(function() {
-    $("#check_availability").click(function() {
-      var btn = $(this);
-      $.ajax({
-        url: "/users/nickname",
-        type: "POST",
-        data: { nickname: $("input[name=nickname]").attr("value") },
-        success: function(is_available) {
-          is_available = JSON.parse(is_available);
-          if (is_available) {
-            btn.next("span").addClass("success").removeClass("error").html("available");
-          } else {
-            btn.next("span").addClass("error").removeClass("success").html("not available");
-          }
-        }
-      });
-      return false;
-    });
-  });
 </script>
 <% end %>
 
-<form action="/settings/nickname" method="POST">
-  <section>
-  <h2>Nickname</h2>
-  <label>
-    Your nickname is used in the links when sharing documents with people.
-    <br />
-    <br />
-    <input type="text" name="nickname" class="very_fat" value="<%= current_user.nickname %>" />
-    <button id="check_availability">check availability</button>
-    <span></span>
-  </label>
-  <p>Links to your public pages will look something like this:
-    <br />
-    &rarr; <a><code>http://<%= request.host %>/<strong>your-nickname</strong>/<strong>page-title</strong></code></a>
-  </p>
-  <p><em><strong>Note: </strong> changing your nickname will irreversibly invalidate all the links
-    you've shared with people. Change it only if you know what you're doing.</em></p>
-  </section>
-
-  <input type="submit" class="kinda_bad" value="Change Nickname" />
-</form>
 
 <!-- <hr /> -->
 
+<!-- <h1>Account</h1> -->
+<form action="/settings/profile" method="POST">
+  <fieldset>
+    <legend>General</legend>
+    <ol>
+      <li><label>Full name</label></li>
+      <li><input type="text" name="name" class="fat" value="<%= current_user.name %>" /></li>
+      <li><label>Email address</label><br />
+        <span class="hint">Your primary email address where we can reach you: <em>(not visible to people)</em></span>
+
+      </li>
+      <li>
+        <input type="text" name="email" class="very_fat" value="<%= current_user.email %>" />
+        <% unless current_user.verified? current_user.email %>
+          <a href="/settings/verify/primary" class="inline button thin bad">Verify</a>
+        <% else %>
+          <span>Verified</span>
+        <% end %>
+        <br />
+      </li>
+
+    <li><label>Gravatar email</label><br />
+      <span class="hint">Change your avatar at <a href="http://www.gravatar.com">gravatar.com</a></span>
+    </li>
+    <li><input type="text" name="gravatar_email" class="fat" value="<%= current_user.gravatar_email || current_user.email %>" />
+      <br />
+      <br />
+      <%= gravatar_tag current_user, :default, html: { style: "vertical-align: middle;" } %>
+
+    </li>
+  </ol>
+  </fieldset>
+  <input type="submit" value="Update Profile" />
+</form>
+
+<br />
+<!-- <hr /> -->
+
 <form method="POST" action="/settings/password">
-  <section>
-    <h2>Changing your password</h2>
+  <fieldset>
+    <legend>Password</legend>
 
-    <label>
-      Your current password:<br />
-      <input type="password" class="fat" name="password[current]" />
-    </label>
-    <br />
+    <ol>
+      <li><label>Your current password:</label></li>
+      <li>
+        <input type="password" class="fat" name="password[current]" />
+      </li>
+      <li><label>New password</label><br />
+        <span class="hint">Type it twice to confirm it</span>
+      </li>
+      <li>
+        <label>#1 &rarr; <input type="password" class="fat" name="password[new]" style="margin-bottom: 5px;" /></label>
+        <br />
+        <label>#2 &rarr; <input type="password" class="fat" name="password[confirmation]" /></label>
+      </li>
+    </ol>
+  </fieldset>
 
-    <span>
-      And a new one (type it twice to confirm it):<br />
-    </span>
-    <label>#1 &rarr; <input type="password" class="fat" name="password[new]" style="margin-bottom: 5px;" /></label>
-    <br />
-    <label>#2 &rarr; <input type="password" class="fat" name="password[confirmation]" /></label>
-
-  </section>
-
-  <br />
   <input type="submit" value="Update password" />
 </form>
