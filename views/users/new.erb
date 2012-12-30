@@ -1,53 +1,7 @@
 <% content_for :title do %> Sign up | <%= AppName %> <% end %>
+<% content_for :layout_classes do %>sessions<% end %>
 
+<h1>Create a <%= AppName %>&trade; account</h1>
 
-<form id="user_signup" action="/users" method="POST">
-  <h2>Sign up for a <%= AppName %> account</h2>
-
-  <label>
-    Your email:<br />
-    <input class="very_fat" type="text" name="email" value="ahmad@amireh.net" />
-  </label>
-  <br />
-  <label>
-    Your name:<br />
-    <input class="very_fat" type="text" name="name" value="Ahmad Amireh" />
-  </label>
-  <br />
-
-  <!-- <label>
-    And some password:<br />
-    <input class="very_fat" type="password" name="password" />
-  </label> -->
-    <span>
-      And a password (type it twice to confirm it):<br />
-    </span>
-    <label>#1 &rarr; <input type="password" class="fat" name="password" style="margin-bottom: 5px;" value="tuonela" /></label>
-    <br />
-    <label>#2 &rarr; <input type="password" class="fat" name="password_confirmation" value="tuonela" /></label>
-
-  <br />
-  <br />
-  <input type="submit" value="Sign up to <%= AppName %>!" />
-  <br />
-  <br />
-</form>
-<div class="browser_notice">
-  <p>
-    <h2>Notice</h2>
-    <p><%= AppName %> uses HTML5, CSS3, and JavaScript and requires an <em>up-to-date</em> browser. Officially
-      supported browsers are:
-      <ul>
-        <li>Google Chrome</li>
-        <li>Safari 5</li>
-        <li>Mozilla Firefox</li>
-        <li>Opera 12</li>
-      </ul>
-    </p>
-    <img src="/images/html5-badge-v-css3-semantics.png"
-       width="38"
-       height="138"
-       alt="HTML5 Powered with CSS3 / Styling, and Semantics"
-       title="HTML5 Powered with CSS3 / Styling, and Semantics" />
-  </p>
-</div>
+<%= partial "/users/_form" %>
+<%= partial "/static/browser_notice" %>

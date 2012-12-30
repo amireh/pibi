@@ -24,6 +24,7 @@ public
 # end
 
 get '/users/new' do
+  current_page("signup")
   erb :"/users/new"
 end
 

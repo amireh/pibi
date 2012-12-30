@@ -5,9 +5,14 @@
 <p>
 <% error = response.body.first || "" %>
 <% if !error.to_s.include?("\n") then %>
-  <%= error %>
+  Seems like you weren't doing such a honorable thing as the server said:
+  '<span class="negative"><strong><%= error %></strong></span>'.</p>
+
+<h2>But...</h2>
+<p>How about a snowman instead? <span class="snowman"></span></p>
 <% else %>
-  The page you were looking for does not exist!
+  The page you were looking for does not exist, but here's a snowman instead:
+  <br /><span class="snowman"></span>
 <% end %>
 
 </p>

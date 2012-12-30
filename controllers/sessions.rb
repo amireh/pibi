@@ -1,4 +1,5 @@
 get '/sessions/new' do
+  current_page("signin")
   erb "/sessions/new".to_sym
 end
 

@@ -3,74 +3,49 @@
 <head>
   <meta charset="UTF-8">
   <title>
-    <%= yield_with_default(:title) { "Pibi" } %>
+    <%= yield_with_default(:title) { "Pibi - Managing your money" } %>
   </title>
 
   <script type="text/javascript" src="/js/jquery.1.7.1.min.js"></script>
-  <script type="text/javascript" src="/js/shortcut.js"></script>
   <link href="/css/common.css" rel="stylesheet" type="text/css" />
   <link href="/css/guest.css"  rel="stylesheet" type="text/css" />
 
-  <% if !flash.empty? %>
-    <script type="text/javascript">
-      $(function() {
-        $("#flashes button").click(function() {
-          $(this).parent().next("hr:first").remove();
-          $(this).parent().addClass("hidden");
-          $(".flash_wrap").addClass("hidden");
-        });
-      });
-    </script>
-  <% end %>
+  <%= yield_content :scripts %>
 
-  <script type="text/javascript">
-    $(function() { $("nav a[href='<%=request.path%>']").addClass("selected"); });
-  </script>
-
-  <% yield_content :scripts %>
-
-  <link href="/css/skins/light.css" rel="stylesheet" type="text/css" />
+  <link href="/css/skins/rainbow.css" rel="stylesheet" type="text/css" />
 </head>
 
-<body class="<%= @layout.to_s.split('/').last %>">
+<body class="<%= @layout.to_s.split('/').last %> <%= yield_content :layout_classes %>">
 
   <div class="stuff">
+    <div class="subheader">
+      <%= partial "layouts/_flashes" %>
+    </div>
+
     <nav>
-      <a href="/users/new">Sign up</a>
-      <a id="login" href="/sessions/new">Sign in</a>
+      <ol>
+        <li><a id="nav_welcome" href="/">Home</a></li>
+        <li><a id="nav_signup" href="/users/new">Sign up</a></li>
+        <li><a id="nav_signin" href="/sessions/new">Sign in</a></li>
+      </ol>
     </nav>
 
     <header>
-      <h1><a href="/">Pibi</a></h1>
+      <h1><a href="/">Pibi</a>&trade;</h1>
     </header>
 
     <div id="content">
-      <div id="status">
-      </div>
-
-      <% if !flash.empty? %>
-        <div id="flashes">
-          <% if flash.size > 1 then %>
-            <ol>
-              <% flash.each_pair do |ctx,msg| %>
-                <li class="flash <%= ctx %>"><%= msg %></li>
-              <% end %>
-            </ol>
-          <% else %>
-            <% flash.each_pair do |ctx,msg| %>
-              <span class="flash <%= ctx %>"><%= msg %></span>
-            <% end %>
-          <% end %>
-          <button>&times;</button>
-        </div>
-      <% end %>
-
       <%= yield %>
     </div>
 
     <%= partial :"footer" %>
   </div>
-
+  <%= yield_content :deferred_js %>
+  <script>
+    $(function() {
+      $("nav li a[id='nav_<%=current_page%>']").addClass("highlighted");
+    })
+  </script>
 </body>
 
 </html>

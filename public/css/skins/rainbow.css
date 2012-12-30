@@ -61,6 +61,7 @@ nav {
   border-bottom: 2px solid #888;
   color: #333;
   margin-left: 0;
+  position: relative;
   /*padding: 10px 20px 20px 20px;*/
   padding: 0 20px 10px 20px;
 }
@@ -296,7 +297,6 @@ textarea {
   max-width: 100%;
 }
 
-a.button.inline { display: inline-block; }
 a.button.prev { padding-left: 10px;}
 a.button.next { padding-right: 10px;}
 a.button.prev:before { content: '\00AB  '; }
@@ -336,6 +336,10 @@ a.button {
   -o-transition:      all 0.25s ease 0s;
   transition:         all 0.25s ease 0s;
 }
+a.inline,
+button.inline,
+input[type=submit].inline,
+input.inline { display: inline-block; }
 
 button:disabled,
 .button:disabled,
@@ -495,9 +499,12 @@ form #tx_occured_on { width: 292px; }
 
 form span.hint {
   font-size: 11px;
-  color: #999;
   font-style: italic;
   font-weight: normal;
+}
+
+.hint {
+  color: #999;
 }
 
 /* DatePicker widget */
@@ -744,3 +751,54 @@ a.bad { font-size: 0.75em; }
 #content > h1:first-child { margin-top: 0; }
 */
 #content > form:first-child > fieldset:first-child { margin-top: 20px; }
+
+.coming_soon_sadface { font-size: 0;}
+.coming_soon_sadface:after { content: '\2639'; font-size: 196px;}
+
+.snowman { font-size: 0; margin-top: 10px; display: block;}
+.snowman:after { content: '\2603'; font-size: 256px; }
+
+.guest img.logo {
+  display: inline-block;
+  vertical-align: middle;
+}
+.guest .column { display: inline-block; vertical-align: top; width: 295px; }
+.guest .column:not(:first-of-type) {
+  /*border-left: 1px solid #ddd;*/
+  padding-left: 10px;
+  margin-left: 10px;
+}
+.guest ul {  padding: 0 0 0 20px;}
+.guest ul li {
+  margin-bottom: 10px;
+}
+.guest #content { text-shadow: 0 1px 0 white;}
+
+.guest #content form input { margin-bottom: 5px; }
+.guest #content form label { display: block; }
+
+.guest #content h1:first-of-type {
+  background: white;
+  padding: 10px 20px;
+  width: 960px;
+  margin-left: -20px;
+  box-shadow: 0 0 3px 0px #DDD;
+}
+.guest #content h2 { border-bottom: 1px solid #ddd; padding-bottom: 5px;}
+
+.guest.sessions img { vertical-align: middle; }
+.guest nav { height: 106px;}
+.guest .stuff { margin-top: 20px;}
+.guest p, .guest #content li { font-size: 13px;}
+
+.guest.sessions .browser_notice {
+  margin-top: 10px;
+  background: rgba(0,0,0, 0.05);
+  border: 1px solid #ddd;
+  padding: 1px 20px 10px 20px;
+  border-radius: 3px;
+  position: relative;
+}
+.guest.sessions .browser_notice img {
+  position: absolute; right: 10px; top: 10px;
+}

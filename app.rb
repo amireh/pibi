@@ -58,6 +58,7 @@ configure do
   Gravatarify.options[:filetype] = :png
   Gravatarify.styles.merge!({
     mini:     { size: 16, html: { :class => 'gravatar gravatar-mini' } },
+    icon:     { size: 32, html: { :class => 'gravatar gravatar-icon' } },
     default:  { size: 96, html: { :class => 'gravatar' } },
     profile:  { size: 128, html: { :class => 'gravatar' } }
   })
@@ -110,13 +111,13 @@ error 403 do
   erb :"403"
 end
 
-# error do
-#   if request.xhr?
-#     halt 500, "500 - internal error: " + env['sinatra.error'].name + " => " + env['sinatra.error'].message
-#   end
+error do
+  if request.xhr?
+    halt 500, "500 - internal error: " + env['sinatra.error'].name + " => " + env['sinatra.error'].message
+  end
 
-#   erb :"500"
-# end
+  erb :"500"
+end
 
 [ '/', '/transactions' ].each { |r|
   get r do
@@ -150,8 +151,18 @@ end
 }
 
 get '/' do
+  current_page("welcome")
+
   erb "welcome/index"
 end
 [ 'tos', 'privacy', 'oss', 'faq' ].each do |static_item|
-  get "/#{static_item}" do erb :"static/#{static_item}" end
+  get "/#{static_item}" do
+    current_page("")
+    erb :"static/#{static_item}"
+  end
+end
+
+get '/reports*' do
+  current_page("")
+  erb :"static/coming_soon"
 end
