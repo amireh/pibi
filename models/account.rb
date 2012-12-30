@@ -21,6 +21,14 @@ class Account
   has n, :withdrawals, :constraint => :destroy
   has n, :recurrings,   :constraint => :destroy
 
+  [ :daily, :monthly, :yearly ].each { |period|
+    define_method(:"#{period}_expenses") {
+      expenses = 0.0
+      recurrings.all({frequency: period }).each { |t| expenses = t + expenses }
+      expenses
+    }
+  }
+
   def latest_transactions(q = {}, t = nil)
     transactions.all({ :occured_on.gte => Timetastic.this.month, :occured_on.lt => Timetastic.next.month }.merge(q))
   end

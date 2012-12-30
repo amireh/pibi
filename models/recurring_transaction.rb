@@ -10,7 +10,7 @@ class Recurring < Transaction
   property :active,     Boolean, default: true
 
   def +(y)
-    y
+    amount * (flow_type == :negative ? -1 : 1) + y
   end
 
   def next_billing_date()
@@ -23,6 +23,18 @@ class Recurring < Transaction
       else
         t = 1.month.ahead
         Time.new(t.year, t.month, recurs_on.day)
+      end
+    when :yearly
+      if last_commit then
+        t = nil
+          Timetastic.fixate(last_commit) { t = 1.year.ahead }
+        t
+      else
+        if recurs_on.month < Time.now.month
+          Time.new(Timetastic.next.year.year, recurs_on.month, recurs_on.day)
+        else
+          Time.new(Time.now.year, recurs_on.month, recurs_on.day)
+        end
       end
     end
   end

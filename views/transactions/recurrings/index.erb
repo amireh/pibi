@@ -6,19 +6,22 @@
     <thead>
       <th>Name</th>
       <th>Amount</th>
-      <th>Flow type</th>
       <th>Billing date</th>
+      <th>Next bill in</th>
       <th>Active?</th>
       <th>Actions</th>
     </thead>
     <tbody>
       <% @yearly_transies.each do |t| %>
-        <tr class="<%= t.flow_type %>">
+        <tr>
           <td><%= t.note %></td>
-          <td><%= t.amount.to_f %></td>
-          <td><%= t.flow_type.capitalize %></td>
+          <td class="<%= t.flow_type %>"><%= t.amount.to_f %></td>
           <td><%= natural_recurrence_date(t) %></td>
-          <td><%= t.active ? 'Yes' : 'No' %></td>
+          <td>
+            <% time_left = Timetastic.days_and_months_between(Time.now, t.next_billing_date) %>
+            <%= "#{time_left[1]} months and #{time_left[0]} days" %>
+          </td>
+          <td class="<%= t.active? ? 'positive' : 'negative' %>"><%= t.active ? 'Yes' : 'No' %></td>
           <td>
             <%= actions_for(t) %>
           </td>
@@ -26,6 +29,7 @@
       <% end %>
     </tbody>
   </table>
+  <p>Total yearly change: <span data-amount><%= current_account.yearly_expenses.to_f.round(2) %> <%= current_account.currency %></span></p>
 <% else %>
   <p>You have not registered any yearly bills yet.</p>
 <% end %>
@@ -64,6 +68,8 @@
       <% end %>
     </tbody>
   </table>
+  <p>Total monthly change: <span data-amount><%= current_account.monthly_expenses.to_f.round(2) %> <%= current_account.currency %></span><br />
+    Annual monthly change: <span data-amount><%= (current_account.monthly_expenses.to_f * 12).round(2) %> <%= current_account.currency %></span> </p>
 <% else %>
   <p>You have not registered any monthly bills yet.</p>
 <% end %>
@@ -92,6 +98,7 @@
       <% end %>
     </tbody>
   </table>
+  <p>Total daily change: <span data-amount><%= current_account.daily_expenses.to_f %> <%= current_account.currency %></span> </p>
 <% else %>
   <p>You have not registered any daily bills yet.</p>
 <% end %>

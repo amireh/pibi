@@ -53,5 +53,9 @@ $(function() {
 
   //   return true; // let the event propagate
   // });
+
+  $("[data-amount]").each(function() {
+    $(this).addClass(parseInt($(this).html()) >= 0 ? "positive" : "negative");
+  })
 })
 
