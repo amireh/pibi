@@ -14,6 +14,16 @@ get '/categories/:id', auth: :user do |cid|
   erb :"categories/show"
 end
 
+get '/categories/:id/edit', auth: :user do |cid|
+  current_page("manage")
+
+  unless @c = current_user.categories.first({id: cid})
+    halt 404, "No such category"
+  end
+
+  erb :"categories/edit"
+end
+
 post '/categories', auth: :user do
 
   { "You must specify a name" => params["name"].empty? }.each_pair {|msg,cnd|
@@ -50,27 +60,36 @@ put '/categories/:cid', auth: :user do |cid|
 
     # must be unique
     if @user.categories.first({ name: params["name"] })
-      halt 400, "You already have a category called #{params["name"]}."
+      flash[:error] = "You already have a category called #{params["name"]}."
+      return redirect back
     end
 
     c.name = params["name"] if params.has_key?("name")
   end
 
   unless c.save
-    halt 500, c.collect_errors
+    # halt 500, c.collect_errors
+    flash[:error] = "Category could not be updated. Technical reason: #{c.collect_errors}"
+  else
+    flash[:notice] = "The category '#{c.name}' has been updated."
   end
 
-  c
+  redirect back
 end
 
 delete '/categories/:cid', auth: :user do |cid|
-  unless c = @account.categories.get(cid)
+  unless c = @user.categories.get(cid)
     halt 400
   end
 
+  name = c.name
+
   unless c.destroy
-    halt 500, c.collect_errors
+    # halt 500, c.collect_errors
+    flash[:error] = "Category could not be deleted. Technical reason: #{c.collect_errors}"
+  else
+    flash[:notice] = "The category '#{name}' has been removed."
   end
 
-  true
+  redirect '/categories'
 end

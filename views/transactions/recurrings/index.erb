@@ -1,6 +1,7 @@
 <h1>Recurring Transies</h1>
+<% content_for :layout_classes do %>bills<% end %>
 
-<h2>Yearly Bills</h2>
+<h2>Yearly <span data-amount><%= current_account.yearly_expenses.to_f.round(2) %> <%= current_account.currency %></span></h2>
 <% unless @yearly_transies.empty? %>
   <table>
     <thead>
@@ -29,12 +30,10 @@
       <% end %>
     </tbody>
   </table>
-  <p>Total yearly change: <span data-amount><%= current_account.yearly_expenses.to_f.round(2) %> <%= current_account.currency %></span></p>
 <% else %>
   <p>You have not registered any yearly bills yet.</p>
 <% end %>
-
-<h2>Monthly Bills</h2>
+<h2>Monthly <span data-amount><%= current_account.monthly_expenses.to_f.round(2) %> <%= current_account.currency %></span></h2>
 <% unless @monthly_transies.empty? %>
   <table>
     <thead>
@@ -68,13 +67,11 @@
       <% end %>
     </tbody>
   </table>
-  <p>Total monthly change: <span data-amount><%= current_account.monthly_expenses.to_f.round(2) %> <%= current_account.currency %></span><br />
-    Annual monthly change: <span data-amount><%= (current_account.monthly_expenses.to_f * 12).round(2) %> <%= current_account.currency %></span> </p>
+  <p>Annual monthly change: <span data-amount><%= (current_account.monthly_expenses.to_f * 12).round(2) %> <%= current_account.currency %></span> </p>
 <% else %>
   <p>You have not registered any monthly bills yet.</p>
 <% end %>
-
-<h2>Daily Bills</h2>
+<h2>Daily <span data-amount><%= current_account.daily_expenses.to_f %> <%= current_account.currency %></span></h2>
 <% unless @daily_transies.empty? %>
   <table>
     <thead>
@@ -98,7 +95,6 @@
       <% end %>
     </tbody>
   </table>
-  <p>Total daily change: <span data-amount><%= current_account.daily_expenses.to_f %> <%= current_account.currency %></span> </p>
 <% else %>
   <p>You have not registered any daily bills yet.</p>
 <% end %>

@@ -132,15 +132,15 @@ end
 
     current_page("transactions")
 
-    @transies = current_account.monthly_transactions(Time.now)
+    @transies = current_account.latest_transactions({ order: [ :occured_on.desc ] })#(Time.now)
 
     @date = Time.now
 
     # partition into months
     @daily_transies = {}
     @transies.each { |tx|
-      @daily_transies[tx.occured_on.day] ||= []
-      @daily_transies[tx.occured_on.day] <<  tx
+      @daily_transies[tx.occured_on.strftime("%Y%b%d")] ||= []
+      @daily_transies[tx.occured_on.strftime("%Y%b%d")] <<  tx
     }
 
     @balance  = current_account.balance_for(@transies)

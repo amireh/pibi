@@ -191,10 +191,10 @@ get '/transactions/recurrings/:id/toggle_activity', auth: :user do |tid|
   redirect back
 end
 
-get '/transactions/:year' do |year|
+get '/transactions/:year', auth: :user do |year|
   current_page("transactions")
 
-  @transies = current_account.yearly_transactions(Time.new(year, 1, 1))
+  @transies = current_account.yearly_transactions(Time.new(year, 1, 2))
 
   # partition into months
   @monthly_transies = Array.new(13, [])
@@ -208,14 +208,14 @@ get '/transactions/:year' do |year|
 end
 
 
-get '/transactions/:year/:month' do |year, month|
+get '/transactions/:year/:month', auth: :user do |year, month|
   current_page("transactions")
 
-  @transies = current_account.monthly_transactions(Time.new(year, month, 1))
+  @transies = current_account.monthly_transactions(Time.new(year, month, 2))
 
   @date = Time.new(year, month, Time.now.day)
 
-  # partition into months
+  # partition into days
   @daily_transies = {}
   @transies.each { |tx|
     @daily_transies[tx.occured_on.day] ||= []

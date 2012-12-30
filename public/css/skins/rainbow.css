@@ -61,7 +61,7 @@ nav {
   border-bottom: 2px solid #888;
   color: #333;
   margin-left: 0;
-  padding: 0 10px 10px 10px;
+  padding: 0 20px 10px 20px;
 }
 
 nav a,
@@ -295,6 +295,11 @@ textarea {
   max-width: 100%;
 }
 
+a.button.inline { display: inline-block; }
+a.button.prev { padding-left: 10px;}
+a.button.next { padding-right: 10px;}
+a.button.prev:before { content: '\00AB  '; }
+a.button.next:after  { content: '  \00BB';}
 input[type=submit],
 button,
 .button,
@@ -318,6 +323,7 @@ a.button {
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e5e5e5',GradientType=0 ); /* IE6-9 */
   border-color: #C60 #C60 #AD5700;
   border-color: rgba(0, 0, 0, 0.10) rgba(0, 0, 0, 0.10) rgba(0, 0, 0, 0.3);
+  color: #222;
 
   text-transform: capitalize;
   text-decoration: none;
@@ -414,7 +420,9 @@ textarea:focus {
   position: absolute;
   right: 8px;
   padding: 5px;
-  top: 7px;
+  top: 5px;
+  background: rgba(0,0,0,0.5);
+  color: white;
 }
 /*.flash.notice { color: #98bf0d; }*/
 /*.flash.error  { color: #D54421; }*/
@@ -474,6 +482,9 @@ form fieldset ol li:nth-of-type(even) {
 form fieldset ol li input[type=checkbox] {
   margin-left: 0;
 }
+
+.transactions form input[type=text] { width: 214px;}
+.transactions form textarea { width: 292px; }
 
 form #tx_occured_on { width: 292px; }
 #datepicker {
@@ -637,8 +648,8 @@ footer div * { margin-right: 5px; }
 .feed { font-size: 90%; margin-bottom: 10px; }
 .feed .timeframe {
   background: rgba(0,0,0,0.0725);
-  padding: 10px;
-  width: 960px; margin-left: -10px;
+  padding: 10px 20px;
+  width: 960px; margin-left: -20px;
   color: #777;
   text-shadow: 1px 1px 0 white;
 }
@@ -648,7 +659,7 @@ footer div * { margin-right: 5px; }
 .feed tr.deposit    td:first-of-type,
 .positive                             { color: #98BF0D; }
 
-.feed td:nth-of-type(1) { width: 20px; padding: 0 5px;}
+.feed td:nth-of-type(1) { width: 26px; padding: 0 5px;}
 .feed td:nth-of-type(2) { width: 40px; }
 .feed td:nth-of-type(3) { width: 40px; }
 .feed td:nth-of-type(1),
@@ -658,7 +669,9 @@ footer div * { margin-right: 5px; }
 
 .feed td:last-of-type { text-align: right; }
 
-.feed tr:hover { background: rgba(0,0,0,0.05); }
+/*.feed tr:hover td:first-of-type:before { background: rgba(0,0,0,0.05); }*/
+.feed tr:hover td:first-of-type:before { content: '\00BB  '; margin-left:  -8px; color: orange; font-weight: bold; }
+.feed tr:hover td:last-of-type:after { content: '  \00AB';   margin-right: -8px; color: orange; font-weight: bold; }
 
 .feed td small { color: #999; }
 
@@ -673,7 +686,8 @@ footer div * { margin-right: 5px; }
 .transactions .navigation select,
 .transactions .navigation input,
 .transactions .navigation form  { display: inline-block; }
-.transactions .navigation select { padding: 5px; }
+.transactions .navigation select { padding: 3px; }
+.transactions .navigation input  { padding: 3px 10px;}
 
 a.navigator { display: inline-block; font-size: 75%; position: absolute; }
 a.navigator.prev { left:  0; padding-left:  10px; }
@@ -691,18 +705,22 @@ code.license {
   text-align: justify;
 }
 
-.manage td, th {
+.manage.bills td,
+.manage.bills th {
   /*padding: 0 30px 0 0;*/
   padding: 10px 0 10px 10px;
   border: 1px solid #ddd;
 }
-.manage th {
+.manage.bills th {
   text-align: left;
   background: rgba(0,0,0,0.015);
 }
-.manage th:first-of-type { border-top-left-radius:  3px; }
-.manage th:last-of-type  { border-top-right-radius: 3px; }
-.manage table { width: 100%; }
-
+.manage.bills th:first-of-type { border-top-left-radius:  3px; }
+.manage.bills th:last-of-type  { border-top-right-radius: 3px; }
+.manage.bills table { width: 100%; }
+.manage.bills h2 { position: relative; }
+.manage.bills h2 > [data-amount] { position: absolute; right: 0; }
+.manage h2 > .actions { font-size: smaller; opacity: 0.5; }
+.manage h2:hover > .actions { opacity: 1; }
 a.bad { font-size: 0.75em; }
 [data-amount] { font-weight:bold; }

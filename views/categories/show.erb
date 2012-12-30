@@ -1,7 +1,26 @@
-<h2><%= @c.name %></h2>
-<p><%= @c.transactions.count %> transaction(s) have been categorized as <%= @c.name %>.</p>
-<ol>
-<% @c.transactions.each do |t| %>
-  <li><%= tx_to_html t %></li>
+<h2><%= @c.name %> <span class="actions"><%= actions_for @c %></span></h2>
+<p><%= @c.transactions.count %> transaction(s) have been categorized under <%= @c.name %>.</p>
+<% transies = {} %>
+<% @c.transactions.all({ order: [ :occured_on.desc ] }).each do |t| %>
+  <% transies[t.occured_on.to_time.strftime("%Y%m%d")] ||= [] %>
+  <% transies[t.occured_on.to_time.strftime("%Y%m%d")] <<  t  %>
 <% end %>
-</ol>
+
+<div class="feed">
+  <% transies.each_pair do |date, txs| %>
+    <h4 class="timeframe"><%= txs.first.occured_on.strftime("%Y - %B, %d") %></h4>
+    <table>
+      <% txs.each do |t| %>
+      <tr class="<%= t.type.to_s.downcase %>">
+        <td><%= t.withdrawal? ? '&minus;' : '&plus;' %></td>
+        <td><%= t.amount.to_f %></td>
+        <td><%= t.currency %></td>
+        <td><%= t.note %> <small><%= t.categories.collect(){ |c| c.name }.join(', ') %></small></td>
+        <td><%= actions_for t %></td>
+      </tr>
+      <% end %>
+    </table>
+  <% end %>
+</div>
+
+<a class="inline prev button" href="/categories">Back</a>

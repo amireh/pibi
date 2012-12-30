@@ -1,25 +1,25 @@
+<h1>Categories <small>(<%= @user.categories.size %>)</small></h1>
+<div class="category_listing">
+  <% if @user.categories.empty? %>
+    <p>You do not have any categories set up yet. You can use
+      <a href="/categories">this page</a> to manage your categories.
+    </p>
+  <% end %>
+  <% @user.categories.each do |c| %>
+    <label>
+      <!-- <input type="checkbox" name="categories[]" value="<%= c.id %>" /> -->&nbsp;
+      <a href="/categories/<%= c.id %>"><%= c.name %></a> (<%= c.transactions.count %>)
+    </label>
+  <% end %>
+</div>
 
-  <h1>Existing Categories</h1>
-  <div class="category_listing">
-    <% if @user.categories.empty? %>
-      <p>You do not have any categories set up yet. You can use
-        <a href="/categories">this page</a> to manage your categories.
-      </p>
-    <% end %>
-    <% @user.categories.each do |c| %>
-      <label>
-        <!-- <input type="checkbox" name="categories[]" value="<%= c.id %>" /> -->&nbsp;
-        <a href="/categories/<%= c.id %>"><%= c.name %></a> (<%= c.transactions.count %>)
-      </label>
-    <% end %>
-  </div>
-  <br />
-  <form method="POST" action="/categories">
-    <fieldset>
-      <legend>New Category</legend>
-      <input type="text" name="name" placeholder="Everyday Expenses" />
-      <input type="submit" value="Create" style="display: inline-block;" />
-    </fieldset>
+<br />
 
-  </form>
+<form method="POST" action="/categories">
+  <fieldset>
+    <legend>New Category</legend>
+    <input type="text" name="name" placeholder="Everyday Expenses" />
+    <input type="submit" value="Create" style="display: inline-block;" />
+  </fieldset>
+</form>
 

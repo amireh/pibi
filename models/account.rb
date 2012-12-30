@@ -30,7 +30,8 @@ class Account
   }
 
   def latest_transactions(q = {}, t = nil)
-    transactions.all({ :occured_on.gte => Timetastic.this.month, :occured_on.lt => Timetastic.next.month }.merge(q))
+    transactions_in(nil, q)
+    # transactions.all({ :occured_on.gte => Timetastic.this.month, :occured_on.lt => Timetastic.next.month }.merge(q))
   end
 
   def yearly_transactions(date = Timetastic.this.year, q = {})
@@ -80,7 +81,8 @@ class Account
     transactions.all({
       :occured_on.gte => range[:begin],
       :occured_on.lt => range[:end],
-      :type.not => 'Recurring'
+      :type.not => Recurring,
+      :order => [ :occured_on.desc ]
     }.merge(q))
   end
 
