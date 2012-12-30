@@ -31,7 +31,8 @@
 
   post "/transactions/#{type}", auth: :user do
     { "You must specify an amount" => params["amount"].empty?,
-      "Amount must be greater than 0" => params["amount"].to_f <= 0.0
+      "Amount must be greater than 0" => params["amount"].to_f <= 0.0,
+      "You really should write some note, even a short one" => params["note"].empty?
     }.each_pair {|msg,cnd|
       if cnd
         flash[:error] = msg
@@ -98,6 +99,15 @@
     unless tx = @account.transactions.get(tid)
       halt 400
     end
+
+    { "You must specify an amount" => params["amount"].empty?,
+      "Amount must be greater than 0" => params["amount"].to_f <= 0.0
+    }.each_pair {|msg,cnd|
+      if cnd
+        flash[:error] = msg
+        return redirect back
+      end
+    }
 
     def update(tx, params, fields)
       fields = [ fields ] unless fields.is_a?(Array)

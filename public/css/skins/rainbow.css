@@ -56,7 +56,7 @@ nav {
 #content {
   /*background: #E7FFE6;*/
   background: #fff url(/images/bgs/debut_light/debut_light.png) repeat;
-  background: #fff url(/images/bgs/grey/grey.png) repeat;
+  /*background: #fff url(/images/bgs/grey/grey.png) repeat;*/
   border-top: 2px solid #888;
   border-bottom: 2px solid #888;
   color: #333;
@@ -657,7 +657,8 @@ footer div * { margin-right: 5px; }
 .feed tr.withdrawal td:first-of-type,
 .negative                             { color: #D54421;   }
 .feed tr.deposit    td:first-of-type,
-.positive                             { color: #98BF0D; }
+.positive                             { color: #617C04; }
+/*.positive                             { color: #98BF0D; }*/
 
 .feed td:nth-of-type(1) { width: 26px; padding: 0 5px;}
 .feed td:nth-of-type(2) { width: 40px; }
@@ -715,11 +716,21 @@ code.license {
   text-align: left;
   background: rgba(0,0,0,0.015);
 }
+.manage.bills td.positive,
+.manage.bills td.negative { background: white; text-align: center; padding: 0; }
+
 .manage.bills th:first-of-type { border-top-left-radius:  3px; }
 .manage.bills th:last-of-type  { border-top-right-radius: 3px; }
 .manage.bills table { width: 100%; }
-.manage.bills h2 { position: relative; }
-.manage.bills h2 > [data-amount] { position: absolute; right: 0; }
+.manage.bills h2 { position: relative;
+  background: white;
+  padding: 10px 20px;
+  width: 960px;
+  margin-left: -20px;
+  box-shadow: 0 0px 3px 0 #aaa;
+  color: #222;
+}
+.manage.bills h2 > [data-amount] { position: absolute; right: 20px; }
 .manage h2 > .actions { font-size: smaller; opacity: 0.5; }
 .manage h2:hover > .actions { opacity: 1; }
 a.bad { font-size: 0.75em; }
