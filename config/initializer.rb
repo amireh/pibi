@@ -1,2 +1,3 @@
 AppName = "Pibi"
-AppURL  = "pibi.amireh.net"
+AppURL  = "http://pibi.algollabs.com"
+AppGithubURL = "https://github.com/amireh/pibi"

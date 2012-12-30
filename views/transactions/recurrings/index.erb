@@ -1,26 +1,98 @@
-<table>
-  <thead>
-    <th>Name</th>
-    <th>Amount</th>
-    <th>Flow type</th>
-    <th>Frequency</th>
-    <th>Recurs on</th>
-    <th>Active?</th>
-    <th>Actions</th>
-  </thead>
-  <tbody>
-    <% @transies.each do |t| %>
-      <tr>
-        <td><%= t.note %></td>
-        <td><%= t.amount.to_f %></td>
-        <td><%= t.flow_type.capitalize %></td>
-        <td><%= t.frequency.capitalize %></td>
-        <td><%= natural_recurrence_date(t) %></td>
-        <td><%= t.active ? 'Yes' : 'No' %></td>
-        <td>
-          <%= actions_for(t) %>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+<h1>Recurring Transies</h1>
+
+<h2>Yearly Bills</h2>
+<% unless @yearly_transies.empty? %>
+  <table>
+    <thead>
+      <th>Name</th>
+      <th>Amount</th>
+      <th>Flow type</th>
+      <th>Billing date</th>
+      <th>Active?</th>
+      <th>Actions</th>
+    </thead>
+    <tbody>
+      <% @yearly_transies.each do |t| %>
+        <tr class="<%= t.flow_type %>">
+          <td><%= t.note %></td>
+          <td><%= t.amount.to_f %></td>
+          <td><%= t.flow_type.capitalize %></td>
+          <td><%= natural_recurrence_date(t) %></td>
+          <td><%= t.active ? 'Yes' : 'No' %></td>
+          <td>
+            <%= actions_for(t) %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p>You have not registered any yearly bills yet.</p>
+<% end %>
+
+<h2>Monthly Bills</h2>
+<% unless @monthly_transies.empty? %>
+  <table>
+    <thead>
+      <th>Name</th>
+      <th>Amount</th>
+      <!-- <th>Flow type</th> -->
+      <th>Billing day</th>
+      <th>Active?</th>
+      <th>Next bill in</th>
+      <th>Actions</th>
+    </thead>
+    <tbody>
+      <% @monthly_transies.each do |t| %>
+        <tr>
+          <td><%= t.note %></td>
+          <td class="<%= t.flow_type %>"><%= t.amount.to_f %></td>
+          <!-- <td><% t.flow_type.capitalize %></td> -->
+          <td><%= natural_recurrence_date(t) %></td>
+          <td class="<%= t.active? ? 'positive' : 'negative' %>"><%= t.active ? 'Yes' : 'No' %></td>
+          <td>
+            <% if t.active %>
+              <%= Timetastic.days_between(Time.now, t.next_billing_date) %> days
+            <% else %>
+              --
+            <% end %>
+          </td>
+          <td>
+            <%= actions_for(t) %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p>You have not registered any monthly bills yet.</p>
+<% end %>
+
+<h2>Daily Bills</h2>
+<% unless @daily_transies.empty? %>
+  <table>
+    <thead>
+      <th>Name</th>
+      <th>Amount</th>
+      <th>Flow type</th>
+      <th>Active?</th>
+      <th>Actions</th>
+    </thead>
+    <tbody>
+      <% @daily_transies.each do |t| %>
+        <tr class="<%= t.flow_type %>">
+          <td><%= t.note %></td>
+          <td><%= t.amount.to_f %></td>
+          <td><%= t.flow_type.capitalize %></td>
+          <td><%= t.active ? 'Yes' : 'No' %></td>
+          <td>
+            <%= actions_for(t) %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p>You have not registered any daily bills yet.</p>
+<% end %>
+

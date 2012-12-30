@@ -276,7 +276,7 @@ header .account_balance {
   margin-bottom: 18px;
 }
 header .account_balance .positive { color: #98BF0D; }
-header .account_balance .negative { color: #D54421; }
+header .account_balance .negative, a.bad:not(:hover) { color: #D54421; }
 
 /* ----
  * Forms & Input
@@ -607,7 +607,7 @@ footer p {
   max-width: 31%;
   display: inline-block;
   vertical-align: top;
-  margin: 0 6% 0 0;
+  /*margin: 0 6% 0 0;*/
   text-align: left;
 }
 footer p:nth-child(2) {
@@ -615,7 +615,7 @@ footer p:nth-child(2) {
 }
 footer p:last-of-type {
   width: auto;
-  margin-right: 0;
+  /*margin-right: 0;*/
   margin-left: 4%;
 }
 footer img {
@@ -628,6 +628,9 @@ footer div {
   border-top: 1px solid rgba(255,255,255, 0.125);
   padding-top: 5px;
 }
+
+footer p { line-height: 14px; }
+footer div * { margin-right: 5px; }
 
 .feed { font-size: 90%; margin-bottom: 10px; }
 .feed .timeframe {
@@ -679,3 +682,18 @@ a.navigator.prev:before { content: '\2190  '; }
 a[target]:after {
   content: ' \21B7';
 }
+
+code.license {
+  display: inline-block;
+  width: 480px;
+  text-align: justify;
+}
+
+.manage td, th {
+  padding: 0 30px 0 0;
+}
+.manage th {
+  text-align: left;
+}
+
+a.bad { font-size: 0.75em; }

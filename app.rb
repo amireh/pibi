@@ -152,6 +152,6 @@ end
 get '/' do
   erb "welcome/index"
 end
-get '/tos' do
-  erb "tos"
+[ 'tos', 'privacy', 'oss', 'faq' ].each do |static_item|
+  get "/#{static_item}" do erb :"static/#{static_item}" end
 end

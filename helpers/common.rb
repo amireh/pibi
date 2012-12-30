@@ -57,11 +57,11 @@ helpers do
   def actions_for(tx)
     html = ''
     html << "<a href=\"#{tx.url}/edit\">Edit</a>"
-    html << " <a href=\"#{tx.url}/destroy\">Delete</a>"
     if tx.recurring?
       action = tx.active? ? 'Deactivate' : 'Activate'
       html << " <a href=\"#{tx.url}/toggle_activity\">#{action}</a>"
     end
+    html << " <a href=\"#{tx.url}/destroy\" class=\"bad\">Delete</a>"
     html
   end
 end

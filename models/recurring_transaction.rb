@@ -13,6 +13,20 @@ class Recurring < Transaction
     y
   end
 
+  def next_billing_date()
+    case frequency
+    when :monthly
+      if last_commit then
+        t = nil
+        Timetastic.fixate(last_commit) { t = 1.month.ahead }
+        t
+      else
+        t = 1.month.ahead
+        Time.new(t.year, t.month, recurs_on.day)
+      end
+    end
+  end
+
   def applicable?(now = nil)
     now ||= DateTime.now
 
