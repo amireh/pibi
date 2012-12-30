@@ -118,14 +118,40 @@ end
 #   erb :"500"
 # end
 
-get '/' do
-  pass unless logged_in?
+[ '/', '/transactions' ].each { |r|
+  get r do
+    pass unless logged_in?
 
-  current_page("feed")
+    if params[:year]
+      if params[:month]
+        return redirect "/transactions/#{params[:year]}/#{params[:month]}"
+      end
 
-  erb "transactions/index"
-end
+      return redirect "/transactions/#{params[:year]}"
+    end
+
+    current_page("transactions")
+
+    @transies = current_account.monthly_transactions(Time.now)
+
+    @date = Time.now
+
+    # partition into months
+    @daily_transies = {}
+    @transies.each { |tx|
+      @daily_transies[tx.occured_on.day] ||= []
+      @daily_transies[tx.occured_on.day] <<  tx
+    }
+
+    @balance  = current_account.balance_for(@transies)
+
+    erb "transactions/index"
+  end
+}
 
 get '/' do
   erb "welcome/index"
+end
+get '/tos' do
+  erb "tos"
 end

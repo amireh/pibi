@@ -49,6 +49,10 @@ class Transaction
     true
   end
 
+  def +(y)
+    y
+  end
+
   [ :update, :destroy ].each do |advice|
     before advice do |ctx|
       puts "[ before #{advice} ] #{self.id} #{self.type} Deducting my current amount (#{to_account_currency.to_f}) from the account balance (#{self.account.balance.to_f} #{self.account.currency})"

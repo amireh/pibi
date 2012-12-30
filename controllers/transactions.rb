@@ -186,3 +186,40 @@ get '/transactions/recurrings/:id/toggle_activity', auth: :user do |tid|
 
   redirect back
 end
+
+get '/transactions/:year' do |year|
+  current_page("transactions")
+
+  @transies = current_account.yearly_transactions(Time.new(year, 1, 1))
+
+  # partition into months
+  @monthly_transies = Array.new(13, [])
+  @transies.each { |tx|
+    @monthly_transies[tx.occured_on.month] <<  tx
+  }
+
+  @balance  = current_account.balance_for(@transies)
+
+  erb :"transactions/index"
+end
+
+
+get '/transactions/:year/:month' do |year, month|
+  current_page("transactions")
+
+  @transies = current_account.monthly_transactions(Time.new(year, month, 1))
+
+  @date = Time.new(year, month, Time.now.day)
+
+  # partition into months
+  @daily_transies = {}
+  @transies.each { |tx|
+    @daily_transies[tx.occured_on.day] ||= []
+    @daily_transies[tx.occured_on.day] <<  tx
+  }
+
+  @balance  = current_account.balance_for(@transies)
+
+  erb :"transactions/index"
+end
+

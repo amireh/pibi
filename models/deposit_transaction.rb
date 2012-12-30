@@ -25,4 +25,7 @@ class Deposit < Transaction
     # end
   end
 
+  def +(y)
+    to_account_currency + y
+  end
 end

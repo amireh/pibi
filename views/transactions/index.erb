@@ -1,6 +1,56 @@
-<h1>Activity for <%= Time.now.strftime("%B, %Y") %></h1>
-<ul>
-  <% current_account.latest_transactions.each do |t| %>
-    <li><%= tx_to_html t %> <%= actions_for t %></li>
+<h1><%= @date.strftime("%B, %Y") %>
+  <span style="float: right;" class="<%= @balance > 0 ? 'positive' : 'negative' %>">
+    <%= @balance.to_f.round(2) %>
+    <%= current_account.currency %>
+  </span>
+</h1>
+
+<% if @transies.empty? %>
+  <p>No transactions have been committed during this time period.</p>
+<% end %>
+
+<div class="feed">
+  <% @daily_transies.each_pair do |day, txs| %>
+    <% next if txs.empty? %>
+    <h4 class="timeframe"><%= txs.first.occured_on.strftime("%A, ") %>the <%= txs.first.occured_on.strftime("%-d").to_i.ordinalize %>
+
+    </h4>
+
+    <table>
+      <% txs.each do |t| %>
+      <tr class="<%= t.type.to_s.downcase %>">
+        <td><%= t.withdrawal? ? '&minus;' : '&plus;' %></td>
+        <td><%= t.amount.to_f %></td>
+        <td><%= t.currency %></td>
+        <td><%= t.note %> <small><%= t.categories.collect(){ |c| c.name }.join(', ') %></small></td>
+        <td><%= actions_for t %></td>
+      </tr>
+      <% end %>
+    </table>
   <% end %>
-</ul>
+</div>
+
+<div class="navigation">
+  <% last_month = 1.month.ago(@date) %>
+  <% next_month = 1.month.ahead(@date) %>
+  <a class="button navigator prev" href="/transactions/<%= last_month.year %>/<%= last_month.month %>"><%=  last_month.strftime("%B, %Y") %></a>
+
+  <form method="GET" action="/transactions">
+    <select name="year">
+      <% (@user.created_at.year..@date.year+3).each do |y| %>
+        <% next if Time.now.year < y %>
+        <option <%= 'selected="selected"' if @date.year == y %> value="<%= y %>">
+          <%= y %>
+        </option>
+      <% end %>
+    </select>
+    <select name="month">
+      <% 12.times do |i| %>
+        <option <%= 'selected="selected"' if @date.month == i+1 %> value="<%= i+1 %>"><%= Time.new(Time.now.year, i+1, 1).strftime("%B") %></option>
+      <% end %>
+    </select>
+    <input type="submit" value="Go" />
+  </form>
+
+  <a class="button navigator next" href="/transactions/<%= next_month.year %>/<%= next_month.month %>"><%=  next_month.strftime("%B, %Y") %></a>
+</div>

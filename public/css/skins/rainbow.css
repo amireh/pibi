@@ -1,5 +1,5 @@
 body {
-  font: 14px/18px Arial, Verdana, Helvetica, sans-serif;
+  font: 14px Arial, Verdana, Helvetica, sans-serif;
   /*background: #222;*/
   /*background: #222 url(/images/bgs/twinkle_twinkle/twinkle_twinkle.png) repeat;*/
   /*background: #222 url(/images/bgs/twinkle_twinkle/twinkle_twinkle2.png) repeat;*/
@@ -59,7 +59,7 @@ nav {
   border-bottom: 2px solid #888;
   color: #333;
   margin-left: 0;
-  padding: 10px;
+  padding: 0 10px 10px 10px;
 }
 
 nav a,
@@ -594,12 +594,14 @@ nav a.listlike + ol { display: none; }
 
 footer {
   font-size: 0.75em;
+  line-height: inherit;
   /*text-align: center;*/
 }
 footer p > strong:first-child {
   clear: both;
   display: block;
   text-decoration: underline;
+  margin-bottom: 5px;
 }
 footer p {
   max-width: 31%;
@@ -619,4 +621,61 @@ footer p:last-of-type {
 footer img {
   border: none;
   margin: 10px 0 0 0;
+}
+
+footer div {
+  margin-top: 5px;
+  border-top: 1px solid rgba(255,255,255, 0.125);
+  padding-top: 5px;
+}
+
+.feed { font-size: 90%; margin-bottom: 10px; }
+.feed .timeframe {
+  background: rgba(0,0,0,0.0725);
+  padding: 10px;
+  width: 960px; margin-left: -10px;
+  color: #777;
+  text-shadow: 1px 1px 0 white;
+}
+
+.feed tr.withdrawal td:first-of-type,
+.negative                             { color: #D54421;   }
+.feed tr.deposit    td:first-of-type,
+.positive                             { color: #98BF0D; }
+
+.feed td:nth-of-type(1) { width: 20px; padding: 0 5px;}
+.feed td:nth-of-type(2) { width: 40px; }
+.feed td:nth-of-type(3) { width: 40px; }
+.feed td:nth-of-type(1),
+.feed td:nth-of-type(2) { font-weight: bold; text-align: left; }
+
+.feed table { width: 100%; text-align: left;}
+
+.feed td:last-of-type { text-align: right; }
+
+.feed tr:hover { background: rgba(0,0,0,0.05); }
+
+.feed td small { color: #999; }
+
+.transactions .navigation {
+  display: block;
+  position: relative;
+  text-align: center;
+  margin-top: 20px;
+  padding: 20px 0 10px 0;
+  border-top: 1px solid #ddd;
+}
+.transactions .navigation select,
+.transactions .navigation input,
+.transactions .navigation form  { display: inline-block; }
+.transactions .navigation select { padding: 5px; }
+
+a.navigator { display: inline-block; font-size: 75%; position: absolute; }
+a.navigator.prev { left:  0; padding-left:  10px; }
+a.navigator.next { right: 0; padding-right: 10px; }
+a.navigator.next:after { content: ' \2192'; }
+a.navigator.prev:before { content: '\2190  '; }
+
+a[target]:after {
+  content: ' \21B7';
 }

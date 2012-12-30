@@ -44,6 +44,7 @@
         <label><input type="radio" name="flow_type" value="positive" <%= 'checked="checked"' if @tx.flow_type == :positive %> />Positive
           <span class="hint">(ie, a salary)</span>
         </label>
+        <br />
         <label>
           <input type="radio" name="flow_type" value="negative" <%= 'checked="checked"' if @tx.flow_type == :negative %> />Negative
           <span class="hint">(ie, a bill)</span>

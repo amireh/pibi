@@ -36,7 +36,7 @@
 
 <% content_for :content do %> <%= yield %> <% end %>
 
-<body class="<%= @layout.to_s.split('/').last %>">
+<body class="<%= @layout.to_s.split('/').last %> <%= current_page %>">
   <%= partial "layouts/#{preferences['pibi']['layout']}" %>
 
   <img class="loader" hidden="hidden" src="/images/ajax-loader-615B4E.gif" />

@@ -9,6 +9,10 @@ class Recurring < Transaction
   property :last_commit, DateTime, allow_nil: true
   property :active,     Boolean, default: true
 
+  def +(y)
+    y
+  end
+
   def applicable?(now = nil)
     now ||= DateTime.now
 

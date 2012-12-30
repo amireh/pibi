@@ -25,4 +25,8 @@ class Withdrawal < Transaction
     # end
   end
 
+  def +(y)
+    to_account_currency * -1 + y
+  end
+
 end
