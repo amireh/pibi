@@ -27,6 +27,8 @@ class User
   # has n, :transactions, :through => :accounts
   # has n, :deposits,     :through => :accounts
   has n, :categories, :constraint => :destroy
+  has n, :payment_methods, :constraint => :destroy
+  has 1, :payment_method, :constraint => :skip
 
   validates_presence_of :name, :provider, :uid
 
@@ -43,6 +45,8 @@ class User
 
   after :create do
     self.accounts.create
+    self.payment_methods.create({ name: "Cash" })
+    self.payment_methods.create({ name: "Cheque" })
   end
 
   def categories

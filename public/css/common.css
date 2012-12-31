@@ -23,11 +23,11 @@ nav {
   /*left: -220px;*/
   /*top: 0;*/
 }
-
+/*
 nav > span:first-of-type {
   display: block;
   margin-bottom: 10px;
-}
+}*/
 
 .category_listing label {
   display: inline-block;

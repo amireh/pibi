@@ -102,6 +102,15 @@ not_found do
   erb :"404"
 end
 
+error 401 do
+  if request.xhr?
+    r = response.body.first
+    return r.include?("<html>") ? "401 - unauthorized!" : r.to_json
+  end
+
+  erb :"401"
+end
+
 error 403 do
   if request.xhr?
     r = response.body.first
@@ -155,7 +164,7 @@ get '/' do
 
   erb "welcome/index"
 end
-[ 'tos', 'privacy', 'oss', 'faq' ].each do |static_item|
+[ 'features', 'tos', 'privacy', 'oss', 'faq' ].each do |static_item|
   get "/#{static_item}" do
     current_page("")
     erb :"static/#{static_item}"

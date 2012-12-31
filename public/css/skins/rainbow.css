@@ -267,21 +267,23 @@ nav li a.listlike + ol li:last-of-type {
   border-bottom-right-radius: 3px;
 }
 
-header h1 { display: none; }
-header .account_balance {
-  display: block;
+.subheader {
   color: white;
   font-size: 14px;
   font-weight: normal;
-  font-family: monospace;
   letter-spacing: 1px;
+}
+header h1 { display: none; }
+header .account_balance {
+  display: block;
+  /*font-family: monospace;*/
   text-align: justify;
   margin-top: 17px;
   margin-bottom: 18px;
 }
 header .account_balance .positive { color: #98BF0D; }
 header .account_balance .negative, a.bad:not(:hover) { color: #D54421; }
-
+header .account_name { position: absolute; right: 0; top: 0; color: white; }
 /* ----
  * Forms & Input
  * ---- */
@@ -625,19 +627,20 @@ footer p > strong:first-child {
   margin-bottom: 5px;
 }
 footer p {
-  max-width: 31%;
+  max-width: 235px;
   display: inline-block;
   vertical-align: top;
+  margin-right: 110px;
   /*margin: 0 6% 0 0;*/
   text-align: left;
 }
-footer p:nth-child(2) {
+/*footer p:nth-child(2) {
   margin-left: 1%;
-}
+}*/
 footer p:last-of-type {
   width: auto;
-  /*margin-right: 0;*/
-  margin-left: 4%;
+  margin-right: 0;
+  /*margin-left: 4%;*/
 }
 footer img {
   border: none;
@@ -762,11 +765,11 @@ a.bad { font-size: 0.75em; }
   display: inline-block;
   vertical-align: middle;
 }
-.guest .column { display: inline-block; vertical-align: top; width: 295px; }
+.guest .column { display: inline-block; vertical-align: top; width: 270px; }
 .guest .column:not(:first-of-type) {
   /*border-left: 1px solid #ddd;*/
   padding-left: 10px;
-  margin-left: 10px;
+  margin-left: 50px;
 }
 .guest ul {  padding: 0 0 0 20px;}
 .guest ul li {
@@ -789,7 +792,7 @@ a.bad { font-size: 0.75em; }
 .guest.sessions img { vertical-align: middle; }
 .guest nav { height: 106px;}
 .guest .stuff { margin-top: 20px;}
-.guest p, .guest #content li { font-size: 13px;}
+.guest #content p, .guest #content li { font-size: 13px;}
 
 .guest.sessions .browser_notice {
   margin-top: 10px;
@@ -801,4 +804,20 @@ a.bad { font-size: 0.75em; }
 }
 .guest.sessions .browser_notice img {
   position: absolute; right: 10px; top: 10px;
+}
+
+nav .tri.right { right: 0; }
+nav .tri.left { left: 0;
+  border-width: 0 20px 20px 0;
+  border-color: transparent rgba(0, 0, 0, 0.35) transparent transparent;
+}
+nav .tri {
+  display: block;
+  position: absolute;
+  bottom: -20px;
+  width: 0px;
+  height: 0px;
+  border-style: solid;
+  border-width: 20px 20px 0 0;
+  border-color: rgba(0,0,0,0.35) transparent transparent transparent;
 }

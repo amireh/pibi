@@ -13,12 +13,14 @@
       <span class="account_balance">Balance:
         <span class="<%= current_account.balance > 0 ? 'positive' : 'negative' %>"><%= current_account.balance.to_f %></span> <%= current_account.currency %>
       </span>
+      <span class="account_name"><%= current_user.name %></span>
       <% yield_content :subheader %>
       <%= partial "layouts/_flashes" %>
     </div>
   </header>
 
   <nav>
+    <div class="left tri"></div>
     <!-- <span>Hi <%= current_user.nickname %></span> -->
     <!-- <h3>Transactions</h3> -->
     <ol>
@@ -49,6 +51,7 @@
         </ol>
       </li>
     </ol>
+    <div class="right tri"></div>
   </nav>
 
   <div id="content" class="<%= request.path.gsub('/', ' ').strip.sanitize.split('-').first %>">
