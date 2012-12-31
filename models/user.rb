@@ -9,7 +9,8 @@ class User
   property :provider, String, length: 255, required: true
   property :uid,      String, length: 255, required: true
 
-  property :email,          String, length: 255, default: ""
+  property :email,          String, length: 255, default: "", unique: true
+  property :email_verified, Boolean, default: false
   property :gravatar_email, String, length: 255, default: lambda { |r,_| r.email }
   property :nickname,       String, length: 120, default: ""
   property :password,       String, length: 64
@@ -17,12 +18,12 @@ class User
   property :oauth_token,    Text
   property :oauth_secret,   Text
   property :extra,          Text
-  property :auto_password,   Boolean, default: false
+  property :auto_password,  Boolean, default: false
   property :auto_nickname,  Boolean, default: false
-  property :verified,       Boolean, default: false
   property :created_at,     DateTime, default: lambda { |*_| DateTime.now }
+  property :is_admin,       Boolean, default: false
 
-  has n, :email_verifications, :constraint => :destroy
+  has n, :notices, :constraint => :destroy
   has n, :accounts, :constraint => :destroy
   # has n, :transactions, :through => :accounts
   # has n, :deposits,     :through => :accounts
@@ -33,12 +34,13 @@ class User
   validates_presence_of :name, :provider, :uid
 
   before :valid? do |_|
-    self.nickname = self.name.to_s.sanitize if self.nickname.empty?
+    if nickname.empty?
+      nickname = name.to_s.sanitize
+    end
 
-    # unless self.verified
-    #   validate_email!(self.email,           "primary")
-    #   validate_email!(self.gravatar_email,  "gravatar")
-    # end
+    unless email_verified?
+      validate_email!
+    end
 
     true
   end
@@ -57,39 +59,44 @@ class User
     ""
   end
 
-  def profile_url
-    "/profiles/#{self.nickname}"
-  end
-
-  def verified?(address)
-    if self.verified
-      return true
-    elsif address == self.email
-      unless ev = self.email_verifications.first({ primary: true })
-        return false
-      end
-    else
-      unless ev = self.email_verifications.first({ address: address, primary: false })
-        return false
-      end
+  def on_notice_accepted(notice)
+    case notice.type
+    when 'email'
+      update({ email_verified: true })
+    when 'password'
+      # nothing to do really
     end
-
-    ev.verified?
   end
 
-  def verify_address(address)
-    unless ev = self.email_verifications.first_or_create({ address: address, primary: address == self.email })
-      errors.add :email_verifications, ev.collect_errors
+  def on_notice_expired(notice)
+    notice.destroy
+  end
+
+  # Email verification:
+  #
+  # the deal here is that a Notice is sent to the user's registered email
+  # address containing a link which, when visited, will verify the address
+  def email_verified?
+    email_verified
+  end
+
+  # dispatches an email verification notice notice
+  def verify_email
+    unless n = notices.first_or_create({ data: self.email, type: 'email' })
+      errors.add :notices, n.collect_errors
       throw :halt
     end
 
-    ev
+    n
   end
 
-  def awaiting_verification?(address)
-    if ev = self.email_verifications.first({ address: address })
-      return ev.pending?
+  # has a notice been dispatched and is still pending?
+  def awaiting_email_verification?
+    if email_verified?
+      return false
     end
+
+    return !notices.all({ type: 'email', status: :pending }).empty?
   end
 
   def self.encrypt(pw)
@@ -109,14 +116,15 @@ class User
     @mx.size > 0 ? true : false
   end
 
-  def validate_email!(email, type)
+  # Validates whether the given string is a valid and genuine email address
+  def validate_email!
     unless email.nil? || email.empty?
       unless email.is_email?
-        errors.add(:email, "Your #{type} email address does not appear to be valid.")
+        errors.add(:email, "Your email address does not appear to be valid.")
         throw :halt
       else
         unless validate_email_domain(email)
-          errors.add(:email, "Your #{type} email domain name appears to be incorrect.")
+          errors.add(:email, "Your email domain name appears to be incorrect.")
           throw :halt
         end
       end

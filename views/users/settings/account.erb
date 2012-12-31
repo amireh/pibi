@@ -1,4 +1,4 @@
-<% content_for :title do %> Account Settings | <%= current_user.nickname %> | <%= AppName %> <% end %>
+<% content_for :title do %> Account Settings | <%= current_user.name %> | <%= AppName %> <% end %>
 
 <% content_for :js do %>
 <script>
@@ -21,10 +21,14 @@
       </li>
       <li>
         <input type="text" name="email" class="very_fat" value="<%= current_user.email %>" />
-        <% unless current_user.verified? current_user.email %>
-          <a href="/settings/verify/primary" class="inline button thin bad">Verify</a>
+        <% if current_user.email_verified? %>
+          <span class="good">Verified</span>
         <% else %>
-          <span>Verified</span>
+          <% if current_user.awaiting_email_verification? %>
+            <span>Verification pending. <a href="/settings/verify/email">Send again</a>.
+          <% else %>
+            <a href="/settings/verify/email" class="inline button thin bad">Verify</a>
+          <% end %>
         <% end %>
         <br />
       </li>

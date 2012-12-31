@@ -1,0 +1,21 @@
+<% content_for :title do %> 500 - Internal Server Error | <%= AppName %> <% end %>
+
+<h1>500 - Internal error</h1>
+
+
+<p>Looks like things got a little hairy while processing your request, because the server says:</p>
+
+<code class="negative"><strong><%= response.body.first %></strong></code>
+
+<p>It is highly likely that you have come across a bug in the application,
+  and to consolidate the damages, our team would like to humbly present
+  to you our most esteemed snowman: <br />
+  <span class="snowman"></span>
+</p>
+
+<p>
+  We would also kindly ask you to take a minute to <a href="<%= AppIssueURL %>">report this issue</a>
+  to our technical team so we can improve the application and fix this problem.<br /><br />
+
+  Thanks!
+</p>

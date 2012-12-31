@@ -17,11 +17,12 @@ end
 
 public
 
-# before do
-#   if current_user && current_user.auto_nickname && flash.empty?
-#     flash[:notice] = "You have an auto-generated nickname, please go to your profile page and update it."
-#   end
-# end
+before do
+  if current_user && !current_user.email_verified? && flash.empty?
+    flash[:warning] = 'Your email address is not yet verified. ' <<
+                      'Please visit <a href="/settings/account">this page</a> for more info.'
+  end
+end
 
 get '/users/new' do
   current_page("signup")
@@ -77,129 +78,6 @@ post '/users' do
 end
 
 
-get '/settings' do
-  redirect "/settings/account"
-end
-
-[ "account", "editing", "notifications" ].each { |domain|
-  get "/settings/#{domain}", auth: :user do
-    current_page("manage")
-
-    erb :"/users/settings/#{domain}"
-  end
-}
-
-post '/settings/password', auth: :user do
-  pw = Digest::SHA1.hexdigest(params[:password][:current])
-
-  if current_user.password == pw then
-    pw_new = Digest::SHA1.hexdigest(params[:password][:new])
-    pw_confirm = Digest::SHA1.hexdigest(params[:password][:confirmation])
-
-    if params[:password][:new].empty? then
-      flash[:error] = "You've entered an empty password!"
-    elsif pw_new == pw_confirm then
-      current_user.password = pw_new
-      if current_user.save then
-        flash[:notice] = "Your password has been changed."
-      else
-        flash[:error] = "Something bad happened while updating your password!"
-      end
-    else
-      flash[:error] = "The passwords you've entered do not match!"
-    end
-  else
-    flash[:error] = "The current password you've entered isn't correct!"
-  end
-
-  redirect back
-end
-
-post '/settings/nickname', auth: :user do
-  # see if the nickname is available
-  nickname = params[:nickname]
-  if nickname.empty? then
-    flash[:error] = "A nickname can't be empty!"
-    return redirect back
-  end
-
-  u = User.first(nickname: nickname)
-  # is it taken?
-  if u && u.email != current_user.email then
-    flash[:error] = "That nickname isn't available. Please choose another one."
-    return redirect back
-  end
-
-  current_user.nickname = nickname
-  current_user.auto_nickname = false
-
-  if current_user.save then
-    flash[:notice] = "Your nickname has been changed."
-  else
-    flash[:error] = "Something bad happened while updating your nickname."
-  end
-
-  redirect back
-end
-
-post "/settings/profile", auth: :user do
-
-  { :name => "Your name can not be empty",
-    :email => "You must specify a primary email address.",
-    :gravatar_email => "Your gravatar email address can not be empty."
-  }.each_pair { |k, err|
-    if !params[k] || params[k].empty?
-      flash[:error] = err
-      return redirect back
-    else
-      current_user.send("#{k}=".to_sym, params[k])
-    end
-  }
-
-  if current_user.save then
-    flash[:notice] = "Your profile has been updated."
-  else
-    flash[:error] = current_user.collect_errors
-  end
-
-  redirect back
-end
-
-get '/settings/verify/:type', auth: :user do |type|
-  dispatch = lambda { |addr, tmpl|
-    Pony.mail :to => addr,
-              :from => "noreply@#{AppURL}",
-              :subject => "[#{AppName}] Please verify your email '#{addr}'",
-              :html_body => erb(tmpl.to_sym, layout: "layouts/mail".to_sym)
-  }
-
-  redispatch = params[:redispatch]
-
-  @type = type.to_sym
-
-  case type
-  when "primary"
-    @address = current_user.email
-    if !redispatch && current_user.verified?(@address)
-      return erb :"/emails/already_verified"
-    elsif !redispatch && current_user.awaiting_verification?(@address)
-      return erb :"/emails/already_dispatched"
-    else
-      if redispatch
-        current_user.email_verifications.first({ address: @address }).destroy
-      end
-
-      unless @ev = current_user.verify_address(@address)
-        halt 500, "Unable to generate a verification link: #{current_user.collect_errors}"
-      end
-
-      dispatch.call(current_user.email, "emails/verification")
-    end
-  end
-
-  erb :"/emails/dispatched"
-end
-
 get '/users/nickname' do
   restricted!
   nn = params[:nickname]
@@ -218,19 +96,33 @@ post '/users/nickname', auth: :user do
   name_available?(params[:nickname]).to_json
 end
 
-get '/users/:id/verify/:token', auth: :user do |uid, token|
-  unless @ev = @scope.email_verifications.first({ salt: token })
+get '/users/:id/accept/:token', auth: :user do |uid, token|
+  unless @n = @scope.notices.first({ salt: token })
     halt 400, "No such verification link."
   end
 
-  if @ev.expired?
+  case @n.status
+  when :expired
     return erb :"emails/expired"
-  elsif @ev.verified?
-    flash[:error] = "Your email address '#{@ev.address}' is already verified."
-    return redirect "/settings/profile"
+
+  when :accepted
+    case @n.type
+    when 'email'
+      flash[:error] = "This verification notice seems to have been accepted earlier."
+    end
+
+    return redirect "/settings/account"
+
   else
-    @ev.verify!
-    flash[:notice] = "Your email address '#{@ev.address}' has been verified."
-    return redirect "/settings/profile"
+    @n.accept!
+
+    case @n.type
+    when 'email'
+      flash[:notice] = "Your email address '#{@n.user.email}' has been verified."
+      return redirect "/settings/account"
+    when 'password'
+      return redirect "/settings/account"
+    end
   end
+
 end

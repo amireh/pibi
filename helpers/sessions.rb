@@ -17,7 +17,7 @@ module SessionsHelper
 
   set(:auth) do |*roles|
     condition do
-      if roles.include? :user
+      if roles.include? :user || roles.include?(:admin)
         restricted!
         @scope = current_user
         @account ||= @user.accounts.first
@@ -26,6 +26,10 @@ module SessionsHelper
           unless @account = current_user.accounts.get(params[:account])
             halt 500, "No such account."
           end
+        end
+
+        if roles.include?(:admin) && !@scope.is_admin
+          halt 403, "Admin privileges are needed to visit this section."
         end
       end
     end

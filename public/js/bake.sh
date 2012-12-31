@@ -2,7 +2,7 @@
 
 UGLIFY_CMD="uglifyjs -nc"
 
-SCRIPTS=('jqModal' 'shortcut' 'dynamism' 'pagehub' 'pagehub_ui')
+SCRIPTS=('jqModal' 'shortcut' 'dynamism' 'pibi' 'pibi_ui')
 DEST="ugly"
 COMBINED="${DEST}/all.js"
 

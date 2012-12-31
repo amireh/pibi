@@ -13,7 +13,11 @@
       <span class="account_balance">Balance:
         <span class="<%= current_account.balance > 0 ? 'positive' : 'negative' %>"><%= current_account.balance.to_f %></span> <%= current_account.currency %>
       </span>
-      <span class="account_name"><%= current_user.name %></span>
+      <span class="account_name"><%= current_user.name %>
+        <% if current_user.is_admin %>
+          <a href="/admin">Admin</a>
+        <% end %>
+      </span>
       <% yield_content :subheader %>
       <%= partial "layouts/_flashes" %>
     </div>

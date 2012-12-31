@@ -281,8 +281,12 @@ header .account_balance {
   margin-top: 17px;
   margin-bottom: 18px;
 }
-header .account_balance .positive { color: #98BF0D; }
-header .account_balance .negative, a.bad:not(:hover) { color: #D54421; }
+header .account_balance .positive,
+.good,
+a.good:not(:hover) { color: #98BF0D; }
+header .account_balance .negative,
+.bad,
+a.bad:not(:hover) { color: #D54421; }
 header .account_name { position: absolute; right: 0; top: 0; color: white; }
 /* ----
  * Forms & Input
@@ -758,7 +762,7 @@ a.bad { font-size: 0.75em; }
 .coming_soon_sadface { font-size: 0;}
 .coming_soon_sadface:after { content: '\2639'; font-size: 196px;}
 
-.snowman { font-size: 0; margin-top: 10px; display: block;}
+.snowman { font-size: 0; margin-top: 40px; display: block; margin-bottom: -30px; }
 .snowman:after { content: '\2603'; font-size: 256px; }
 
 .guest img.logo {
@@ -821,3 +825,5 @@ nav .tri {
   border-width: 20px 20px 0 0;
   border-color: rgba(0,0,0,0.35) transparent transparent transparent;
 }
+
+code.negative { margin: 20px 0px; display: block; }

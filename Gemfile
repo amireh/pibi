@@ -20,6 +20,7 @@ gem 'addressable'
 gem 'uuid'
 gem 'gravatarify', ">= 3.1.0"
 gem 'timetastic', '>= 0.1.2', path: '~/Workspace/Projects/timetastic'
+gem "pony"
 
 group :development do
   gem 'thin'
@@ -28,10 +29,9 @@ group :development do
   gem 'rake'
 end
 
+gem 'omniauth'
+gem 'omniauth-facebook'
+gem 'omniauth-github'
+gem 'omniauth-twitter', '0.0.9'
 group :production do
-  gem "pony"
-  gem 'omniauth'
-  gem 'omniauth-facebook'
-  gem 'omniauth-github'
-  gem 'omniauth-twitter', '0.0.9'
 end
