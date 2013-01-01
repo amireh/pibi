@@ -149,7 +149,7 @@ end
 
     @transies = current_account.latest_transactions({ order: [ :occured_on.desc ] })#(Time.now)
 
-    @date = Time.now
+    @date = Time.new(Time.now.year,Time.now.month, 3)
 
     # partition into months
     @daily_transies = {}

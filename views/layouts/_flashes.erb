@@ -2,23 +2,26 @@
   <% content_for :deferred_js do %>
     <script>
       $(function() {
-        $("#flashes button").click(function() { $(this).parent().hide(); });
+        $(".flashes button").click(function() { $(this).parent().hide(); });
       });
     </script>
   <% end %>
 
-  <div id="flashes" <%= "class=\"#{flash.first[0]}\"" %>>
-    <% if flash.size > 1 then %>
-      <ol>
-        <% flash.each_pair do |ctx,msg| %>
-          <li class="flash <%= ctx %>"><%= msg %></li>
-        <% end %>
-      </ol>
-    <% else %>
-      <% flash.each_pair do |ctx,msg| %>
-        <span class="flash <%= ctx %>"><%= msg %></span>
+  <% flash.each_pair do |ctx, messages| %>
+
+    <div class="flashes <%= ctx %>">
+      <% if messages.is_a?(Array) && messages.size > 1 %>
+        <ol>
+          <% messages.each do |m| %>
+            <li class="flash <%= ctx %>"><%= m %></li>
+          <% end %>
+        </ol>
+      <% else %>
+        <% messages = messages.first if messages.is_a?(Array) %>
+        <span class="flash <%= ctx %>"><%= messages %></span>
       <% end %>
-    <% end %>
-    <button>&times;</button>
-  </div>
+      <button>&times;</button>
+    </div>
+
+  <% end %>
 <% end %>

@@ -18,9 +18,41 @@ end
 public
 
 before do
-  if current_user && !current_user.email_verified? && flash.empty?
-    flash[:warning] = 'Your email address is not yet verified. ' <<
-                      'Please visit <a href="/settings/account">this page</a> for more info.'
+  if current_user
+
+
+    messages = []
+    unless current_user.email_verified?
+
+      # send an email verification email unless one has already been sent
+      unless current_user.awaiting_email_verification?
+        if @n = current_user.verify_email
+          dispatch_email(current_user.email, "emails/verification", "Please verify your email '#{current_user.email}'")
+        end
+      end
+
+      m = 'Your email address is not yet verified. ' <<
+          'Please check your email, or visit <a href="/settings/account">this page</a> for more info.'
+      messages << m
+    end
+    if current_user.auto_password
+      # has an auto password and the code hasn't been sent yet?
+      if current_user.notices.all({ type: 'password', status: :pending }).empty?
+        pw = nickname_salt
+        current_user.update!({ password: User.encrypt(pw) })
+        @n = current_user.notices.create({ type: 'password', data: pw })
+        dispatch_email(current_user.email, "emails/auto_password", "Temporary password")
+      end
+
+      m = 'You have an auto-generated password. ' <<
+          'Please check your email to get the code, and visit <a href="/settings/account">' <<
+          'this page</a> to change it.'
+      messages << m
+    end
+
+    unless messages.empty?
+      flash[:warning] = messages
+    end
   end
 end
 

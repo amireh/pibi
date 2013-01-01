@@ -13,9 +13,18 @@
       <span class="account_balance">Balance:
         <span class="<%= current_account.balance > 0 ? 'positive' : 'negative' %>"><%= current_account.balance.to_f %></span> <%= current_account.currency %>
       </span>
-      <span class="account_name"><%= current_user.name %>
+      <span class="account_name">
         <% if current_user.is_admin %>
           <a href="/admin">Admin</a>
+        <% end %>
+        <%= current_user.nickname %>
+        <%= gravatar_tag current_user, :icon %>
+        <% if current_user.notice_count > 0 %>
+          <a href="/settings/notifications">
+            <span class="notifications" title="You have <%= current_user.notice_count %> pending notifications">
+              <%= current_user.notice_count %>
+            </span>
+          </a>
         <% end %>
       </span>
       <% yield_content :subheader %>

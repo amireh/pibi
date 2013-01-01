@@ -22,6 +22,7 @@ post '/settings/password', auth: :user do
       flash[:error] = "You've entered an empty password!"
     elsif pw_new == pw_confirm then
       current_user.password = pw_new
+      current_user.auto_password = false
       if current_user.save then
         flash[:notice] = "Your password has been changed."
       else
@@ -88,12 +89,6 @@ post "/settings/profile", auth: :user do
 end
 
 get '/settings/verify/:type', auth: :user do |type|
-  dispatcher = lambda { |addr, tmpl|
-    Pony.mail :to => addr,
-              :from => "noreply@#{AppURL}",
-              :subject => "[#{AppName}] Please verify your email '#{addr}'",
-              :html_body => erb(tmpl.to_sym, layout: "layouts/mail".to_sym)
-  }
 
   # was a notice already issued and another is requested?
   redispatch = params[:redispatch]
@@ -125,7 +120,7 @@ get '/settings/verify/:type', auth: :user do |type|
     error_msg = ''
 
     begin
-      dispatched = dispatcher.call(current_user.email, "emails/verification")
+      dispatched = dispatch_email(current_user.email, "emails/verification", "Please verify your email '#{addr}'")
     rescue Exception => e
       dispatched = false
       error_msg = e.message

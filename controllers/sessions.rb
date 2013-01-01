@@ -21,13 +21,11 @@ post '/sessions' do
   end
 
   session[:id] = u.id
-  session[:account] = u.accounts.first.id
   redirect '/'
 end
 
 delete '/sessions' do
   session[:id] = nil
-  session[:account] = nil
 
   flash[:notice] = "Successfully logged out."
   redirect '/'
@@ -46,7 +44,8 @@ end
       uparams[:nickname] = auth.info.nickname if auth.info.nickname
       uparams[:oauth_token] = auth.credentials.token if auth.credentials.token
       uparams[:oauth_secret] = auth.credentials.secret if auth.credentials.secret
-
+      uparams[:password] = nickname_salt
+      uparams[:auto_password] = true
       if auth.extra.raw_info then
         uparams[:extra] = auth.extra.raw_info.to_json.to_s
       end
@@ -93,5 +92,5 @@ end
 
 get '/auth/failure' do
   flash[:error] = params[:message]
-  redirect '/'
+  redirect '/sessions/new'
 end

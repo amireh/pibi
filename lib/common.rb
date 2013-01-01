@@ -99,6 +99,13 @@ module Sinatra
       end
 
     end
+
+    def dispatch_email(addr, tmpl, title)
+      Pony.mail :to => addr,
+                :from => "noreply@#{AppURL}",
+                :subject => "[#{AppName}] #{title}",
+                :html_body => erb(tmpl.to_sym, layout: "layouts/mail".to_sym)
+    end
   end
 
   module Templates

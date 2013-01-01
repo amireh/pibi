@@ -223,7 +223,7 @@ get '/transactions/:year/:month', auth: :user do |year, month|
 
   @transies = current_account.monthly_transactions(Time.new(year, month, 2))
 
-  @date = Time.new(year, month, Time.now.day)
+  @date = Time.new(year, month, 2)
 
   # partition into days
   @daily_transies = {}

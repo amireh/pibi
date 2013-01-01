@@ -45,11 +45,11 @@ module SessionsHelper
   def current_account
     return @account if @account
 
-    unless session[:account]
-      session[:account] = current_user.accounts.first.id
-    end
+    # unless session[:account]
+    #   session[:account] = current_user.accounts.first.id
+    # end
 
-    @account = current_user.accounts.first({ id: session[:account] })
+    @account = current_user.accounts.first
   end
 
 

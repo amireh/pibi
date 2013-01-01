@@ -13,7 +13,7 @@ class User
   property :email_verified, Boolean, default: false
   property :gravatar_email, String, length: 255, default: lambda { |r,_| r.email }
   property :nickname,       String, length: 120, default: ""
-  property :password,       String, length: 64
+  property :password,       String, length: 64, required: true
   property :settings,       Text, default: "{}"
   property :oauth_token,    Text
   property :oauth_secret,   Text
@@ -34,13 +34,14 @@ class User
   validates_presence_of :name, :provider, :uid
 
   before :valid? do |_|
-    if nickname.empty?
-      nickname = name.to_s.sanitize
+    if self.nickname.empty?
+      self.nickname = name.to_s.sanitize
     end
 
     unless email_verified?
       validate_email!
     end
+
 
     true
   end
@@ -49,6 +50,10 @@ class User
     self.accounts.create
     self.payment_methods.create({ name: "Cash" })
     self.payment_methods.create({ name: "Cheque" })
+  end
+
+  def notice_count
+    notices.all({status: :pending }).count
   end
 
   def categories
