@@ -175,9 +175,9 @@ get '/transactions/recurrings', auth: :user do
   current_page("manage")
 
   @transies = current_account.recurrings.all
-  @drilled_transies =   @transies.all({ frequency: :daily })
+  @daily_transies   = @transies.all({ frequency: :daily })
   @monthly_transies = @transies.all({ frequency: :monthly })
-  @yearly_transies =  @transies.all({ frequency: :yearly })
+  @yearly_transies  =  @transies.all({ frequency: :yearly })
 
   erb :"/transactions/recurrings/index"
 end
