@@ -1,18 +1,15 @@
-<% content_for :js do %>
-<% if settings.development? %>
-  <script src="/js/ugly/jqModal.js"></script>
-<% end %>
+<% content_for :deferred_js do %>
 
 <script>
   $(function() {
 
-    pagehub.confirm = function(msg, heading, callback) {
+    pibi.confirm = function(msg, heading, callback) {
       var accept_dialogue = function() {
         if($(this).attr("id") == 'confirm_accepted') {
           if (typeof callback == "string") {
             window.location.href = callback;
           } else {
-            try { 
+            try {
               callback();
             } catch (script_error) {
               ui.report_error(script_error);
@@ -27,7 +24,7 @@
 
       $('#confirm')
         .jqmShow()
-        .find('h1')
+        .find('h2')
         .html(heading || "Confirmation")
         .end()
         .find('p.jqmConfirmMsg')
@@ -48,20 +45,39 @@
     }
 
     $('#confirm').jqm({overlay: 88, modal: true, trigger: false});
-    
-    $('a.confirm').click(function(e) { 
+
+    $('a.confirm,a.bad').click(function(e) {
       var a = $(this);
       try {
         var msg = a.attr("data-confirm") || a.next("[data-confirm]").html();
         var heading = a.attr("data-confirm-heading") || "Confirmation";
         var accept_label = a.attr("data-confirm-accept") || "Yes";
+
+        if (!msg || msg.length == "") {
+          var confirmable_parent = a.parents("[data-confirmable]:first");
+          console.log(confirmable_parent[0])
+          obj = confirmable_parent;
+          if (confirmable_parent.length > 0) {
+            var id = confirmable_parent.attr("data-confirmable");
+                id += '_' + a.html().toLowerCase() + '_';
+                id += 'confirmation';
+
+            confirmable = $('#' + id);
+
+            heading = confirmable.find("> h1:first").html();
+            msg     = confirmable.find("> p:first").html();
+            if (confirmable.find("span[data-label]").length > 0) {
+              accept_label = confirmable.find("span[data-label]:first").html()
+            }
+          }
+        }
         $("div#confirm #confirm_accepted").attr("value", accept_label);
-        
+
         if (!a.attr("data-confirm-cb")) {
-          pagehub.confirm(msg, heading, a.attr("href"));
+          pibi.confirm(msg, heading, a.attr("href"));
         } else {
-          
-          pagehub.confirm(msg, heading, function() {
+
+          pibi.confirm(msg, heading, function() {
             var method = dynamism.utility.lookup_method(a.attr("data-confirm-cb"));
             if (method) {
               return method(a);
@@ -89,15 +105,15 @@
 <div class="jqmConfirm" id="confirm">
   <div id="ex3b" class="jqmConfirmWindow">
     <div class="jqmConfirmTitle">
-      <h1>Confirm your action</h1>
+      <h2>Confirm your action</h2>
     </div>
-    
+
     <div class="jqmConfirmContent">
     <p class="jqmConfirmMsg"></p>
     </div>
-    
+
     <input type="submit" id="confirm_rejected" class="bad" value="Cancel" />
     <input type="submit" id="confirm_accepted" class="good" value="Yes" />
-    
+
   </div>
 </div>

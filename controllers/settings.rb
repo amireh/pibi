@@ -12,8 +12,9 @@ end
 }
 
 post '/settings/password', auth: :user do
-  pw = User.encrypt(params[:password][:current])
+  back_url = back
 
+  pw = User.encrypt(params[:password][:current])
   if current_user.password == pw then
     pw_new     = User.encrypt(params[:password][:new])
     pw_confirm = User.encrypt(params[:password][:confirmation])
@@ -24,7 +25,12 @@ post '/settings/password', auth: :user do
       current_user.password = pw_new
       current_user.auto_password = false
       if current_user.save then
-        current_user.pending_notices({ type: 'password' }).each { |n| n.accept! }
+        notices = current_user.pending_notices({ type: 'password' })
+        unless notices.empty?
+          back_url = "/"
+          notices.each { |n| n.accept! }
+        end
+
         flash[:notice] = "Your password has been changed."
       else
         flash[:error] = "Something bad happened while updating your password!"
@@ -36,7 +42,7 @@ post '/settings/password', auth: :user do
     flash[:error] = "The current password you've entered isn't correct!"
   end
 
-  redirect back
+  redirect back_url
 end
 
 post '/settings/nickname', auth: :user do

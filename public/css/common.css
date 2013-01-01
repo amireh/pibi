@@ -54,3 +54,117 @@ nav ol { list-style-type: none; padding: 0; }
 nav h3 {
   padding: 10px 10px 10px 20px; position: relative; left: -20px; width: 240px;
 }
+
+
+  /* jqModal base Styling courtesy of;
+    Brice Burgess <bhb@iceburg.net> */
+
+  /* The Window's CSS z-index value is respected (takes priority). If none is supplied,
+    the Window's z-index value will be set to 3000 by default (via jqModal.js). */
+
+  .jqmWindow {
+      display: none;
+
+      position: fixed;
+      top: 17%;
+      left: 50%;
+
+      margin-left: -300px;
+      width: 600px;
+      /*
+      background-color: #EEE;
+      color: #333;
+      border: 1px solid black;
+      padding: 12px;*/
+  }
+
+  .jqmOverlay { background-color: rgba(0,0,0,0.5); }
+
+  div.jqmConfirm { /* contains + positions the alert window */
+    display: none;
+
+    position: fixed;
+    top: 17%;
+    width: 100%;
+    left: 0;
+  }
+
+  div.jqmConfirmWindow {
+    height: auto;
+    width: auto;
+    margin: auto;
+    max-width: 420px;
+    padding: 0;
+    background: white;
+    border: 1px solid #aaa;
+    box-shadow: 0 0 1px 5px #BBB;
+    border-radius: 3px;
+    position: relative;
+    padding-bottom: 50px;
+  }
+
+  .jqmConfirmTitle{
+    margin: 0;
+    height: auto;
+    color: black;
+    background: rgba(0, 0, 0, 0.1);
+    padding: 5px;
+    text-shadow: 0 1px 0 white;
+    font-weight: normal;
+    border-bottom: 1px solid #bbb;
+    text-transform: capitalize;
+  }
+  .jqmConfirmTitle h2 {
+    margin:5px 2px;
+    padding: 5px 6px;
+    /*font-size:18px;*/
+    text-transform:capitalize;
+    letter-spacing: 1px;
+    font-weight: normal;
+  }
+
+  div.jqmConfirmContent{
+    color: black;
+    font-size: 14px;
+    padding: 0 15px;
+    margin: 15px 0;
+    line-height: 18px;
+  }
+
+  div.jqmConfirm div.jqmActions {
+    display: block;
+  }
+  div.jqmConfirm input#confirm_accepted {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+  }
+  div.jqmConfirm input#confirm_rejected {
+    position: absolute;
+    bottom: 15px;
+    left: 15px;
+  }
+
+/*  .clearfix:after {
+      content: ".";
+      display: block;
+      height: 0;
+      clear: both;
+      visibility: hidden;
+  }
+
+  .clearfix {display: inline-block;}
+
+  * html .clearfix {height: 1%;}
+  .clearfix {display: block;}
+*/
+.modal {
+    display: none;
+}
+.modal.alert {
+  background: white;
+  position: fixed;
+  top: 45%;
+  left: 45%;
+}
+

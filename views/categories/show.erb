@@ -6,21 +6,21 @@
   <% transies[t.occured_on.to_time.strftime("%Y%m%d")] <<  t  %>
 <% end %>
 
-<div class="feed">
-  <% transies.each_pair do |date, txs| %>
-    <h4 class="timeframe"><%= txs.first.occured_on.strftime("%Y - %B, %d") %></h4>
-    <table>
-      <% txs.each do |t| %>
-      <tr class="<%= t.type.to_s.downcase %>">
-        <td><%= t.withdrawal? ? '&minus;' : '&plus;' %></td>
-        <td><%= t.amount.to_f %></td>
-        <td><%= t.currency %></td>
-        <td><%= t.note %> <small><%= t.categories.collect(){ |c| c.name }.join(', ') %></small></td>
-        <td><%= actions_for t %></td>
-      </tr>
-      <% end %>
-    </table>
-  <% end %>
-</div>
+
+<%= partial "/transactions/drilldowns/_feed", locals: {
+  transies: transies,
+  heading: lambda { |d|
+    html = '<h4 class="timeframe">'
+    html << "<a href=\"/transactions/#{d.year}/#{d.month}\">"
+    html << d.strftime("%-m") << '</a>/'
+    html << "<a href=\"/transactions/#{d.year}/#{d.month}/#{d.day}\">"
+    html << d.strftime("%-d") << '</a>/'
+    html << "<a href=\"/transactions/#{d.year}\">"
+    html << d.strftime("%Y") << '</a>'
+    html << '</h4>'
+    html
+  }
+}
+%>
 
 <a class="inline prev button" href="/categories">Back</a>

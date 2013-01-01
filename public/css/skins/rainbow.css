@@ -273,7 +273,7 @@ nav li a.listlike + ol li:last-of-type {
   font-size: 12px;
   font-weight: normal;
   letter-spacing: 1px;
-  margin: 17px 0;
+  margin: 17px 0 0 0;
   position: relative;
 }
 header h1 { display: none; }
@@ -742,7 +742,7 @@ code.license {
 .manage.bills th:first-of-type { border-top-left-radius:  3px; }
 .manage.bills th:last-of-type  { border-top-right-radius: 3px; }
 .manage.bills table { width: 100%; }
-.manage.bills h2 { position: relative;
+.manage.bills h2.timeframe { position: relative;
   background: white;
   padding: 10px 20px;
   width: 960px;
@@ -866,3 +866,5 @@ p.warning:before {
 }
 
 .small { font-size: 0.9em; }
+
+.hidden { display: none; }

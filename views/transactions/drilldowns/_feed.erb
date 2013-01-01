@@ -1,4 +1,4 @@
-<div class="feed">
+<div class="feed" data-confirmable="transactions">
   <% transies.each_pair do |period, txs| %>
     <% next if txs.empty? %>
 
@@ -16,4 +16,11 @@
       <% end %>
     </table>
   <% end %>
+</div>
+
+<div class="hidden" id="transactions_delete_confirmation">
+  <h1>Deleting transaction</h1>
+  <p class="warning">Are you sure you want to remove this transaction?
+    <em class="bad">This action is irreversible</em>
+  </p>
 </div>

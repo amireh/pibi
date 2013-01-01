@@ -1,9 +1,9 @@
 <h1>Recurring Transies</h1>
 <% content_for :layout_classes do %>bills<% end %>
 
-<h2>Yearly <span data-amount><%= current_account.yearly_expenses.to_f.round(2) %> <%= current_account.currency %></span></h2>
+<h2 class="timeframe">Yearly <span data-amount><%= current_account.yearly_expenses.to_f.round(2) %> <%= current_account.currency %></span></h2>
 <% unless @yearly_transies.empty? %>
-  <table>
+  <table data-confirmable="bills">
     <thead>
       <th>Name</th>
       <th>Amount</th>
@@ -33,9 +33,9 @@
 <% else %>
   <p>You have not registered any yearly bills yet.</p>
 <% end %>
-<h2>Monthly <span data-amount><%= current_account.monthly_expenses.to_f.round(2) %> <%= current_account.currency %></span></h2>
+<h2 class="timeframe">Monthly <span data-amount><%= current_account.monthly_expenses.to_f.round(2) %> <%= current_account.currency %></span></h2>
 <% unless @monthly_transies.empty? %>
-  <table>
+  <table data-confirmable="bills">
     <thead>
       <th>Name</th>
       <th>Amount</th>
@@ -71,9 +71,9 @@
 <% else %>
   <p>You have not registered any monthly bills yet.</p>
 <% end %>
-<h2>Daily <span data-amount><%= current_account.daily_expenses.to_f %> <%= current_account.currency %></span></h2>
+<h2 class="timeframe">Daily <span data-amount><%= current_account.daily_expenses.to_f %> <%= current_account.currency %></span></h2>
 <% unless @daily_transies.empty? %>
-  <table>
+  <table data-confirmable="bills">
     <thead>
       <th>Name</th>
       <th>Amount</th>
@@ -99,3 +99,12 @@
   <p>You have not registered any daily bills yet.</p>
 <% end %>
 
+<div class="hidden" id="bills_delete_confirmation">
+  <h1>Removing bill</h1>
+  <p class="warning">Are you sure you want to remove this bill?
+    Note that you can simply de-activate the bill instead, and
+    re-activate it later when needed.
+    <br /><br />
+    <em class="bad">Deleting the bill is irreversible.</em>
+  </p>
+</div>

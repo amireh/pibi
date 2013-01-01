@@ -161,9 +161,9 @@
       halt 400
     end
 
-    unless t.destroy
-      halt 500, t.collect_errors
-    end
+    # unless t.destroy
+    #   halt 500, t.collect_errors
+    # end
 
     flash[:notice] = "Transaction was successfully removed."
 

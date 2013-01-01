@@ -13,6 +13,7 @@
 
   <script type="text/javascript" src="/js/json2.min.js"></script>
   <script type="text/javascript" src="/js/jquery.1.7.1.min.js"></script>
+  <script type="text/javascript" src="/js/modernizr.js"></script>
   <script src="/js/jquery-ui/js/jquery-ui-1.9.2.custom.min.js"></script>
   <script type="text/javascript" src="/js/bootstrap/js/bootstrap.min.js"></script>
 
@@ -26,6 +27,7 @@
     <script src="/js/dynamism.js"></script>
     <script src="/js/pibi.js"></script>
     <script src="/js/pibi_ui.js"></script>
+    <script src="/js/jqModal.js"></script>
   <% else %>
     <script src="/js/ugly/all.js"></script>
   <% end %>
@@ -53,6 +55,7 @@
     </p>
   </aside>
 
+  <%= partial "/shared/_confirmation_dlg" %>
   <%= yield_content :deferred_js %>
 </body>
 
