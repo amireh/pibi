@@ -4,23 +4,30 @@
 
 <section class="blocky">
   <h2 class="blocky_heading">Notifications</h2>
-  <strong>Pending Notifications</strong>
-  <ol>
-  <% current_user.notices({status: :pending}).each do |n| %>
-    <li>
-      <% if n.type == 'email' %>
-        Your email address is not yet verified.
-        Please check your email, or visit <a href="/settings/account">this page</a> for more info.
-      <% elsif n.type == 'password' %>
-        You have an auto-generated password.
-        Please check your email to get the code, and visit <a href="/settings/account">
-        this page</a> to change it.
-      <% end %>
-    </li>
-  <% end %>
-  </ol>
-
+  <% pending_notices = current_user.pending_notices %>
   <% accepted_notices = current_user.notices({ :status.not => :pending }) %>
+
+  <strong>Pending Notifications</strong>
+  <% if pending_notices.empty? && !accepted_notices.empty?  %>
+    <p>You have correctly closed all notifications, good job! Here's a snowman:</p>
+    <p><span class="snowman"></span></p>
+  <% else %>
+    <ol>
+    <% pending_notices.each do |n| %>
+      <li>
+        <% if n.type == 'email' %>
+          Your email address is not yet verified.
+          Please check your email, or visit <a href="/settings/account">this page</a> for more info.
+        <% elsif n.type == 'password' %>
+          You have an auto-generated password.
+          Please check your email to get the code, and visit <a href="/settings/password">
+          this page</a> to change it.
+        <% end %>
+      </li>
+    <% end %>
+    </ol>
+  <% end %>
+
   <% unless accepted_notices.empty? %>
     <strong>Accepted Notifications</strong>
     <ol>
