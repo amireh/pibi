@@ -56,16 +56,16 @@ class Transaction
 
   [ :update, :destroy ].each do |advice|
     before advice do |ctx|
-      puts "[ before #{advice} ] #{self.id} #{self.type} Deducting my current amount (#{to_account_currency.to_f}) from the account balance (#{self.account.balance.to_f} #{self.account.currency})"
+      # puts "[ before #{advice} ] #{self.id} #{self.type} Deducting my current amount (#{to_account_currency.to_f}) from the account balance (#{self.account.balance.to_f} #{self.account.currency})"
       deduct# if persisted?
-      puts "[ before #{advice} ] \t#{self.id} #{self.type} account balance = (#{self.account.balance.to_f} #{self.account.currency})"
+      # puts "[ before #{advice} ] \t#{self.id} #{self.type} account balance = (#{self.account.balance.to_f} #{self.account.currency})"
       true
     end
   end
 
   [ :update, :create ].each do |advice|
     after advice do
-      puts "[ after #{advice} ] #{self.id} #{self.type} Adding my current amount (#{to_account_currency.to_f}) to the account balance (#{self.account.balance.to_f} #{self.account.currency})"
+      # puts "[ after #{advice} ] #{self.id} #{self.type} Adding my current amount (#{to_account_currency.to_f}) to the account balance (#{self.account.balance.to_f} #{self.account.currency})"
 
       # if account.dirty? || dirty?
       #   raise RuntimeError.new "Account is already dirty before adding: #{account.dirty_attributes}, #{dirty_attributes}"
@@ -73,7 +73,7 @@ class Transaction
 
       add_to_account# if persisted?
 
-      puts "[ after #{advice} ] \t#{self.id} #{self.type} account balance = (#{self.account.balance.to_f} #{self.account.currency})"
+      # puts "[ after #{advice} ] \t#{self.id} #{self.type} account balance = (#{self.account.balance.to_f} #{self.account.currency})"
 
       # if account.dirty? || dirty?
       #   raise RuntimeError.new "Account is still dirty after adding: #{account.dirty_attributes}, #{dirty_attributes}"
@@ -112,7 +112,7 @@ class Transaction
     mc = Currency[self.currency]
 
     # ac.from(mc, self.amount)
-    amt = (Transaction.get(self.id) || self).amount
+    amt = (Transaction.get(self.id) || self).amount # WTF? || self?
     ac.from(mc, amt)
   end
 end

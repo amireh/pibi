@@ -2,8 +2,6 @@ describe "Recurring Transactions" do
 
   before do
     User.destroy
-    # Transaction.destroy
-    # Account.destroy
 
     @user = User.create({
       name: "Ahmad Amireh",
@@ -80,13 +78,14 @@ describe "Recurring Transactions" do
     @account = @account.refresh
     @account.balance.to_f.should == -10.0
 
-    t = DateTime.now
-    rt.applicable?(DateTime.new(t.year,t.month,t.day+1)).should be_true
-    rt.applicable?(DateTime.new(t.year,t.month+1,t.day)).should be_true unless t.month == 12
-    rt.applicable?(DateTime.new(t.year+1,t.month,t.day)).should be_true
-    rt.applicable?(DateTime.new(t.year,t.month,t.day-1)).should be_false
-    rt.applicable?(DateTime.new(t.year,t.month-1,t.day)).should be_false
-    rt.applicable?(DateTime.new(t.year-1,t.month,t.day)).should be_false
+    t = Time.now
+
+    rt.applicable?(1.day.ahead).should be_true
+    rt.applicable?(1.month.ahead).should be_true
+    rt.applicable?(1.year.ahead).should be_true
+    rt.applicable?(1.day.ago).should be_false
+    rt.applicable?(1.month.ago).should be_false
+    rt.applicable?(1.year.ago).should be_false
   end
 
   it "should commit a monthly RT only once a month" do
@@ -104,13 +103,15 @@ describe "Recurring Transactions" do
     @account = @account.refresh
     @account.balance.to_f.should == -10.0
 
-    t = DateTime.now
-    rt.applicable?(DateTime.new(t.year,t.month,t.day+1)).should be_false
-    rt.applicable?(DateTime.new(t.year,t.month+1,t.day)).should be_true unless t.month == 12
-    rt.applicable?(DateTime.new(t.year+1,t.month,t.day)).should be_true
-    rt.applicable?(DateTime.new(t.year,t.month,t.day-1)).should be_false
-    rt.applicable?(DateTime.new(t.year,t.month-1,t.day)).should be_false
-    rt.applicable?(DateTime.new(t.year-1,t.month,t.day)).should be_false
+    rt = rt.refresh
+
+    rt.applicable?(1.day.ahead).should be_false
+    t = Time.new(1.month.ahead.year, 1.month.ahead.month, rt.recurs_on.day)
+    rt.applicable?(t).should be_true
+    rt.applicable?(1.year.ahead).should be_true
+    rt.applicable?(1.day.ago).should be_false
+    rt.applicable?(1.month.ago).should be_false
+    rt.applicable?(1.year.ago).should be_false
   end
 
   it "should commit a yearly RT only once a year" do
@@ -128,15 +129,12 @@ describe "Recurring Transactions" do
     @account = @account.refresh
     @account.balance.to_f.should == -10.0
 
-    t = DateTime.now
-    rt.applicable?(DateTime.new(t.year,t.month,t.day+1)).should be_false
-    unless t.month == 12
-      rt.applicable?(DateTime.new(t.year,t.month+1,t.day)).should be_false
-    end
-    rt.applicable?(DateTime.new(t.year+1,t.month,t.day)).should be_true
-    rt.applicable?(DateTime.new(t.year,t.month,t.day-1)).should be_false
-    rt.applicable?(DateTime.new(t.year,t.month-1,t.day)).should be_false
-    rt.applicable?(DateTime.new(t.year-1,t.month,t.day)).should be_false
+    rt.applicable?(1.day.ahead).should    be_false
+    rt.applicable?(1.month.ahead).should  be_false
+    rt.applicable?(1.year.ahead).should   be_true
+    rt.applicable?(1.day.ago).should      be_false
+    rt.applicable?(1.month.ago).should    be_false
+    rt.applicable?(1.year.ago).should     be_false
   end
 
 end

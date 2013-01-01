@@ -40,22 +40,18 @@ class Recurring < Transaction
   end
 
   def applicable?(now = nil)
-    now ||= DateTime.now
+    now ||= Time.now
 
     case frequency
     when :daily
       # recurs_on is ignored in this frequency
       return !last_commit ||              # never committed before
-        last_commit.year  < now.year  || # committed last year
-        last_commit.month < now.month || # or last month
-        last_commit.day   < now.day      # or yesterday, maybe
+        Timetastic.days_between(last_commit.to_time, now) >= 1
     when :monthly
       # is it the day of the month the tx should be committed on?
       if recurs_on.day == now.day
         # committed already for this month?
-        return !last_commit ||
-          last_commit.year  < now.year ||
-          last_commit.month < now.month
+        return !last_commit || now >= 1.month.ahead(last_commit.to_time)
       end
     when :yearly
       # is it the day and month of the year the tx should be committed on?
