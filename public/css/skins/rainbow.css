@@ -335,6 +335,8 @@ a.button {
   border-color: rgba(0, 0, 0, 0.10) rgba(0, 0, 0, 0.10) rgba(0, 0, 0, 0.3);
   color: #222;
 
+  outline: none;
+
   text-transform: capitalize;
   text-decoration: none;
   font-weight: bold;
@@ -373,6 +375,11 @@ button:focus:not(:disabled),
 input[type=submit]:focus:not(:disabled) {
   background: #01B0EC;
   color: #fff;
+}
+
+button::-moz-focus-inner,
+input[type=submit]::-moz-focus-inner {
+  border: 0;
 }
 
 input[type=text],
