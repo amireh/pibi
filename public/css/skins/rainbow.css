@@ -801,7 +801,8 @@ a.bad { font-size: 0.75em; }
 .guest.sessions img { vertical-align: middle; }
 .guest nav { height: 106px;}
 .guest .stuff { margin-top: 20px;}
-.guest #content p, .guest #content li { font-size: 13px;}
+.guest.welcome #content p,
+.guest.welcome #content li { font-size: 13px;}
 
 .guest.sessions .browser_notice {
   margin-top: 10px;
@@ -863,3 +864,5 @@ p.warning:before {
   top: 5px;
   color: orange;
 }
+
+.small { font-size: 0.9em; }

@@ -1,6 +1,6 @@
 source :rubygems
 
-gem 'sinatra'
+gem 'sinatra', '=1.3.3'
 gem 'sinatra-contrib', :require => 'sinatra/content_for'
 gem 'sinatra-flash', :require => 'sinatra/flash'
 gem 'mysql'

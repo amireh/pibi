@@ -18,9 +18,14 @@ end
 public
 
 after do
-  if current_user && current_user.auto_password && request.path != '/settings/password'
-    # return erb :"/users/settings/password"
-    return redirect '/settings/password'
+  if current_user
+    if response.status == 200
+      if current_user.auto_password && request.path != '/settings/password'
+        # return erb :"/users/settings/password"
+        flash.keep
+        return redirect '/settings/password'
+      end
+    end
   end
 end
 
@@ -35,7 +40,7 @@ before do
       # send an email verification email unless one has already been sent
       unless current_user.awaiting_email_verification?
         if @n = current_user.verify_email
-          dispatch_email(current_user.email, "emails/verification", "Please verify your email '#{current_user.email}'")
+          dispatch_email_verification(current_user)
         end
       end
 
@@ -53,7 +58,7 @@ before do
       # has an auto password and the code hasn't been sent yet?
       if current_user.pending_notices({ type: 'password' }).empty?
         @n = current_user.generate_temporary_password
-        dispatch_email(current_user.email, "emails/auto_password", "Temporary password")
+        dispatch_temp_password(current_user)
       end
     end
 

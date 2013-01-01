@@ -25,7 +25,7 @@
           <span class="good">Verified</span>
         <% else %>
           <% if current_user.awaiting_email_verification? %>
-            <span>Verification pending. <a href="/settings/verify/email">Send again</a>.
+            <span>Verification pending. <a href="/settings/verify/email?redispatch=true">Send again</a>.
           <% else %>
             <a href="/settings/verify/email" class="inline button thin bad">Verify</a>
           <% end %>

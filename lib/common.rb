@@ -97,14 +97,34 @@ module Sinatra
         route 'PUT' , path,  opts, &bk
         route 'POST', path,  opts, &bk
       end
-
     end
 
-    def dispatch_email(addr, tmpl, title)
-      Pony.mail :to => addr,
-                :from => "noreply@#{AppURL}",
-                :subject => "[#{AppName}] #{title}",
-                :html_body => erb(tmpl.to_sym, layout: "layouts/mail".to_sym)
+    private
+
+    def invoke
+      res = catch(:halt) { yield }
+      res = [res] if Fixnum === res or String === res
+      if Array === res and Fixnum === res.first
+        status(res.shift)
+        body(res.pop)
+        headers(*res)
+      elsif res.respond_to? :each
+        body res
+      end
+      nil
+    end
+
+    # Dispatch a request with error handling.
+    def dispatch!
+      invoke do
+        static! if settings.static? && (request.get? || request.head?)
+        filter! :before
+        route!
+      end
+    rescue ::Exception => boom
+      invoke { handle_exception!(boom) }
+    ensure
+      filter! :after unless env['sinatra.static_file']
     end
   end
 

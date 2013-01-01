@@ -12,11 +12,11 @@ end
 }
 
 post '/settings/password', auth: :user do
-  pw = Digest::SHA1.hexdigest(params[:password][:current])
+  pw = User.encrypt(params[:password][:current])
 
   if current_user.password == pw then
-    pw_new = Digest::SHA1.hexdigest(params[:password][:new])
-    pw_confirm = Digest::SHA1.hexdigest(params[:password][:confirmation])
+    pw_new     = User.encrypt(params[:password][:new])
+    pw_confirm = User.encrypt(params[:password][:confirmation])
 
     if params[:password][:new].empty? then
       flash[:error] = "You've entered an empty password!"
@@ -24,6 +24,7 @@ post '/settings/password', auth: :user do
       current_user.password = pw_new
       current_user.auto_password = false
       if current_user.save then
+        current_user.pending_notices({ type: 'password' }).each { |n| n.accept! }
         flash[:notice] = "Your password has been changed."
       else
         flash[:error] = "Something bad happened while updating your password!"
@@ -116,24 +117,27 @@ get '/settings/verify/:type', auth: :user do |type|
       halt 500, "Unable to generate a verification link: #{current_user.collect_errors}"
     end
 
-    dispatched = false
-    error_msg = ''
-
-    begin
-      dispatched = dispatch_email(current_user.email, "emails/verification", "Please verify your email '#{addr}'")
-    rescue Exception => e
-      dispatched = false
-      error_msg = e.message
-    end
-
-    # remove the notice, the mail wasn't delivered
-    unless dispatched
-      current_user.notices.all({ type: 'email' }).destroy
-      if error_msg.empty?
-        halt 500, "Mail could not be delivered, please try again later."
-      else
-        halt 500, "Mail could not be delivered: '#{error_msg}'"
+    dispatch_email_verification(current_user) { |success, msg|
+      unless success
+        current_user.notices.all({ type: 'email' }).destroy
+        halt 500, msg
       end
+    }
+
+  when "password"
+    if redispatch
+      unless @n = current_user.generate_temporary_password
+        halt 500, "Unable to generate temporary password: #{current_user.collect_errors}"
+      end
+
+      dispatch_temp_password(current_user) { |success, msg|
+        unless success
+          current_user.notices.all({ type: 'password' }).destroy
+          halt 500, msg
+        end
+      }
+
+      flash[:notice] = "Another temporary password message has been sent to your email."
     end
 
   else # an unknown type

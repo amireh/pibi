@@ -4,7 +4,7 @@ get '/sessions/new' do
 end
 
 post '/sessions' do
-  pw = Digest::SHA1.hexdigest(params[:password])
+  pw = User.encrypt(params[:password])
   info = { password: pw }
 
   # authenticating using email?
@@ -44,7 +44,7 @@ end
       uparams[:nickname] = auth.info.nickname if auth.info.nickname
       uparams[:oauth_token] = auth.credentials.token if auth.credentials.token
       uparams[:oauth_secret] = auth.credentials.secret if auth.credentials.secret
-      uparams[:password] = nickname_salt
+      uparams[:password] = 'foobar'
       uparams[:auto_password] = true
       if auth.extra.raw_info then
         uparams[:extra] = auth.extra.raw_info.to_json.to_s
@@ -70,13 +70,8 @@ end
       end
 
       # puts "Creating a new user from #{provider} with params: \n#{uparams.inspect}"
-      u = User.create(uparams)
-      if u then
+      if u = User.create(uparams) then
         flash[:notice] = "Welcome to #{AppName}! You have successfully signed up using your #{provider} account."
-
-        session[:id] = u.id
-
-        return redirect '/'
       else
         flash[:error] = "Sorry! Something wrong happened while signing you up. Please try again."
         return redirect "/auth/#{provider}"

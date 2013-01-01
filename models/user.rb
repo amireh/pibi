@@ -96,7 +96,7 @@ class User
   # is kept in the notice's @data field for use when sending the notice email
   def generate_temporary_password
     pw = nickname_salt
-    update!({ password: User.encrypt(pw) })
+    update!({ password: User.encrypt(pw), auto_password: true })
 
     notices.create({ type: 'password', data: pw })
   end
