@@ -1,12 +1,6 @@
 <% content_for :title do %> Account Settings | <%= current_user.name %> | <%= AppName %> <% end %>
 
-<% content_for :js do %>
-<script>
-</script>
-<% end %>
-
-
-<!-- <hr /> -->
+<%= partial "/users/settings/_nav" %>
 
 <!-- <h1>Account</h1> -->
 <form action="/settings/profile" method="POST">
@@ -33,53 +27,19 @@
         <br />
       </li>
 
-    <li><label>Gravatar email</label><br />
-      <span class="hint">Change your avatar at <a href="http://www.gravatar.com">gravatar.com</a></span>
-    </li>
-    <li><input type="text" name="gravatar_email" class="fat" value="<%= current_user.gravatar_email || current_user.email %>" />
-      <br />
-      <br />
-      <%= gravatar_tag current_user, :default, html: { style: "vertical-align: middle;" } %>
-    </li>
-    <li>Default currency<br />
-      <span class="hint">The currency that will be selected by default everytime you
-        launch a transie form.
-      </span></li>
-    <li>
-      <select name="currency">
-        <% Currencies.each do |c| %>
-          <option value="<%= c %>" <%= 'selected="selected"' if current_account.currency == c %>><%= c %></option>
-        <% end %>
-      </select>
-    </li>
-    <li>Payment methods<br />
-      <span class="hint">When creating a transie, you can specify how you
-      paid or received it by choosing one of the methods you define here.</span>
-    </li>
-    <li>
-      <!-- <form method="POST" action="/settings/payment_methods"> -->
-        <input type="text" placeholder="Credit Card" />
-        <input type="submit" value="Add" class="inline" />
-      <!-- </form> -->
-      <br />
-      <br />
-    </li>
-    <li>Default payment method<br />
-      <span class="hint">The payment method that will be selected by default everytime you
-        launch a transie form.
-      </span>
-    </li>
-    <li>
-      <% @user.payment_methods.each do |pm| %>
-        <label><input type="radio" name="payment_method" value="<%= pm.id %>" <%= 'checked="checked"' if @user.payment_method.id == pm.id %> /><%= pm.name %></label>
-      <% end %>
-    </li>
-  </ol>
+      <li><label>Gravatar email</label><br />
+        <span class="hint">Change your avatar at <a href="http://www.gravatar.com">gravatar.com</a></span>
+      </li>
+      <li><input type="text" name="gravatar_email" class="fat" value="<%= current_user.gravatar_email || current_user.email %>" />
+        <br />
+        <br />
+        <%= gravatar_tag current_user, :default, html: { style: "vertical-align: middle;" } %>
+      </li>
+
+    </ol>
   </fieldset>
-  <input type="submit" value="Update Profile" />
+  <input type="submit" value="Update Account" />
 </form>
 
 <br />
 <!-- <hr /> -->
-
-<%= partial "/users/settings/password" %>

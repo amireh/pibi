@@ -5,21 +5,22 @@
 <% content_for :scripts do %>
   <script>
     $(function() {
-      $(".settings > nav a[href=\"<%= request.path %>\"]")
+      $(".settings > .settings_nav a[href=\"<%= request.path %>\"]")
         .addClass("selected").parent().addClass("selected");
     })
   </script>
 <% end %>
 
 <!-- <nav> -->
+<div class="settings_nav">
+  <h3 class="blocky_heading">Settings</h3>
   <ul>
-    <li>Settings</li>
-    <li><a data-placement="right" title="Your public profile" href="/settings/profile">Profile</a></li>
-    <li><a data-placement="right" title="Nickname, password, etc." href="/settings/account">Account</a></li>
-    <li><a href="/settings/editing">Editing</a></li>
-    <li><a href="/settings/publishing">Publishing</a></li>
-    <li><a data-placement="right" title="Not available yet" class="disabled" href="/settings/notifications">Notifications</a></li>
-    <li><a data-placement="right" title="Your group memberships" href="/settings/groups">Groups</a></li>
-    <li><a data-placement="right" title="Pages you've shared with people" href="/settings/public_pages">Shares</a></li>
+    <li><a data-placement="right" title="Name, email, etc." href="/settings/account">Account</a></li>
+    <li><a data-placement="right" title="Change your password" href="/settings/password">Password</a></li>
+    <li><a data-placement="right" title="Default currency, and other application settings" href="/settings/preferences">Preferences</a></li>
+    <li><a data-placement="right" title="Notifications you should accept" href="/settings/notifications">Notifications <span data-amount>(<%= current_user.pending_notices.size %>)</span></a>
+
+    </li>
   </ul>
+</div>
 <!-- </nav> -->

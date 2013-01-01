@@ -29,6 +29,16 @@ class Account
     }
   }
 
+  validates_with_method :currency, :method => :check_currency
+
+  def check_currency
+    unless Currency.valid?(self.currency)
+      return [ false, "Currency must be one of #{Currencies.join(', ')}" ]
+    end
+
+    true
+  end
+
   def latest_transactions(q = {}, t = nil)
     transactions_in(nil, q)
     # transactions.all({ :occured_on.gte => Timetastic.this.month, :occured_on.lt => Timetastic.next.month }.merge(q))

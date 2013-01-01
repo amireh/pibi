@@ -134,7 +134,7 @@ module Sinatra
     end
 
     def partial(template, options={}, locals={})
-      erb template.to_sym, options.merge({ layout: false }), locals
+      erb template.to_sym, options.merge({ layout: false }), locals.merge({ is_partial: true })
     end
   end
 

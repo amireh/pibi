@@ -1,0 +1,94 @@
+.settings form,
+.settings section,
+.settings .settings_nav {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.settings .settings_nav {
+  width: 180px;
+  position: absolute;
+}
+.settings .settings_nav h3 {
+  margin-top: 10px;
+  margin-bottom: 0;
+  z-index: 2;
+  position: relative;
+  margin-left: 0;
+  /*width: 190px;*/
+  /*margin-left: 10px;*/
+}
+.settings .settings_nav ul {
+  /*width: 170px;*/
+  list-style-type: none;
+  padding: 10px;
+  margin: 0;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid #ddd;
+  position: relative;
+  top: -1px;
+  z-index: 1;
+  font-size: 0.9em;
+}
+.settings .settings_nav li {
+  /*border-bottom: 1px solid #ddd;*/
+  /*padding: 0 0 10px 0;*/
+  margin-bottom: 5px;
+}
+.settings .settings_nav li a {
+  display: block;
+  text-decoration: none;
+  margin-left: 10px;
+}
+.settings .settings_nav li a.selected {
+  /*color: red;*/
+}
+.settings .settings_nav li a.selected:before,
+.settings .settings_nav li a:hover:before  {
+  content: '\27BE  ';
+  margin-left: -15px;
+}
+
+.settings form,
+.settings section {
+  width: 726px;
+  position: relative;
+  margin-left: 190px;
+  margin-bottom: 10px;
+}
+.settings section {
+  border: 1px solid #ddd;
+  background: rgba(255,255,255,0.5);
+  margin-top: 30px;
+  padding: 20px 20px 0 20px;
+}
+.settings section h2.blocky_heading {
+  margin: -40px 5px 10px -10px;
+  width: 699px
+}
+
+.settings .container { position: relative; }
+.settings input.color {
+  padding: 2px;
+  width: 24px;
+  height: 24px;
+  font-size: 0px;
+  color: transparent;
+  top: -6px;
+  display: inline-block;
+  position: relative;
+}
+.settings input.color:focus {
+  color: inherit;
+  font-size: 10px;
+  width: 44px;
+  /*position: absolute;*/
+}
+
+.settings form fieldset ol li:nth-of-type(odd) {
+  width: 25%;
+  margin-right: 4%;
+}
+.settings form fieldset ol li:nth-of-type(even) {
+  width: 69%;
+}

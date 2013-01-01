@@ -1,0 +1,64 @@
+<% content_for :title do %> Preferences | <%= current_user.name %> | <%= AppName %> <% end %>
+<% content_for :js do %>
+  <script type="text/javascript" src="/js/jscolor/jscolor.js"></script>
+<% end %>
+
+<%= partial "/users/settings/_nav" %>
+
+<form action="/settings/preferences" method="POST">
+  <fieldset>
+    <legend>Preferences</legend>
+    <ol>
+      <li>Default currency<br />
+        <span class="hint">The currency that will be selected by default everytime you
+          launch a transie form.
+        </span></li>
+      <li>
+        <select name="currency">
+          <% Currencies.each do |c| %>
+            <option value="<%= c %>" <%= 'selected="selected"' if current_account.currency == c %>><%= c %></option>
+          <% end %>
+        </select>
+      </li>
+      <li>Payment methods<br />
+        <span class="hint">When creating a transie, you can specify how you
+        paid or received it by choosing one of the methods you define here.</span>
+      </li>
+      <li>
+        <!-- <form method="POST" action="/settings/payment_methods"> -->
+          <input type="text" name="new_payment_method" placeholder="Credit Card" />
+          <input type="submit" value="Add" class="inline" />
+        <!-- </form> -->
+        <br />
+        <br />
+      </li>
+      <li>Default payment method<br />
+        <span class="hint">The payment method that will be selected by default everytime you
+          launch a transie form.
+        </span>
+      </li>
+      <li data-confirmable="payment_methods" class="container">
+        <% @user.payment_methods.each do |pm| %>
+        <input type="text" class="color" name="pm_colors[<%=pm.id%>]" value="<%= pm.color %>" />
+          <label>
+            <input type="radio" name="payment_method" value="<%= pm.id %>" <%= 'checked="checked"' if @user.payment_method.id == pm.id %> />
+            <%= pm.name %>
+          </label>
+          <a href="/settings/preferences/payment_methods/<%= pm.id %>/destroy" class="bad">delete</a>
+          <br />
+        <% end %>
+      </li>
+    </ol>
+  </fieldset>
+  <input type="submit" value="Update Preferences" />
+</form>
+
+<div class="hidden" id="payment_methods_delete_confirmation">
+  <h1>Payment method removal</h1>
+  <p>Removing a payment method will cause all the transactions
+    that were flagged with it to lose their payment
+    method status!<br /><br />
+    Are you sure you want to do this?
+  </p>
+</div>
+<!-- <hr /> -->

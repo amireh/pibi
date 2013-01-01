@@ -51,6 +51,7 @@ nav {
   position: relative;
   width: auto;
   width: 1000px; margin-left: -20px;
+  height: 106px;
 }
 
 #content {
@@ -455,7 +456,8 @@ form fieldset {
   /*background: #F4F4F4;*/
   background: rgba(255, 255, 255, 0.5);
 }
-form fieldset legend {
+form fieldset legend,
+.blocky_heading {
   margin-bottom: 10px;
   margin-left: -5px;
   width: 100%;
@@ -701,7 +703,12 @@ footer div * { margin-right: 5px; }
 .feed tr:hover td:first-of-type:before { content: '\00BB  '; margin-left:  -8px; color: orange; font-weight: bold; }
 .feed tr:hover td:last-of-type:after { content: '  \00AB';   margin-right: -8px; color: orange; font-weight: bold; }
 
-.feed td small { color: #999; }
+.feed td span.tx_categories,
+.feed td span.tx_pm         { font-size: smaller; }
+.feed td span.tx_categories { color: #999; }
+/*.feed td span.tx_pm { color: purple; }*/
+.feed td span.tx_pm:before         { content: '\00AB  '; }
+.feed td span.tx_pm:after         { content: '  \00BB'; }
 
 .transactions .navigation {
   display: block;
@@ -873,5 +880,6 @@ p.warning:before {
 }
 
 .small { font-size: 0.9em; }
+.smaller { font-size: 0.75em; }
 
 .hidden { display: none; }

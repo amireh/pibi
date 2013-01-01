@@ -21,6 +21,7 @@ class Transaction
   property :created_at,   DateTime, default: lambda { |*_| DateTime.now }
 
   belongs_to :account, required: true
+  belongs_to :payment_method, required: false
 
   has n, :categories, :through => Resource, :constraint => :skip
 

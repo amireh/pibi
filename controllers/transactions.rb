@@ -32,7 +32,9 @@
   post "/transactions/#{type}", auth: :user do
     { "You must specify an amount" => params["amount"].empty?,
       "Amount must be greater than 0" => params["amount"].to_f <= 0.0,
-      "You really should write some note, even a short one" => params["note"].empty?
+      "You really should write some note, even a short one" => params["note"].empty?,
+      "Missing payment method" => params["payment_method"].empty?,
+      "Unknown payment method" => current_user.payment_methods.get(params["payment_method"].to_i).nil?
     }.each_pair {|msg,cnd|
       if cnd
         flash[:error] = msg
@@ -76,6 +78,7 @@
       amount: params["amount"].to_f,
       currency: params["currency"].to_s,
       note: params["note"],
+      payment_method: current_user.payment_methods.get(params["payment_method"].to_i),
       account: @account
     }.merge(p))
 
@@ -101,7 +104,9 @@
     end
 
     { "You must specify an amount" => params["amount"].empty?,
-      "Amount must be greater than 0" => params["amount"].to_f <= 0.0
+      "Amount must be greater than 0" => params["amount"].to_f <= 0.0,
+      "Missing payment method" => params["payment_method"].empty?,
+      "Unknown payment method" => current_user.payment_methods.get(params["payment_method"].to_i).nil?
     }.each_pair {|msg,cnd|
       if cnd
         flash[:error] = msg
@@ -121,6 +126,8 @@
     if params["occured_on"]
       tx.occured_on = params["occured_on"].to_date
     end
+
+    tx.payment_method = current_user.payment_methods.get(params["payment_method"].to_i)
 
     if tx.recurring?
       tx.flow_type = params["flow_type"].to_sym if params.has_key?("flow_type")

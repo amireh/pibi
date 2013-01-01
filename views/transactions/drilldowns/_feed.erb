@@ -10,7 +10,11 @@
         <td><%= t.withdrawal? ? '&minus;' : '&plus;' %></td>
         <td><%= t.amount.to_f %></td>
         <td><%= t.currency %></td>
-        <td><%= t.note %> <small><%= t.categories.collect(){ |c| c.name }.join(', ') %></small></td>
+        <td><%= t.note %> <span class="tx_categories"><%= t.categories.collect(){ |c| c.name }.join(', ') %></span>
+          <% if t.payment_method %>
+            <span class="tx_pm" style="color: #<%= t.payment_method.color %>;"><%= t.payment_method.name %></span>
+          <% end %>
+        </td>
         <td><%= actions_for t %></td>
       </tr>
       <% end %>

@@ -4,15 +4,13 @@
 <% content_for :js do %>
   <script>
     $(function() {
-      $("#datepicker").datepicker({
-            // showOn: "both",
-            altField: "#tx_occured_on"
-            // buttonImage: "images/calendar.gif",
-            // buttonImageOnly: true
-        });
-    })
+      var current_date = $("#tx_occured_on").attr("value");
+      $("#datepicker").datepicker({ altField: "#tx_occured_on" });
+      $("#datepicker").datepicker("setDate", current_date);
+    });
   </script>
 <% end %>
+
 <% if false %>
 <h2>
   <% if editing %>
@@ -37,6 +35,22 @@
       </li>
       <li>Note*</li>
       <li><textarea name="note" rows="3" cols="80" placeholder="Something to remind you of this transaction"><%= @tx.note %></textarea></li>
+
+      <li>Paid with<br />
+        <span class="hint">You can manage your payment methods in your
+          <a href="/settings/preferences" target="_blank">preferences</a>
+          section.
+        </span>
+      </li>
+      <li>
+        <% @user.payment_methods.each do |pm| %>
+          <label style="color: #<%= pm.color %>;">
+            <input type="radio" name="payment_method" value="<%= pm.id %>" <%= 'checked="checked"' if @user.payment_method.id == pm.id %> />
+            <%= pm.name %>
+          </label>
+        <% end %>
+      </li>
+
       <li>Date of transaction</li>
       <li><input type="text" id="tx_occured_on" name="occured_on" value="<%= to_jQueryUI_date @tx.occured_on %>" /> <span class="hint">(Format: MM/DD/YYYY)</span><div id="datepicker"></div></li>
       <%= partial "/transactions/_category_listing" %>
