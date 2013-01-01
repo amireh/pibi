@@ -1,0 +1,52 @@
+<%
+  # Accepted locals:
+  # [required] period: Symbol, any of the following [ :day, :month, :year ]
+  # [required] uri_generator: lambda that accepts the date, and returns a URI
+  # [required] labeller: lambda that accepts a date and returns the label for the next/prev buttons
+  # [optional] jump_by_months: Boolean, if false it will not display a Month selector for time jump
+%>
+
+<% jump_by_months = true if jump_by_months.nil? %>
+<% jump_by_days = true if jump_by_days.nil? %>
+
+<div class="navigation">
+  <% last_period = Timetastic.last(1, @date).send(period) # 1.send(period).ago(@date) %>
+  <% next_period = Timetastic.next(1, @date).send(period) # 1.send(period).ahead(@date) %>
+
+  <a class="button navigator prev" href="<%= uri_generator.call(last_period) %>">
+    <%= labeller.call(last_period) %>
+  </a>
+
+  <form method="GET" action="/transactions">
+    <select name="year">
+      <% (@user.created_at.year..@date.year+3).each do |y| %>
+        <% next if Time.now.year < y %>
+        <option <%= 'selected="selected"' if @date.year == y %> value="<%= y %>">
+          <%= y %>
+        </option>
+      <% end %>
+    </select>
+
+    <% if jump_by_months %>
+      <select name="month">
+        <% 12.times do |i| %>
+          <option <%= 'selected="selected"' if @date.month == i+1 %> value="<%= i+1 %>"><%= Time.new(Time.now.year  , i+1, 1).strftime("%B") %></option>
+        <% end %>
+      </select>
+    <% end %>
+
+    <% if jump_by_days %>
+      <select name="day">
+        <% Timetastic.days_in_month(@date.year, @date.month).times do |i| %>
+          <option <%= 'selected="selected"' if @date.day == i+1 %> value="<%= i+1 %>"><%= (i+1).ordinalize %></option>
+        <% end %>
+      </select>
+    <% end %>
+
+    <input type="submit" value="Go" />
+  </form>
+
+  <a class="button navigator next" href="<%= uri_generator.call(next_period) %>">
+    <%= labeller.call(next_period) %>
+  </a>
+</div>

@@ -139,28 +139,15 @@ end
 
     if params[:year]
       if params[:month]
+        if params[:day]
+          return redirect "/transactions/#{params[:year]}/#{params[:month]}/#{params[:day]}"
+        end
         return redirect "/transactions/#{params[:year]}/#{params[:month]}"
       end
-
       return redirect "/transactions/#{params[:year]}"
     end
 
-    current_page("transactions")
-
-    @transies = current_account.latest_transactions({ order: [ :occured_on.desc ] })#(Time.now)
-
-    @date = Time.new(Time.now.year,Time.now.month, 3)
-
-    # partition into months
-    @daily_transies = {}
-    @transies.each { |tx|
-      @daily_transies[tx.occured_on.strftime("%Y%b%d")] ||= []
-      @daily_transies[tx.occured_on.strftime("%Y%b%d")] <<  tx
-    }
-
-    @balance  = current_account.balance_for(@transies)
-
-    erb "transactions/index"
+    render_transactions_for(Time.now.year, Time.now.month, 0)
   end
 }
 
@@ -169,6 +156,7 @@ get '/' do
 
   erb "welcome/index"
 end
+
 [ 'features', 'tos', 'privacy', 'oss', 'faq' ].each do |static_item|
   get "/#{static_item}" do
     current_page("")
@@ -177,6 +165,6 @@ end
 end
 
 get '/reports*' do
-  current_page("")
+  current_page("reports")
   erb :"static/coming_soon"
 end

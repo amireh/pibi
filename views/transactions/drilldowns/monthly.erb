@@ -1,0 +1,36 @@
+<h1><%= @date.strftime("%B") %>,
+  <a href="/transactions/<%= @date.year %>"><%= @date.strftime("%Y") %></a>
+
+  <span style="float: right;" class="<%= @balance > 0 ? 'positive' : 'negative' %>">
+    <%= @balance.to_f.round(2) %>
+    <%= current_account.currency %>
+  </span>
+</h1>
+
+<% if @transies.empty? %>
+  <p>No transactions have been committed during this year.</p>
+<% end %>
+
+<%= partial "/transactions/drilldowns/_feed", locals: {
+  transies: @drilled_transies,
+  heading: lambda { |d|
+    html = '<h4 class="timeframe">'
+    html << d.strftime("%A, ")
+    html << 'the '
+    html << "<a href=\"/transactions/#{d.year}/#{d.month}/#{d.day}\">"
+    html << d.strftime("%-d").to_i.ordinalize
+    html << '</a></h4>'
+    html
+  }
+}
+%>
+
+
+<%= partial "/transactions/drilldowns/_navigation",
+  locals: {
+    period: :month,
+    uri_generator: lambda { |d| "/transactions/#{d.year}/#{d.month}" },
+    labeller: lambda { |d| d.strftime("%B, %Y") },
+    jump_by_days: false
+  }
+%>

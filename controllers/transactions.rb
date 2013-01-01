@@ -175,7 +175,7 @@ get '/transactions/recurrings', auth: :user do
   current_page("manage")
 
   @transies = current_account.recurrings.all
-  @daily_transies =   @transies.all({ frequency: :daily })
+  @drilled_transies =   @transies.all({ frequency: :daily })
   @monthly_transies = @transies.all({ frequency: :monthly })
   @yearly_transies =  @transies.all({ frequency: :yearly })
 
@@ -201,39 +201,65 @@ get '/transactions/recurrings/:id/toggle_activity', auth: :user do |tid|
   redirect back
 end
 
-get '/transactions/:year', auth: :user do |year|
-  current_page("transactions")
+helpers do
+  def render_transactions_for(year = Time.now.year, month = Time.now.month, day = Time.now.day)
+    year  = year.to_i   if year.is_a? String
+    month = month.to_i  if month.is_a? String
+    day   = day.to_i    if day.is_a? String
 
-  @transies = current_account.yearly_transactions(Time.new(year, 1, 2))
+    # make sure the given date is sane
+    begin
+      @date = Time.new(year, month == 0 ? 1 : month, day == 0 ? 1 : day)
+    rescue ArgumentError => e
+      halt 400, "Invalid transaction period YYYY/MM/DD: '#{year}/#{month}/#{day}'"
+    end
 
-  # partition into months
-  @monthly_transies = Array.new(13, [])
-  @transies.each { |tx|
-    @monthly_transies[tx.occured_on.month] <<  tx
-  }
+    current_page("transactions")
 
-  @balance  = current_account.balance_for(@transies)
+    if day > 0
+      # daily transaction view
+      @drilldown = "daily"
 
-  erb :"transactions/index"
+      @transies = current_account.daily_transactions(Time.new(year,month,day))
+      @drilled_transies = { "0" => @transies }
+    elsif month > 0
+      # monthly transaction view
+      @drilldown = "monthly"
+      @transies = current_account.monthly_transactions(Time.new(year, month, 1))
+
+      # partition into days
+      @drilled_transies = {}
+      @transies.each { |tx|
+        @drilled_transies[tx.occured_on.day] ||= []
+        @drilled_transies[tx.occured_on.day] <<  tx
+      }
+    else
+      # yearly transaction view
+      @drilldown = "yearly"
+      @transies = current_account.yearly_transactions(Time.new(year, 1, 1))
+
+      # partition into months
+      @drilled_transies = {}#Array.new(13, [])
+      @transies.each { |tx|
+        @drilled_transies[tx.occured_on.month] ||= []
+        @drilled_transies[tx.occured_on.month] <<  tx
+      }
+    end
+
+    @balance  = current_account.balance_for(@transies)
+
+    erb :"transactions/drilldowns/#{@drilldown}"
+  end
 end
 
+get '/transactions/:year', auth: :user do |year|
+  render_transactions_for(year, 0, 0)
+end
 
 get '/transactions/:year/:month', auth: :user do |year, month|
-  current_page("transactions")
-
-  @transies = current_account.monthly_transactions(Time.new(year, month, 2))
-
-  @date = Time.new(year, month, 2)
-
-  # partition into days
-  @daily_transies = {}
-  @transies.each { |tx|
-    @daily_transies[tx.occured_on.day] ||= []
-    @daily_transies[tx.occured_on.day] <<  tx
-  }
-
-  @balance  = current_account.balance_for(@transies)
-
-  erb :"transactions/index"
+  render_transactions_for(year,month,0)
 end
 
+get '/transactions/:year/:month/:day', auth: :user do |year, month, day|
+  render_transactions_for(year,month,day)
+end

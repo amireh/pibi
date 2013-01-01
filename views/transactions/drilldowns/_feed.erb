@@ -1,0 +1,19 @@
+<div class="feed">
+  <% transies.each_pair do |period, txs| %>
+    <% next if txs.empty? %>
+
+    <%= heading.call(txs.first.occured_on) %>
+
+    <table>
+      <% txs.each do |t| %>
+      <tr class="<%= t.type.to_s.downcase %>">
+        <td><%= t.withdrawal? ? '&minus;' : '&plus;' %></td>
+        <td><%= t.amount.to_f %></td>
+        <td><%= t.currency %></td>
+        <td><%= t.note %> <small><%= t.categories.collect(){ |c| c.name }.join(', ') %></small></td>
+        <td><%= actions_for t %></td>
+      </tr>
+      <% end %>
+    </table>
+  <% end %>
+</div>

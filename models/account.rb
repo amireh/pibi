@@ -50,6 +50,14 @@ class Account
     c
   end
 
+  def daily_transactions(date = Timetastic.this.day, q = {})
+    c = []
+    Timetastic.fixate(date) {
+      c = transactions_in({ :begin => Timetastic.this.day, :end => Timetastic.next.day }, q)
+    }
+    c
+  end
+
   def yearly_balance(date_or_collection, q = {})
     c = []
     if date_or_collection.is_a?(DataMapper::Collection)

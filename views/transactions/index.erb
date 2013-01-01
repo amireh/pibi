@@ -1,4 +1,12 @@
-<h1><%= @date.strftime("%B, %Y") %>
+<h1>
+  <% if @drilldown == "yearly" %>
+    <%= @date.strftime("%Y") %>
+  <% elsif @drilldown == "monthly" %>
+    <%= @date.strftime("%B, %Y") %>
+  <% else %>
+    <%= txs.first.occured_on.strftime("%-d").to_i.ordinalize %> of <%= @date.strftime("%B, %Y") %>
+  <% end %>
+
   <span style="float: right;" class="<%= @balance > 0 ? 'positive' : 'negative' %>">
     <%= @balance.to_f.round(2) %>
     <%= current_account.currency %>
@@ -10,11 +18,17 @@
 <% end %>
 
 <div class="feed">
-  <% @daily_transies.each_pair do |day, txs| %>
+  <% @drilled_transies.each_pair do |day, txs| %>
     <% next if txs.empty? %>
-    <h4 class="timeframe"><%= txs.first.occured_on.strftime("%A, ") %>the <%= txs.first.occured_on.strftime("%-d").to_i.ordinalize %>
 
-    </h4>
+
+    <% if @drilldown == "yearly" %>
+      <h4 class="timeframe"><%= txs.first.occured_on.strftime("%B") %></h4>
+    <% elsif @drilldown == "monthly" %>
+      <h4 class="timeframe"><%= txs.first.occured_on.strftime("%A, ") %>the <%= txs.first.occured_on.strftime("%-d").to_i.ordinalize %></h4>
+    <% else %>
+    <% # no timeframe in daily view %>
+    <% end %>
 
     <table>
       <% txs.each do |t| %>
