@@ -52,16 +52,26 @@ class User
     self.payment_methods.create({ name: "Cheque" })
   end
 
-  def notice_count
-    notices.all({status: :pending }).count
+  class << self
+    # TODO: this needs to be changed
+    def encrypt(pw)
+      Digest::SHA1.hexdigest pw
+    end
   end
 
   def categories
     Category.all({ conditions: { user_id: id }, :order => [ :name.asc ] })
   end
 
-  def namespace
-    ""
+  # ----
+  # Notifications
+  # ----
+  def notice_count
+    notices.all({status: :pending }).count
+  end
+
+  def pending_notices(q = {})
+    notices.all(q.merge({ status: :pending }))
   end
 
   def on_notice_accepted(notice)
@@ -71,21 +81,37 @@ class User
     when 'password'
       # nothing to do really
     end
+
+    # don't destroy it for history sake
   end
 
   def on_notice_expired(notice)
     notice.destroy
   end
 
-  # Email verification:
+  # Replaces the current password with an auto generated one and
+  # creates a notice of type 'password' to be dispatched to the user
   #
-  # the deal here is that a Notice is sent to the user's registered email
+  # Note: since the password is encrypted prior to saving, the raw version
+  # is kept in the notice's @data field for use when sending the notice email
+  def generate_temporary_password
+    pw = nickname_salt
+    update!({ password: User.encrypt(pw) })
+
+    notices.create({ type: 'password', data: pw })
+  end
+
+  # ----
+  # Email verification
+  #
+  # The deal here is that a Notice is sent to the user's registered email
   # address containing a link which, when visited, will verify the address
-  def email_verified?
+  # ----
+  def email_verified? # an alias to the field
     email_verified
   end
 
-  # dispatches an email verification notice notice
+  # dispatches an email verification notice
   def verify_email
     unless n = notices.first_or_create({ data: self.email, type: 'email' })
       errors.add :notices, n.collect_errors
@@ -95,17 +121,13 @@ class User
     n
   end
 
-  # has a notice been dispatched and is still pending?
+  # has an email notice been dispatched and is still pending?
   def awaiting_email_verification?
     if email_verified?
       return false
     end
 
-    return !notices.all({ type: 'email', status: :pending }).empty?
-  end
-
-  def self.encrypt(pw)
-    Digest::SHA1.hexdigest pw
+    return !pending_notices({ type: 'email' }).empty?
   end
 
   private

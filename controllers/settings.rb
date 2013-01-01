@@ -3,7 +3,7 @@ get '/settings' do
   redirect "/settings/account"
 end
 
-[ "account", "editing", "notifications" ].each { |domain|
+[ "account", "editing", "notifications", 'password' ].each { |domain|
   get "/settings/#{domain}", auth: :user do
     current_page("manage")
 

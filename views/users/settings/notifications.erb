@@ -1,0 +1,29 @@
+<h1>Pending Notifications</h1>
+<ol>
+<% current_user.notices({status: :pending}).each do |n| %>
+  <li>
+    <% if n.type == 'email' %>
+      Your email address is not yet verified.
+      Please check your email, or visit <a href="/settings/account">this page</a> for more info.
+    <% elsif n.type == 'password' %>
+      You have an auto-generated password.
+      Please check your email to get the code, and visit <a href="/settings/account">
+      this page</a> to change it.
+    <% end %>
+  </li>
+<% end %>
+</ol>
+
+<h2>Accepted Notifications</h2>
+<ol>
+<% current_user.notices({ :status.not => :pending }).each do |n| %>
+  <li>
+    <% if n.type == 'password' %>
+    An auto-generated password notice was sent on
+    <% elsif n.type == 'email' %>
+    An email verification notice was sent on
+    <% end %>
+    <%= n.created_at.strftime("%D") %>
+  </li>
+<% end %>
+</ol>

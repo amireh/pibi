@@ -17,11 +17,19 @@ end
 
 public
 
+after do
+  if current_user && current_user.auto_password && request.path != '/settings/password'
+    # return erb :"/users/settings/password"
+    return redirect '/settings/password'
+  end
+end
+
 before do
+
+  # handle any invalid states we need to notify the user of
   if current_user
+    messages = [] # see below
 
-
-    messages = []
     unless current_user.email_verified?
 
       # send an email verification email unless one has already been sent
@@ -31,25 +39,28 @@ before do
         end
       end
 
-      m = 'Your email address is not yet verified. ' <<
-          'Please check your email, or visit <a href="/settings/account">this page</a> for more info.'
-      messages << m
+      @n = current_user.pending_notices({ type: 'email' }).first
+      unless @n.displayed
+        m = 'Your email address is not yet verified. ' <<
+            'Please check your email, or visit <a href="/settings/account">this page</a> for more info.'
+        messages << m
+
+        @n.update({ displayed: true })
+      end
     end
+
     if current_user.auto_password
       # has an auto password and the code hasn't been sent yet?
-      if current_user.notices.all({ type: 'password', status: :pending }).empty?
-        pw = nickname_salt
-        current_user.update!({ password: User.encrypt(pw) })
-        @n = current_user.notices.create({ type: 'password', data: pw })
+      if current_user.pending_notices({ type: 'password' }).empty?
+        @n = current_user.generate_temporary_password
         dispatch_email(current_user.email, "emails/auto_password", "Temporary password")
       end
-
-      m = 'You have an auto-generated password. ' <<
-          'Please check your email to get the code, and visit <a href="/settings/account">' <<
-          'this page</a> to change it.'
-      messages << m
     end
 
+    # this has to be done because for some reason the flash[] doesn't persist
+    # in order to append to it, so doing something like the following FAILS:
+    # => flash[:warning] = []
+    # => flash[:warning] << 'some message'
     unless messages.empty?
       flash[:warning] = messages
     end
