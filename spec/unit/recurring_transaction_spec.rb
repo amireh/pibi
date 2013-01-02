@@ -1,17 +1,7 @@
 describe "Recurring Transactions" do
 
   before do
-    User.destroy
-
-    @user = User.create({
-      name: "Ahmad Amireh",
-      email: "ahmad@amireh.net",
-      provider: "pibi",
-      uid: "1234",
-      password: User.encrypt('hello world')
-    })
-
-    @account = @user.accounts.create()
+    mockup_user
   end
 
   it "should create a recurring transaction" do

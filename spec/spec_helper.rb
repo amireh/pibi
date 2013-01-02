@@ -51,14 +51,13 @@ end
 def mockup_user()
   User.destroy
 
-  @raw_password = 'hello world'
-  @user = User.create({
-    name: "Mystery Mocker",
-    email: "mock@pibi.com",
-    provider: "pibi",
-    uid: "1234",
-    password: User.encrypt(@raw_password),
-    password_confirmation: User.encrypt(@raw_password)
+  @some_salt = Pibi.salt
+  @user = @u = User.create({
+    name: 'Mysterious Mocker',
+    email: 'very@mysterious.com',
+    provider: 'pibi',
+    password: @some_salt,
+    password_confirmation: @some_salt
   })
-  @account = @user.accounts.first
+  @account = @a = @user.accounts.first
 end

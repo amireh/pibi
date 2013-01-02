@@ -1,4 +1,4 @@
-describe 'Currency' do
+describe Currency do
   it "should convert from JOD to USD" do
     Currency['JOD'].from('USD', 10).to_f.should == 7.0
     Currency['USD'].from('JOD', 7.0).to_f.should == 10.0
