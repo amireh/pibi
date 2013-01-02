@@ -1,7 +1,7 @@
 source :rubygems
 
 gem 'sinatra', '=1.3.3'
-gem 'sinatra-contrib', :require => 'sinatra/content_for'
+gem 'sinatra-contrib', :require => [ 'sinatra/content_for', 'sinatra/namespace' ]
 gem 'sinatra-flash', :require => 'sinatra/flash'
 gem 'mysql'
 gem 'json'
@@ -28,7 +28,7 @@ group :development do
   gem 'thin'
   gem 'rspec'
   gem 'rspec-core'
-  gem 'rake'
+  # gem 'rake'
 end
 
 gem 'omniauth'
