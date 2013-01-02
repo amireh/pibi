@@ -1,3 +1,4 @@
 get '/admin', auth: :admin do
-  erb :"/admins/index"
+  erb :"/static/coming_soon"
+  # erb :"/admins/index"
 end

@@ -68,9 +68,8 @@ class Transaction
   # -----------------
 
   after :create do
-    added_amount = to_account_currency(self.amount)
-    add_to_account(added_amount)
-    account.save
+    add_to_account(to_account_currency)
+    self.account.save
   end
 
   # adjust the account balance if our amount or currency are being updated
@@ -86,12 +85,12 @@ class Transaction
 
       dd_currency = case attribute_dirty?(:currency)
       when true;  original_attributes[Transaction.currency] # currency is dirty, get original
-      when false; self.currency
+      when false; self[:currency]
       end
 
       dd_amount = case attribute_dirty?(:amount)
       when true;  original_attributes[Transaction.amount] # amount is dirty, get original
-      when false; self.amount
+      when false; self[:amount]
       end
 
       deductible_amount = to_account_currency(dd_amount, dd_currency)
@@ -114,6 +113,7 @@ class Transaction
 
   before :destroy do
     deduct(to_account_currency)
+    self.account.save
   end
 
   def deduct(amt)
@@ -129,7 +129,7 @@ class Transaction
 
   protected
 
-  def to_account_currency(amount = self.amount, mine = self.currency)
-    Currency[self.account.currency].from(Currency[mine], amount)
+  def to_account_currency(amount = self[:amount], mine = self[:currency])
+    Currency[self.account[:currency]].from(Currency[mine], amount)
   end
 end

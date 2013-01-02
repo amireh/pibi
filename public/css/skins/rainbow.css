@@ -725,7 +725,8 @@ code.license {
 .manage.bills td,
 .manage.bills th {
   /*padding: 0 30px 0 0;*/
-  padding: 10px 0 10px 10px;
+  /*padding: 10px 0 10px 10px;*/
+  padding: 5px 0 5px 10px;
   border: 1px solid #ddd;
 }
 .manage.bills th {

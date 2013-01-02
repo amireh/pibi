@@ -26,7 +26,7 @@
     <legend><%= @tx.type %> transie</legend>
     <ol>
       <li><label for="tx_amt">Amount*</label></li>
-      <li><input type="text" id="tx_amt" name="amount" placeholder="5.0" value="<%= @tx.persisted? ? @tx.amount.to_f : '' %>" />
+      <li><input type="text" id="tx_amt" autofocus="autofocus" name="amount" placeholder="5.0" value="<%= @tx.persisted? ? @tx.amount.to_f : '' %>" />
         <select name="currency">
           <% Currencies.each do |c| %>
             <option value="<%= c %>" <%= 'selected="selected"' if @tx.currency == c %>><%= c %></option>
@@ -45,7 +45,7 @@
       <li>
         <% @user.payment_methods.each do |pm| %>
           <label style="color: #<%= pm.color %>;">
-            <input type="radio" name="payment_method" value="<%= pm.id %>" <%= 'checked="checked"' if @user.payment_method.id == pm.id %> />
+            <input type="radio" name="payment_method" value="<%= pm.id %>" <%= 'checked="checked"' if @tx && @tx.payment_method == pm%> />
             <%= pm.name %>
           </label>
         <% end %>
