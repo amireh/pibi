@@ -629,19 +629,27 @@ footer p {
   margin-left: 1%;
 }*/
 footer p:last-of-type {
-  width: auto;
+  width: 100%;
   margin-right: 0;
   /*margin-left: 4%;*/
+}
+
+footer span.site_validations {
+  position: absolute;
+  right: -5px;
+  /*bottom: -35px;*/
+  margin: 0;
 }
 footer img {
   border: none;
   margin: 10px 0 0 0;
 }
 
-footer div {
+footer div.static_links {
   margin-top: 5px;
   border-top: 1px solid rgba(255,255,255, 0.125);
-  padding-top: 5px;
+  padding-top: 10px;
+  position: relative;
 }
 
 footer p { line-height: 14px; }

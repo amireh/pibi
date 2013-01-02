@@ -10,11 +10,11 @@ body * {
 }
 
 
-button::-moz-focus-inner,
+/*button::-moz-focus-inner,
 input[type=submit]::-moz-focus-inner {
   border: 0;
   padding: 0;
-}
+}*/
 
 #content { margin-left: 260px; }
 
