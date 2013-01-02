@@ -31,15 +31,18 @@ class Account
 
   validates_with_method :currency, :method => :check_currency
 
-  after :valid? do
-    if self.user.locked?
-      self.errors.add :user, "This action is not available to this account because it is locked."
-      return false
-    end
-
-    true
-  end
+  # --------- -------
+  # DISABLED: LOCKING
+  # --
+  # after :valid? do
+  #   if self.user.locked?
+  #     self.errors.add :user, "This action is not available to this account because it is locked."
+  #     return false
+  #   end
+  #   true
+  # end
   # is :lockable, :on => [ :balance ]
+  # -----------------
 
   def check_currency
     unless Currency.valid?(self.currency)
@@ -118,29 +121,6 @@ class Account
     balance = 0.0
     collection.each { |tx| balance = tx + balance }
     balance
-  end
-
-  # Accepted options:
-  # => :with_transactions: the account transactions will be dumped
-  # => :with_transaction_notes: the account transaction notes will be dumped
-  def serialize(o = {})
-    s = {
-      id: id,
-      label: label,
-      balance: balance,
-      currency: currency
-    }
-
-    if o[:with_transactions] then
-      s[:transactions] = {}
-      transactions.each { |t| s[:transactions] << t.serialize(o[:with_transaction_notes]) }
-    end
-
-    s
-  end
-
-  def to_json(*args)
-    serialize(args).to_json
   end
 
 end

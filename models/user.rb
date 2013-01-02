@@ -37,15 +37,20 @@ class User
 
   attr_accessor :password_confirmation
 
-  validates_confirmation_of :password, message: 'Passwords must match.'
+  validates_confirmation_of :password,
+    message: 'Passwords must match.'
   validates_length_of       :password, :min => 8,
     message: 'Password is too short! Must be at least 8 characters long.'
 
-  is :lockable
-
-  before :valid? do |*_|
-    !is_locked
-  end
+  # --------- -------
+  # DISABLED: LOCKING
+  # --
+  # is :lockable
+  #
+  # before :valid? do |*_|
+  #   !is_locked
+  # end
+  # -----------------
 
   # invalidate email verification status if email is updated
   before :update do
@@ -68,11 +73,6 @@ class User
     self.payment_methods.create({ name: "Cash", default: true })
     self.payment_methods.create({ name: "Cheque" })
     self.payment_methods.create({ name: "Credit Card" })
-
-    # self.update!({
-      # password: User.encrypt(password),
-      # password_confirmation: User.encrypt(password)
-    # })
   end
 
   class << self

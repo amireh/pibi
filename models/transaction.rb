@@ -4,7 +4,8 @@ class Transaction
   property :id,           Serial
 
   # The raw amount of the transaction.
-  property :amount,       Decimal, scale: 2, required: true
+  property :amount,       Decimal, scale: 2, required: true,
+    message: 'Transaction amount is missing.'
 
   # The transaction currency is the currency used when the transaction
   # was made, and if it differs from the account currency, the proper
@@ -21,14 +22,12 @@ class Transaction
   property :created_at,   DateTime, default: lambda { |*_| DateTime.now }
 
   belongs_to :account, required: true
-  belongs_to :payment_method, required: false
+  belongs_to :payment_method, default: lambda { |tx,*_| tx.account.user.payment_method }
 
   has n, :categories, :through => Resource, :constraint => :skip
 
   before :destroy do
-    CategoryTransaction.all({ transaction_id: self.id }).destroy!
-
-    true
+    CategoryTransaction.all({ transaction_id: self.id }).destroy
   end
 
   validates_with_method :currency, :method => :check_currency
@@ -54,15 +53,19 @@ class Transaction
     y
   end
 
-  [ :create, :save, :update, :destroy ].each do |advice|
-    before advice do |ctx|
-      if !self.account || !self.account.valid? || self.account.user.locked?
-        # puts "Tx: halting #{advice} because my account is locked: #{account.collect_errors}"
-        self.errors.add :account, account.collect_errors
-        throw :halt
-      end
-    end
-  end
+  # --------- -------
+  # DISABLED: LOCKING
+  # --
+  # [ :create, :save, :update, :destroy ].each do |advice|
+  #   before advice do |ctx|
+  #     if self.account.user.locked?
+  #       # puts "Tx: halting #{advice} because my account is locked: #{account.collect_errors}"
+  #       self.errors.add :account, account.collect_errors
+  #       throw :halt
+  #     end
+  #   end
+  # end
+  # -----------------
 
   [ :update, :destroy ].each do |advice|
     before advice do |ctx|
@@ -80,6 +83,7 @@ class Transaction
       # puts "[ after #{advice} ] \t#{self.id} #{self.type} account balance = (#{self.account.balance.to_f} #{self.account.currency})"
       true
     end
+
   end
 
   def deduct
@@ -88,20 +92,9 @@ class Transaction
   def add_to_account
   end
 
-  def serialize(with_note = false)
-    s = {
-      id: id,
-      amount: amount,
-      currency: currency,
-      account_id: account_id
-    }
-
-    s.merge!({ note: note }) if with_note
-    s
-  end
-
-  def to_json(*args)
-    serialize(args).to_json
+  # exposed only for unit tests, you really shouldn't need to use this
+  def __to_account_currency # :nodoc:
+    to_account_currency
   end
 
   protected
