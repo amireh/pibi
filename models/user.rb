@@ -86,6 +86,11 @@ class User
     payment_methods.first({ default: true })
   end
 
+  def payment_method=(new_default_pm)
+    self.payment_method.update({ default: false })
+    new_default_pm.update({ default: true })
+  end
+
   def categories
     Category.all({ conditions: { user_id: id }, :order => [ :name.asc ] })
   end
