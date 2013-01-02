@@ -67,29 +67,59 @@ class Transaction
   # end
   # -----------------
 
-  [ :update, :destroy ].each do |advice|
-    before advice do |ctx|
-      # puts "[ before #{advice} ] #{self.id} #{self.type} Deducting my current amount (#{to_account_currency.to_f}) from the account balance (#{self.account.balance.to_f} #{self.account.currency})"
-      deduct# if persisted?
-      # puts "[ before #{advice} ] \t#{self.id} #{self.type} account balance = (#{self.account.balance.to_f} #{self.account.currency})"
-      true
+  after :create do
+    added_amount = to_account_currency(self.amount)
+    add_to_account(added_amount)
+    account.save
+  end
+
+  # adjust the account balance if our amount or currency are being updated
+  before :update do
+    needs_adjustment = attribute_dirty?(:amount) || attribute_dirty?(:currency)
+
+    if needs_adjustment
+
+      # deduction:
+      # the deductible amount should be what the amount and currency
+      # where prior to the update *if* they were updated, technically
+      # we have 4 permutations here
+
+      dd_currency = case attribute_dirty?(:currency)
+      when true;  original_attributes[Transaction.currency] # currency is dirty, get original
+      when false; self.currency
+      end
+
+      dd_amount = case attribute_dirty?(:amount)
+      when true;  original_attributes[Transaction.amount] # amount is dirty, get original
+      when false; self.amount
+      end
+
+      deductible_amount = to_account_currency(dd_amount, dd_currency)
+      deduct(deductible_amount)
+
+      # addition:
+      # nothing special to do here since the new amount and currency
+      # are set already, see #to_account_currency
+      added_amount = to_account_currency
+      add_to_account(added_amount)
+
+      # note the bang (!) version; we MUST bypass all hooks here
+      # since otherwise there'd be a chicken-and-egg paradox!
+      #
+      # (account is dirty and can't be updated because the tx itself
+      #  is dirty, which needs the account to be updated, and clean, to update)
+      self.account.save!
     end
   end
 
-  [ :update, :create ].each do |advice|
-    after advice do
-      # puts "[ after #{advice} ] #{self.id} #{self.type} Adding my current amount (#{to_account_currency.to_f}) to the account balance (#{self.account.balance.to_f} #{self.account.currency})"
-      add_to_account# if persisted?
-      # puts "[ after #{advice} ] \t#{self.id} #{self.type} account balance = (#{self.account.balance.to_f} #{self.account.currency})"
-      true
-    end
-
+  before :destroy do
+    deduct(to_account_currency)
   end
 
-  def deduct
+  def deduct(amt)
   end
 
-  def add_to_account
+  def add_to_account(amt)
   end
 
   # exposed only for unit tests, you really shouldn't need to use this
@@ -99,12 +129,7 @@ class Transaction
 
   protected
 
-  def to_account_currency
-    ac = Currency[self.account.currency]
-    mc = Currency[self.currency]
-
-    # ac.from(mc, self.amount)
-    amt = (Transaction.get(self.id) || self).amount # WTF? || self?
-    ac.from(mc, amt)
+  def to_account_currency(amount = self.amount, mine = self.currency)
+    Currency[self.account.currency].from(Currency[mine], amount)
   end
 end
