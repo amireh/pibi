@@ -1,26 +1,21 @@
 get '/sessions/new' do
   current_page("signin")
-  erb "/sessions/new".to_sym
+  erb :"/sessions/new"
 end
 
 post '/sessions' do
-  pw = User.encrypt(params[:password])
-  info = { password: pw }
-
-  # authenticating using email?
-  if params[:email].is_email? then
-    info[:email] = params[:email]
-  # or nickname?
-  else
-    info[:nickname] = params[:email]
+  # validate address
+  unless params[:email].is_email?
+    flash[:error] = "The email address you entered seems to be invalid."
+    return redirect '/sessions/new'
   end
 
-  unless u = User.first(info)
-    flash[:error] = "Incorrect id or password, please try again."
-    return redirect "/sessions/new"
+  unless u = User.first({ email: params[:email], password: User.encrypt(params[:password]) })
+    flash[:error] = "Incorrect email or password, please try again."
+    return redirect '/sessions/new'
   end
 
-  session[:id] = u.id
+  authorize(u)
   redirect '/'
 end
 
@@ -34,54 +29,13 @@ end
 # Support both GET and POST for callbacks
 %w(get post).each do |method|
   send(method, "/auth/:provider/callback") do |provider|
-    auth = env['omniauth.auth']
-
-    # create the user if it's their first time
-    unless u = User.first({ uid: auth.uid, provider: provider, name: auth.info.name })
-
-      uparams = { uid: auth.uid, provider: provider, name: auth.info.name }
-      uparams[:email] = auth.info.email if auth.info.email
-      uparams[:nickname] = auth.info.nickname if auth.info.nickname
-      uparams[:oauth_token] = auth.credentials.token if auth.credentials.token
-      uparams[:oauth_secret] = auth.credentials.secret if auth.credentials.secret
-      uparams[:password] = 'foobar'
-      uparams[:auto_password] = true
-      if auth.extra.raw_info then
-        uparams[:extra] = auth.extra.raw_info.to_json.to_s
-      end
-
-      fix_nickname = false
-      nickname = ""
-
-      # Make sure the nickname isn't taken
-      if uparams.has_key?(:nickname) then
-        if User.first({ nickname: uparams[:nickname] }) then
-          nickname = uparams[:nickname] # just add the salt to it
-          fix_nickname = true
-        end
-      else
-        # Assign a default nickname based on their name
-        nickname = auth.info.name.to_s.sanitize
-      end
-
-      if fix_nickname
-        uparams[:nickname] = "#{nickname}_#{nickname_salt}"
-        uparams[:auto_nickname] = true
-      end
-
-      # puts "Creating a new user from #{provider} with params: \n#{uparams.inspect}"
-      if u = User.create(uparams) then
-        flash[:notice] = "Welcome to #{AppName}! You have successfully signed up using your #{provider} account."
-      else
-        flash[:error] = "Sorry! Something wrong happened while signing you up. Please try again."
-        return redirect "/auth/#{provider}"
-      end
+    if u = create_from_oauth(provider, env['omniauth.auth'])
+      flash[:notice] = "Welcome to #{AppName}! You have successfully signed up using your #{provider.capitalize} account."
+      authorize(u)
+      redirect '/'
+    else
+      halt 500, "Sorry! Something wrong happened while signing you up using your #{provider.capitalize} account: #{u.collect_errors}"
     end
-
-    # puts "User seems to already exist: #{u.id}"
-    session[:id] = u.id
-
-    redirect '/'
   end
 end
 

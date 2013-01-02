@@ -8,41 +8,43 @@ class User
   property :name,     String, length: 255, required: true
   property :provider, String, length: 255, required: true
   property :uid,      String, length: 255, required: true
+  property :password, String, length: 64,  required: true
+  property :email,    String, length: 255, required: true,
+    format: :email_address,
+    unique: true,
+    messages: {
+      presence:   'We need your email address.',
+      is_unique:  "There's already an account registered to this email address.",
+      format:     "Doesn't look like an email address to me..."
+    }
 
-  property :email,          String, length: 255, default: "", unique: true
   property :email_verified, Boolean, default: false
-  property :gravatar_email, String, length: 255, default: lambda { |r,_| r.email }
-  property :nickname,       String, length: 120, default: ""
-  property :password,       String, length: 64, required: true
+  property :gravatar_email, String, length: 255, format: :email_address, default: lambda { |r,_| r.email }
   property :settings,       Text, default: "{}"
   property :oauth_token,    Text
   property :oauth_secret,   Text
   property :extra,          Text
   property :auto_password,  Boolean, default: false
-  property :auto_nickname,  Boolean, default: false
   property :created_at,     DateTime, default: lambda { |*_| DateTime.now }
   property :is_admin,       Boolean, default: false
   property :is_public,       Boolean, default: false
 
   has n, :notices, :constraint => :destroy
   has n, :accounts, :constraint => :destroy
-  # has n, :transactions, :through => :accounts
-  # has n, :deposits,     :through => :accounts
   has n, :categories, :constraint => :destroy
   has n, :payment_methods, :constraint => :destroy
 
-  validates_presence_of :name, :provider, :uid
+  attr_accessor :password_confirmation
+
+  validates_confirmation_of :password
+  validates_length_of       :password, :min => 8
 
   is :lockable
 
-  before :valid? do |_|
-    if self.nickname.empty?
-      self.nickname = name.to_s.sanitize
-    end
-
-    unless email_verified?
-      validate_email!
-    end
+  before :valid? do |*_|
+    # unless email_verified?
+    #   validate_email!
+    # end
 
     !is_locked
   end
@@ -51,6 +53,9 @@ class User
     self.accounts.create
     self.payment_methods.create({ name: "Cash", default: true })
     self.payment_methods.create({ name: "Cheque" })
+    self.payment_methods.create({ name: "Credit Card" })
+
+    self.update!({ password: User.encrypt(password) })
   end
 
   class << self
@@ -100,7 +105,7 @@ class User
   # Note: since the password is encrypted prior to saving, the raw version
   # is kept in the notice's @data field for use when sending the notice email
   def generate_temporary_password
-    pw = nickname_salt
+    pw = Pibi.salt
     update!({ password: User.encrypt(pw), auto_password: true })
 
     notices.create({ type: 'password', data: pw })
@@ -140,27 +145,27 @@ class User
   # Validates an email domain using Ruby's DNS resolver.
   # Thanks to:
   # => http://www.buildingwebapps.com/articles/79182-validating-email-addresses-with-ruby
-  def validate_email_domain(email)
-    domain = email.match(/\@(.+)/)[1]
-    Resolv::DNS.open do |dns|
-      @mx = dns.getresources(domain, Resolv::DNS::Resource::IN::MX)
-    end
-    @mx.size > 0 ? true : false
-  end
+  # def validate_email_domain(email)
+  #   domain = email.match(/\@(.+)/)[1]
+  #   Resolv::DNS.open do |dns|
+  #     @mx = dns.getresources(domain, Resolv::DNS::Resource::IN::MX)
+  #   end
+  #   @mx.size > 0 ? true : false
+  # end
 
   # Validates whether the given string is a valid and genuine email address
-  def validate_email!
-    unless email.nil? || email.empty?
-      unless email.is_email?
-        errors.add(:email, "Your email address does not appear to be valid.")
-        throw :halt
-      else
-        unless validate_email_domain(email)
-          errors.add(:email, "Your email domain name appears to be incorrect.")
-          throw :halt
-        end
-      end
-    end
-  end
+  # def validate_email!
+  #   unless email.nil? || email.empty?
+  #     unless email.is_email?
+  #       errors.add(:email, "Your email address does not appear to be valid.")
+  #       throw :halt
+  #     else
+  #       unless validate_email_domain(email)
+  #         errors.add(:email, "Your email domain name appears to be incorrect.")
+  #         throw :halt
+  #       end
+  #     end
+  #   end
+  # end
 
 end

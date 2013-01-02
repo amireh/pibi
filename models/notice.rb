@@ -12,7 +12,7 @@ class Notice
   belongs_to  :user
 
   before :create do |ctx|
-    self.salt = Base64.urlsafe_encode64( self.user.nickname + Random.rand(1234).to_s + Time.now.to_s)
+    self.salt = Pibi.salt(self.user.email)
     true
   end
 

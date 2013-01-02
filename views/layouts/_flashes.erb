@@ -13,7 +13,7 @@
       <% if messages.is_a?(Array) && messages.size > 1 %>
         <ol>
           <% messages.each do |m| %>
-            <li class="flash <%= ctx %>"><%= m %></li>
+            <li class="flash <%= ctx %>"><%= m.is_a?(Array) ? m.first.to_s : m %></li>
           <% end %>
         </ol>
       <% else %>

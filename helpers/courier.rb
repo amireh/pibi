@@ -13,6 +13,7 @@ module Sinatra
 
     def self.registered(app)
       app.helpers Courier::Helpers
+      app.set :courier_service_enabled, true
     end
   end
 
@@ -20,6 +21,11 @@ module Sinatra
 
   class Base
     def dispatch_email(addr, tmpl, title, &cb)
+      if !@courier_service_enabled
+        cb.call(false, 'Courier service is currently turned off.') if block_given?
+        return
+      end
+
       sent = true
       error_msg = 'Mail could not be delivered, please try again later.'
       begin

@@ -95,8 +95,9 @@ post '/settings/password', auth: :active_user do
       flash[:error] = "You've entered an empty password!"
     elsif pw_new == pw_confirm then
       current_user.password = pw_new
+      current_user.password_confirmation = pw_confirm
       current_user.auto_password = false
-      if current_user.save then
+      if current_user.valid? && current_user.save then
         notices = current_user.pending_notices({ type: 'password' })
         unless notices.empty?
           back_url = "/"
@@ -105,7 +106,7 @@ post '/settings/password', auth: :active_user do
 
         flash[:notice] = "Your password has been changed."
       else
-        flash[:error] = "Something bad happened while updating your password!"
+        flash[:error] = "Something bad happened while updating your password: #{@user.all_errors}"
       end
     else
       flash[:error] = "The passwords you've entered do not match!"
@@ -115,33 +116,6 @@ post '/settings/password', auth: :active_user do
   end
 
   redirect back_url
-end
-
-post '/settings/nickname', auth: :active_user do
-  # see if the nickname is available
-  nickname = params[:nickname]
-  if nickname.empty? then
-    flash[:error] = "A nickname can't be empty!"
-    return redirect back
-  end
-
-  u = User.first(nickname: nickname)
-  # is it taken?
-  if u && u.email != current_user.email then
-    flash[:error] = "That nickname isn't available. Please choose another one."
-    return redirect back
-  end
-
-  current_user.nickname = nickname
-  current_user.auto_nickname = false
-
-  if current_user.save then
-    flash[:notice] = "Your nickname has been changed."
-  else
-    flash[:error] = "Something bad happened while updating your nickname."
-  end
-
-  redirect back
 end
 
 post "/settings/profile", auth: :active_user do

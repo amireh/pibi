@@ -69,7 +69,9 @@ module SessionsHelper
     @account = current_user.accounts.first
   end
 
-
+  def authorize(user)
+    session[:id] = user.id
+  end
 
 end
 

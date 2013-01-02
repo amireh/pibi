@@ -4,8 +4,12 @@ class PaymentMethod
   Colors = [ 'EF7901', '98BF0D', 'D54421', '01B0EC', '7449F1', 'B147A3' ]
 
   property :id, Serial
-
-  property :name, String, length: 50, required: true
+  property :name, String, length: 50, required: true,
+    unique: :user_id,
+    messages: {
+      presence: 'Payment method requires a name!',
+      is_unique: 'A payment method with that name already exists.'
+    }
   property :default, Boolean, default: false
   property :color, String, length: 6, default: lambda { |*| Colors[rand(Colors.size)] }
 

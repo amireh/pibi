@@ -17,7 +17,7 @@
         <% if current_user.is_admin %>
           <a href="/admin">Admin</a>
         <% end %>
-        <%= current_user.nickname %>
+        <%= current_user.name %>
         <%= gravatar_tag current_user.gravatar_email, :icon %>
         <% if current_user.notice_count > 0 %>
           <a href="/settings/notifications">
@@ -34,14 +34,8 @@
 
   <nav>
     <div class="left tri"></div>
-    <!-- <span>Hi <%= current_user.nickname %></span> -->
-    <!-- <h3>Transactions</h3> -->
     <ol>
       <li><a id="nav_transactions" href="/" title="Your last month's activity">Transactions</a></li>
-      <!-- <li>Monthly reports</li> -->
-    <!-- </ol> -->
-    <!-- <h3>Actions</h3> -->
-    <!-- <ol> -->
       <li><a id="nav_deposits" href="/transactions/deposits/new" title="Track some money you gained">Deposit</a></li>
       <li><a id="nav_withdrawals" href="/transactions/withdrawals/new" title="Track something you spent">Withdraw</a></li>
       <li><a id="nav_recurrings" href="/transactions/recurrings/new" title="Track a bill or salary">Recurring</a></li>
@@ -51,14 +45,10 @@
           <li><a href="/reports/monthly">Monthly reports</a></li>
         </ol>
       </li>
-    <!-- </ol> -->
-    <!-- <h3>Manage</h3> -->
-    <!-- <ol> -->
       <li><a id="nav_manage" class="listlike" href="/manage">Manage<span>&darr;</span></a>
         <ol>
           <li><a href="/categories">Categories</a></li>
           <li><a href="/transactions/recurrings">Bills</a></li>
-          <!-- <li><a href="/transactions/recurrings" title="Manage &amp; create recurring transies (bills, etc.)">Bills</a></li> -->
           <li><a href="/settings">Account</a></li>
           <li><a href="/sessions/destroy">Sign out</a></li>
         </ol>

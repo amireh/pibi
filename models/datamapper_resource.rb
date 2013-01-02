@@ -1,8 +1,11 @@
 module DataMapper
   module Resource
 
+    def all_errors
+      errors.map { |e| e.first }
+    end
     def collect_errors
-      out = []; errors.each { |e| out << e }; out.join("\n")
+      all_errors.join("\n")
     end
 
     # For some reason, resource.valid? keeps returning true

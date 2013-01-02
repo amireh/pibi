@@ -46,9 +46,11 @@ configure do
   load_all "models"
   load_all "controllers"
 
+
   DataMapper.finalize
   DataMapper.auto_upgrade!
 
+  set :courier_service_enabled, false
   set :config_path, File.join($ROOT, "config")
   set :default_preferences, JSON.parse(File.read(File.join(settings.config_path, "preferences.json")))
 
