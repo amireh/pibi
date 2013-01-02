@@ -23,7 +23,7 @@ class Currency
   # curr can be either a String or a Currency
   def from(curr, amt)
     c = curr.is_a?(String) ? Currency[curr] : curr
-    c.normalize(amt) * self.rate
+    (c.normalize(amt) * self.rate).round(2)
   end
 
   # converts an amount from this currency to another one
