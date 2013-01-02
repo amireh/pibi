@@ -23,6 +23,8 @@ gem 'timetastic', '>= 0.1.2', path: '~/Workspace/Projects/timetastic'
 gem "pony"
 
 group :development do
+  gem 'capybara'
+  gem 'launchy'
   gem 'thin'
   gem 'rspec'
   gem 'rspec-core'

@@ -4,6 +4,9 @@ ENV['RACK_ENV'] = 'test'
 
 require 'rspec'
 require 'rack/test'
+require 'capybara/rspec'
+require 'capybara/node/matchers'
+
 require 'app'
 
 module DataMapper
@@ -32,4 +35,36 @@ RSpec.configure do |config|
   config.order = 'random'
 
   config.include Rack::Test::Methods
+  Capybara.app = Sinatra::Application
+  Capybara.automatic_reload = false
+
+  module Capybara
+    module Node
+      module Matchers
+        def has_keywords?(*keywords)
+          if keywords.size == 1
+            keywords = keywords.first.split(/\s/)
+          end
+          return has_text?(Regexp.new(keywords.join('.*')))
+          # has_content?()
+          # has_xpath?(XPath::HTML.content(Regexp.new(keywords.join('.*'))))
+        end
+        alias_method :have_keywords, :has_keywords?
+      end
+    end
+  end
+end
+
+def mockup_user()
+  User.destroy
+
+  @raw_password = 'hello world'
+  @user = User.create({
+    name: "Mystery Mocker",
+    email: "mock@pibi.com",
+    provider: "pibi",
+    uid: "1234",
+    password: User.encrypt(@raw_password)
+  })
+  @account = @user.accounts.first
 end
