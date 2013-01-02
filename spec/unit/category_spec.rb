@@ -1,16 +1,8 @@
 describe Category do
 
   before do
-    User.destroy
-
-    @user = User.create({
-      name: "Ahmad Amireh",
-      email: "ahmad@amireh.net",
-      provider: "pibi",
-      uid: "1234",
-      password: User.encrypt('hello world')
-    })
-    @account = @user.accounts.first
+    CategoryTransaction.destroy
+    mockup_user()
   end
 
   it "should create a category" do
@@ -19,6 +11,14 @@ describe Category do
     c.errors.size.should == 0
     c.saved?.should be_true
     @user.categories.count.should == 1
+  end
+
+  it "should reject a nameless category" do
+    @user.categories.count.should == 0
+    c = @user.categories.create({ name: "" })
+    c.valid?.should be_false
+    c.saved?.should be_false
+    c.all_errors.first.should match(/must provide a name/)
   end
 
   it "should attach a category to a tx" do

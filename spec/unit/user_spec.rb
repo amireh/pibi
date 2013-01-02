@@ -102,8 +102,4 @@ describe User do
 
     u.save.should be_false
   end
-
-
-
-
 end

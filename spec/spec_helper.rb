@@ -57,7 +57,8 @@ def mockup_user()
     email: "mock@pibi.com",
     provider: "pibi",
     uid: "1234",
-    password: User.encrypt(@raw_password)
+    password: User.encrypt(@raw_password),
+    password_confirmation: User.encrypt(@raw_password)
   })
   @account = @user.accounts.first
 end

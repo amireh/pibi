@@ -1,4 +1,4 @@
-describe User do
+describe Notice do
 
   before do
     User.destroy
