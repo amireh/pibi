@@ -24,7 +24,7 @@ get '/categories/:id/edit', auth: :user do |cid|
   erb :"categories/edit"
 end
 
-post '/categories', auth: :user do
+post '/categories', auth: :active_user do
 
   { "You must specify a name" => params["name"].empty? }.each_pair {|msg,cnd|
     if cnd
@@ -51,7 +51,7 @@ post '/categories', auth: :user do
   redirect back
 end
 
-put '/categories/:cid', auth: :user do |cid|
+put '/categories/:cid', auth: :active_user do |cid|
   unless c = @user.categories.get(cid)
     halt 400
   end
@@ -77,7 +77,7 @@ put '/categories/:cid', auth: :user do |cid|
   redirect back
 end
 
-delete '/categories/:cid', auth: :user do |cid|
+delete '/categories/:cid', auth: :active_user do |cid|
   unless c = @user.categories.get(cid)
     halt 400
   end

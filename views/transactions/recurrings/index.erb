@@ -5,12 +5,14 @@
 <% unless @yearly_transies.empty? %>
   <table data-confirmable="bills">
     <thead>
-      <th>Name</th>
-      <th>Amount</th>
-      <th>Billing date</th>
-      <th>Next bill in</th>
-      <th>Active?</th>
-      <th>Actions</th>
+      <tr>
+        <th>Name</th>
+        <th>Amount</th>
+        <th>Billing date</th>
+        <th>Next bill in</th>
+        <th>Active?</th>
+        <th>Actions</th>
+      </tr>
     </thead>
     <tbody>
       <% @yearly_transies.each do |t| %>
@@ -37,13 +39,15 @@
 <% unless @monthly_transies.empty? %>
   <table data-confirmable="bills">
     <thead>
-      <th>Name</th>
-      <th>Amount</th>
-      <!-- <th>Flow type</th> -->
-      <th>Billing day</th>
-      <th>Active?</th>
-      <th>Next bill in</th>
-      <th>Actions</th>
+      <tr>
+        <th>Name</th>
+        <th>Amount</th>
+        <!-- <th>Flow type</th> -->
+        <th>Billing day</th>
+        <th>Active?</th>
+        <th>Next bill in</th>
+        <th>Actions</th>
+      </tr>
     </thead>
     <tbody>
       <% @monthly_transies.each do |t| %>
@@ -75,11 +79,13 @@
 <% unless @daily_transies.empty? %>
   <table data-confirmable="bills">
     <thead>
-      <th>Name</th>
-      <th>Amount</th>
-      <th>Flow type</th>
-      <th>Active?</th>
-      <th>Actions</th>
+      <tr>
+        <th>Name</th>
+        <th>Amount</th>
+        <th>Flow type</th>
+        <th>Active?</th>
+        <th>Actions</th>
+      </tr>
     </thead>
     <tbody>
       <% @daily_transies.each do |t| %>

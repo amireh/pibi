@@ -1,4 +1,4 @@
-<h2><%= @c.name %> <span class="actions"><%= actions_for @c %></span></h2>
+<h2 data-confirmable="categories"><%= @c.name %> <span class="actions"><%= actions_for @c %></span></h2>
 <p><%= @c.transactions.count %> transaction(s) have been categorized under <%= @c.name %>.</p>
 <% transies = {} %>
 <% @c.transactions.all({ order: [ :occured_on.desc ] }).each do |t| %>
@@ -23,4 +23,15 @@
 }
 %>
 
-<a class="inline prev button" href="/categories">Back</a>
+<div class="navigation">
+  <a class="inline prev navigator button" href="/categories">Back</a>
+</div>
+
+<div class="hidden" id="categories_delete_confirmation">
+  <h1>Category removal</h1>
+  <p>Removing this category will cause all <%= @c.transactions.count %> transactions
+    that were flagged with it to lose that status.
+    <br /><br /> Are you
+    sure you want to do this?
+  </p>
+</div>

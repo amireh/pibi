@@ -144,7 +144,7 @@ post '/users/nickname', auth: :user do
   name_available?(params[:nickname]).to_json
 end
 
-get '/users/:id/accept/:token', auth: :user do |uid, token|
+get '/users/:id/accept/:token', auth: :active_user do |uid, token|
   unless @n = @scope.notices.first({ salt: token })
     halt 400, "No such verification link."
   end

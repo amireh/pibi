@@ -21,8 +21,12 @@ class Recurring < Transaction
         Timetastic.fixate(last_commit) { t = 1.month.ahead }
         t
       else
-        t = 1.month.ahead
-        Time.new(t.year, t.month, recurs_on.day)
+        if recurs_on.day > Time.now.day
+          return Time.new(Time.now.year, Time.now.month, recurs_on.day)
+        else
+          t = 1.month.ahead
+          Time.new(t.year, t.month, recurs_on.day)
+        end
       end
     when :yearly
       if last_commit then
@@ -83,7 +87,7 @@ class Recurring < Transaction
       amount: self.amount,
       currency: self.currency,
       note: self.note,
-      account: self.account
+      payment_method: self.payment_method
     })
 
     unless t.valid? && t.persisted?

@@ -1,4 +1,3 @@
-
 <% @tx ||= Recurring.new %>
 <% unless @tx.persisted? %>
   <% @tx.recurs_on = Timetastic.this.month %>
@@ -11,8 +10,18 @@
         if ($("#yearly_frequency_recurrence").is(":hidden")) {
           $("input[name=yearly_recurs_on_day]").get(0)['required'] = false;
         }
-      })
-      $("fieldset[id*=recurrence]").hide();
+      });
+
+      $("input[name=flow_type]").change(function() {
+        var me = $("input[name=flow_type]:checked").attr('value');
+        if (me == 'positive') {
+          $("#payment_method_label").html("Received as")
+        } else {
+          $("#payment_method_label").html("Paid with")
+        }
+      }).change();
+
+      $("ol[id*=recurrence]").hide();
       $("input[name=frequency]").change(function() {
         var me = $("input[name=frequency]:checked").attr('value');
         if (me == 'yearly') {
@@ -60,6 +69,21 @@
         </select>
       </li>
 
+      <li><span id="payment_method_label">Paid with</span><br />
+        <span class="hint">You can manage your payment methods in your
+          <a href="/settings/preferences" target="_blank">preferences</a>
+          section.
+        </span>
+      </li>
+      <li>
+        <% @user.payment_methods.each do |pm| %>
+          <label style="color: #<%= pm.color %>;">
+            <input type="radio" name="payment_method" value="<%= pm.id %>" <%= 'checked="checked"' if @user.payment_method.id == pm.id %> />
+            <%= pm.name %>
+          </label>
+        <% end %>
+      </li>
+
       <li>
         <label>Frequency</label>
         <br />
@@ -70,37 +94,40 @@
         <label><input type="radio" name="frequency" value="monthly" <%= 'checked="checked"' if @tx.frequency == :monthly %> />Monthly</label>
         <label><input type="radio" name="frequency" value="yearly" <%= 'checked="checked"' if @tx.frequency == :yearly %> />Yearly</label>
       </li>
-
-      <div id="monthly_frequency_recurrence">
-        <li>Time of occurence
-          <br />
-          <span class="hint">On which day of the month does it occur?</p>
-        </li>
-        <!-- <legend>Time of occurence</legend> -->
-        <li><input type="number" name="monthly_recurs_on_day" min="1" max="28" value="<%= @tx.recurs_on.day %>" /> <span class="hint">Allowed range: 1 to 28.</span>
-        </li>
-      </div>
-
-      <div id="yearly_frequency_recurrence">
-        <li>Time of occurence
-          <br />
-          <span class="hint">On which day of which month does it occur?</span>
-        </li>
-        <li>
-          <input type="number" name="yearly_recurs_on_day" min="1" max="28" value="<%= @tx.recurs_on.day %>" />
-            <select name="yearly_recurs_on_month">
-              <% for i in 1..12 do %>
-                <option value="<%= i %>" <%= 'selected="selected"' if @tx.recurs_on.month == i %>><%= Date.new(0, i, 1).strftime("%B") %></option>
-              <% end %>
-            </select>
-          <br />
-          <span class="hint">Allowed day range: 1 to 28.</span>
-        </li>
-      </div>
-
-      <%= partial "/transactions/_category_listing" %>
     </ol>
+
+    <ol id="monthly_frequency_recurrence">
+      <li>Time of occurence
+        <br />
+        <span class="hint">On which day of the month does it occur?</span>
+      </li>
+      <!-- <legend>Time of occurence</legend> -->
+      <li><input type="number" name="monthly_recurs_on_day" min="1" max="28" value="<%= @tx.recurs_on.day %>" /> <span class="hint">Allowed range: 1 to 28.</span>
+      </li>
+    </ol>
+
+    <ol id="yearly_frequency_recurrence">
+      <li>Time of occurence
+        <br />
+        <span class="hint">On which day of which month does it occur?</span>
+      </li>
+      <li>
+        <input type="number" name="yearly_recurs_on_day" min="1" max="28" value="<%= @tx.recurs_on.day %>" />
+          <select name="yearly_recurs_on_month">
+            <% for i in 1..12 do %>
+              <option value="<%= i %>" <%= 'selected="selected"' if @tx.recurs_on.month == i %>><%= Date.new(0, i, 1).strftime("%B") %></option>
+            <% end %>
+          </select>
+        <br />
+        <span class="hint">Allowed day range: 1 to 28.</span>
+      </li>
+    </ol>
+
+    <ol><%= partial "/transactions/_category_listing" %></ol>
+
+
   </fieldset>
 
-  <input type="submit" value="store transaction" />
+  <input class="inline" type="submit" value="store transaction" />
+  <a href="/transactions/recurrings" class="button next small right inline">View all bills</a>
 </form>

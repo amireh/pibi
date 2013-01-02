@@ -38,7 +38,7 @@ configure do
 
   # load the models and controllers
   def load_all(directory)
-    Dir.glob("#{directory}/*.rb").each { |f| require f }
+    Dir.glob("#{directory}/**/*.rb").each { |f| require f }
   end
 
   load_all "lib"

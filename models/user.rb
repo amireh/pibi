@@ -22,6 +22,7 @@ class User
   property :auto_nickname,  Boolean, default: false
   property :created_at,     DateTime, default: lambda { |*_| DateTime.now }
   property :is_admin,       Boolean, default: false
+  property :is_public,       Boolean, default: false
 
   has n, :notices, :constraint => :destroy
   has n, :accounts, :constraint => :destroy
@@ -32,6 +33,8 @@ class User
 
   validates_presence_of :name, :provider, :uid
 
+  is :lockable
+
   before :valid? do |_|
     if self.nickname.empty?
       self.nickname = name.to_s.sanitize
@@ -41,8 +44,7 @@ class User
       validate_email!
     end
 
-
-    true
+    !is_locked
   end
 
   after :create do

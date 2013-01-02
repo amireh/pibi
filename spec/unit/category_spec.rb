@@ -10,8 +10,7 @@ describe Category do
       uid: "1234",
       password: User.encrypt('hello world')
     })
-
-    @account = @user.accounts.create()
+    @account = @user.accounts.first
   end
 
   it "should create a category" do
@@ -29,7 +28,7 @@ describe Category do
     c.saved?.should be_true
     @user.categories.count.should == 1
 
-    t = @account.deposits.create({ amount: 5, account: @account })
+    t = @account.deposits.create({ amount: 5 })
     t.errors.size.should == 0
     t.saved?.should be_true
 
@@ -47,7 +46,7 @@ describe Category do
     c.saved?.should be_true
     @user.categories.count.should == 1
 
-    t = @account.deposits.create({ amount: 5, account: @account })
+    t = @account.deposits.create({ amount: 5 })
     t.errors.size.should == 0
     t.saved?.should be_true
 
@@ -79,13 +78,13 @@ describe Category do
     @user.categories.count.should == 1
 
     # create a couple of txes
-    t = @account.deposits.create({ amount: 5, account: @account })
+    t = @account.deposits.create({ amount: 5 })
     t.errors.size.should == 0
     t.saved?.should be_true
     t.categories << c
     t.save
 
-    t = @account.withdrawals.create({ amount: 5, account: @account })
+    t = @account.withdrawals.create({ amount: 5})
     t.errors.size.should == 0
     t.saved?.should be_true
     t.categories << c

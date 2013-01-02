@@ -1,10 +1,9 @@
-
 get '/settings' do
   redirect "/settings/account"
 end
 
 [ "account", "notifications", "preferences", 'password' ].each { |domain|
-  get "/settings/#{domain}", auth: :user do
+  get "/settings/#{domain}", auth: :active_user do
     current_page("manage")
     @standalone = true
 
@@ -12,11 +11,9 @@ end
   end
 }
 
-post '/settings/preferences', auth: :user do
+post '/settings/preferences', auth: :active_user do
   notices = []
   errors  = []
-
-  puts params.inspect
 
   if params[:new_payment_method] && !params[:new_payment_method].empty?
     if current_user.payment_methods.first({ name: params[:new_payment_method] })
@@ -63,7 +60,7 @@ post '/settings/preferences', auth: :user do
   redirect '/settings/preferences'
 end
 
-delete '/settings/preferences/payment_methods/:pm_id', auth: :user do |pm_id|
+delete '/settings/preferences/payment_methods/:pm_id', auth: :active_user do |pm_id|
   unless pm = current_user.payment_methods.get(pm_id)
     halt 400, "No such payment method '#{pm_id}'."
   end
@@ -86,7 +83,7 @@ delete '/settings/preferences/payment_methods/:pm_id', auth: :user do |pm_id|
   redirect back
 end
 
-post '/settings/password', auth: :user do
+post '/settings/password', auth: :active_user do
   back_url = back
 
   pw = User.encrypt(params[:password][:current])
@@ -120,7 +117,7 @@ post '/settings/password', auth: :user do
   redirect back_url
 end
 
-post '/settings/nickname', auth: :user do
+post '/settings/nickname', auth: :active_user do
   # see if the nickname is available
   nickname = params[:nickname]
   if nickname.empty? then
@@ -147,7 +144,7 @@ post '/settings/nickname', auth: :user do
   redirect back
 end
 
-post "/settings/profile", auth: :user do
+post "/settings/profile", auth: :active_user do
 
   { :name => "Your name can not be empty",
     :email => "You must specify a primary email address.",
@@ -170,7 +167,7 @@ post "/settings/profile", auth: :user do
   redirect back
 end
 
-get '/settings/verify/:type', auth: :user do |type|
+get '/settings/verify/:type', auth: :active_user do |type|
 
   # was a notice already issued and another is requested?
   redispatch = params[:redispatch]

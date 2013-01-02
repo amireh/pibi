@@ -17,9 +17,21 @@ module SessionsHelper
 
   set(:auth) do |*roles|
     condition do
-      if roles.include? :user || roles.include?(:admin)
+      if roles.include?(:active_user)
         restricted!
         @scope = current_user
+
+        if current_user.locked?
+          halt 403, "This action is for available to this account because it is locked."
+        end
+
+        # proceed to normal user auth
+        roles << :user
+      end
+
+      if roles.include? :user || roles.include?(:admin)
+        restricted!
+        @scope = @user = current_user
         @account ||= @user.accounts.first
 
         if params[:account] then
@@ -37,8 +49,13 @@ module SessionsHelper
 
   def current_user
     return @user if @user
-    return nil unless session[:id]
+    if params[:public_uid]
+      @user = User.first({ id: params[:public_uid], is_public: true })
+      @account = @user.accounts.first
+      return @user
+    end
 
+    return nil unless session[:id]
     @user = User.get(session[:id])
   end
 

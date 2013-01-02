@@ -6,7 +6,7 @@
 
   <link href="/css/common.css" rel="stylesheet" type="text/css" />
   <link href="/css/skins/<%= preferences["pibi"]["skin"] %>.css" rel="stylesheet" type="text/css" />
-  <link href="/js/jquery-ui/css/ui-darkness/jquery-ui-1.9.2.custom.min.css" rel="stylesheet" type="text/css" />
+  <link href="/js/jquery-ui/css/ui-darkness/jquery-ui-1.9.2.custom.css" rel="stylesheet" type="text/css" />
   <!-- <link href="/js/bootstrap/css/bootstrap.css" rel="stylesheet" type="text/css" /> -->
 
   <%= yield_content :css %>
@@ -41,7 +41,7 @@
 <body class="<%= @layout.to_s.split('/').last %> <%= current_page %> <%= yield_content :layout_classes %>">
   <%= partial "layouts/#{preferences['pibi']['layout']}" %>
 
-  <img class="loader" hidden="hidden" src="/images/ajax-loader-615B4E.gif" />
+  <!-- <img class="loader" hidden="hidden" src="/images/ajax-loader-615B4E.gif" /> -->
 
   <aside class="modal alert" hidden="hidden" id="html5_compatibility_notice">
     <h2>Unsupported Browser</h2>

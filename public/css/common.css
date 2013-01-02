@@ -9,25 +9,14 @@ body * {
           box-sizing: border-box;
 }
 
-/*.stuff {
-  width: 720px;
-  margin: 10px auto;
-  position: relative;
+
+button::-moz-focus-inner,
+input[type=submit]::-moz-focus-inner {
+  border: 0;
+  padding: 0;
 }
-*/
+
 #content { margin-left: 260px; }
-/*header {                 margin-left: 260px;}*/
-nav {
-  /*position: absolute;*/
-  /*width: 220px;*/
-  /*left: -220px;*/
-  /*top: 0;*/
-}
-/*
-nav > span:first-of-type {
-  display: block;
-  margin-bottom: 10px;
-}*/
 
 .category_listing label {
   display: inline-block;
@@ -54,7 +43,6 @@ nav ol { list-style-type: none; padding: 0; }
 nav h3 {
   padding: 10px 10px 10px 20px; position: relative; left: -20px; width: 240px;
 }
-
 
   /* jqModal base Styling courtesy of;
     Brice Burgess <bhb@iceburg.net> */
@@ -145,35 +133,15 @@ nav h3 {
     left: 15px;
   }
 
-/*  .clearfix:after {
-      content: ".";
-      display: block;
-      height: 0;
-      clear: both;
-      visibility: hidden;
+  .modal {
+      display: none;
   }
-
-  .clearfix {display: inline-block;}
-
-  * html .clearfix {height: 1%;}
-  .clearfix {display: block;}
-*/
-.modal {
-    display: none;
-}
-.modal.alert {
-  background: white;
-  position: fixed;
-  top: 45%;
-  left: 45%;
-}
-
-
-
-
-
-
-
+  .modal.alert {
+    background: white;
+    position: fixed;
+    top: 45%;
+    left: 45%;
+  }
 
 /* Twitter Bootstrap */
 .tooltip {
@@ -185,7 +153,6 @@ nav h3 {
   font-size: 11px;
   line-height: 16px;
   opacity: 0;
-  filter: alpha(opacity=0);
 }
 .tooltip.fade {
   -webkit-transition: opacity 0.25s ease 0s;
@@ -196,7 +163,6 @@ nav h3 {
 }
 .tooltip.in {
   opacity: 0.9;
-  filter: alpha(opacity=90);
 }
 .tooltip.top {
   margin-top: -3px;

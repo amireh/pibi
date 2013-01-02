@@ -29,7 +29,7 @@
     end
   end
 
-  post "/transactions/#{type}", auth: :user do
+  post "/transactions/#{type}", auth: :active_user do
     { "You must specify an amount" => params["amount"].empty?,
       "Amount must be greater than 0" => params["amount"].to_f <= 0.0,
       "You really should write some note, even a short one" => params["note"].empty?,
@@ -91,16 +91,16 @@
         t.save
       end
     else
-      flash[:error] = t.collect_errors
+      halt 500, t.collect_errors
     end
 
     redirect back
   end
 
 
-  put "/transactions/#{type}/:tid", auth: :user do |tid|
+  put "/transactions/#{type}/:tid", auth: :active_user do |tid|
     unless tx = @account.transactions.get(tid)
-      halt 400
+      halt 400, "No such transie"
     end
 
     { "You must specify an amount" => params["amount"].empty?,
@@ -151,26 +151,24 @@
       tx.categories << current_user.categories.get(cid)
     }
 
-    unless tx.valid?
-      flash[:error] = "Transaction #{tx.id} could not be updated: #{tx.collect_errors}, #{tx.account.collect_errors}."
-      # halt 500, tx.collect_errors
-    else
-      tx.save
+    if tx.save
       tx.account.save!
       flash[:notice] = "Transaction #{tx.id} was updated successfully."
+    else
+      flash[:error] = "Transaction #{tx.id} could not be updated: #{tx.collect_errors}, #{tx.account.collect_errors}."
     end
 
     redirect back
   end
 
-  delete "/transactions/#{type}/:tid", auth: :user do |tid|
+  delete "/transactions/#{type}/:tid", auth: :active_user do |tid|
     unless t = @account.transactions.get(tid)
       halt 400
     end
 
-    # unless t.destroy
-    #   halt 500, t.collect_errors
-    # end
+    unless t.destroy
+      halt 500, t.collect_errors
+    end
 
     flash[:notice] = "Transaction was successfully removed."
 
@@ -189,7 +187,7 @@ get '/transactions/recurrings', auth: :user do
   erb :"/transactions/recurrings/index"
 end
 
-get '/transactions/recurrings/:id/toggle_activity', auth: :user do |tid|
+get '/transactions/recurrings/:id/toggle_activity', auth: :unlocked_user do |tid|
   unless tx = current_account.recurrings.get(tid)
     halt 400, "No such recurring transaction."
   end

@@ -31,6 +31,16 @@ class Account
 
   validates_with_method :currency, :method => :check_currency
 
+  after :valid? do
+    if self.user.locked?
+      self.errors.add :user, "This action is not available to this account because it is locked."
+      return false
+    end
+
+    true
+  end
+  # is :lockable, :on => [ :balance ]
+
   def check_currency
     unless Currency.valid?(self.currency)
       return [ false, "Currency must be one of #{Currencies.join(', ')}" ]

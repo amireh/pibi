@@ -1,4 +1,4 @@
-<h2><%= @c.name %></h2>
+<h2>Editing category '<%= @c.name %>'</h2>
 <form method="POST" action="/categories/<%= @c.id %>">
   <fieldset>
     <legend>Category</legend>
@@ -6,3 +6,7 @@
     <input type="submit" value="Update" style="display: inline-block;" />
   </fieldset>
 </form>
+
+<div class="navigation">
+  <a class="inline prev navigator button" href="/categories/<%= @c.id %>">Back</a>
+</div>
