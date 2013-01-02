@@ -15,35 +15,41 @@ module SessionsHelper
     halt 401, "You must sign in first." unless logged_in?
   end
 
+  def restrict_to(roles)
+    roles = [ roles ] if roles.is_a? Symbol
+
+    if roles.include?(:active_user)
+    #   restricted!
+    #   @scope = current_user
+
+    #   if current_user.locked?
+    #     halt 403, "This action is for available to this account because it is locked."
+    #   end
+
+      # proceed to normal user auth
+      roles << :user
+    end
+
+    if roles.include? :user || roles.include?(:admin)
+      restricted!
+      @scope = @user = current_user
+      @account ||= @user.accounts.first
+
+      if params[:account] then
+        unless @account = current_user.accounts.get(params[:account])
+          halt 500, "No such account."
+        end
+      end
+
+      if roles.include?(:admin) && !@scope.is_admin
+        halt 403, "Admin privileges are needed to visit this section."
+      end
+    end
+  end
+
   set(:auth) do |*roles|
     condition do
-      if roles.include?(:active_user)
-        restricted!
-        @scope = current_user
-
-        if current_user.locked?
-          halt 403, "This action is for available to this account because it is locked."
-        end
-
-        # proceed to normal user auth
-        roles << :user
-      end
-
-      if roles.include? :user || roles.include?(:admin)
-        restricted!
-        @scope = @user = current_user
-        @account ||= @user.accounts.first
-
-        if params[:account] then
-          unless @account = current_user.accounts.get(params[:account])
-            halt 500, "No such account."
-          end
-        end
-
-        if roles.include?(:admin) && !@scope.is_admin
-          halt 403, "Admin privileges are needed to visit this section."
-        end
-      end
+      restrict_to(roles)
     end
   end
 
@@ -75,6 +81,4 @@ module SessionsHelper
 
 end
 
-helpers do
-  include SessionsHelper
-end
+helpers SessionsHelper

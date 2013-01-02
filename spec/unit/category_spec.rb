@@ -21,6 +21,19 @@ describe Category do
     c.all_errors.first.should match(/must provide a name/)
   end
 
+  it "should reject a duplicate named category" do
+    @user.categories.count.should == 0
+    c = @user.categories.create({ name: "Utility" })
+    c.valid?.should be_true
+    c.saved?.should be_true
+
+    c = @user.categories.create({ name: "Utility" })
+    c.valid?.should be_false
+    c.saved?.should be_false
+
+    c.all_errors.first.should match(/already have such a category/)
+  end
+
   it "should attach a category to a tx" do
     @user.categories.count.should == 0
     c = @user.categories.create({ name: "Utility" })

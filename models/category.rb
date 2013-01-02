@@ -3,7 +3,14 @@ class Category
 
   property :id, Serial
 
-  property :name, String, length: 250, required: true, message: 'You must provide a name for the category!'
+  property :name, String, length: 250,
+    unique: :user_id,
+    required: true,
+    messages: {
+      presence: 'You must provide a name for the category!',
+      is_unique: 'You already have such a category!'
+    }
+
   belongs_to :user
   has n, :transactions, :through => Resource, :constraint => :skip
 
