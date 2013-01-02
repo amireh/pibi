@@ -9,7 +9,7 @@ class Notice
   property    :type,        String, length: 255
   property    :status,      Enum[ :pending, :expired, :accepted ], default: :pending
   property    :displayed,   Boolean, default: false
-  belongs_to  :user
+  belongs_to  :user, required: true
 
   before :create do |ctx|
     self.salt = Pibi.salt(self.user.email)

@@ -5,10 +5,11 @@ class User
 
   property :id, Serial
 
-  property :name,     String, length: 255, required: true
+  property :name,     String, length: 255, required: true, message: 'We need your name.'
   property :provider, String, length: 255, required: true
-  property :uid,      String, length: 255, required: true
-  property :password, String, length: 64,  required: true
+  property :uid,      String, length: 255, default: lambda { |*u| UUID.generate }
+  property :password, String, length: 64,  required: true, message: 'You must provide a password!'
+
   property :email,    String, length: 255, required: true,
     format: :email_address,
     unique: true,
@@ -27,7 +28,7 @@ class User
   property :auto_password,  Boolean, default: false
   property :created_at,     DateTime, default: lambda { |*_| DateTime.now }
   property :is_admin,       Boolean, default: false
-  property :is_public,       Boolean, default: false
+  property :is_public,      Boolean, default: false
 
   has n, :notices, :constraint => :destroy
   has n, :accounts, :constraint => :destroy
@@ -36,17 +37,30 @@ class User
 
   attr_accessor :password_confirmation
 
-  validates_confirmation_of :password
-  validates_length_of       :password, :min => 8
+  validates_confirmation_of :password, message: 'Passwords must match.'
+  validates_length_of       :password, :min => 8,
+    message: 'Password is too short! Must be at least 8 characters long.'
 
   is :lockable
 
   before :valid? do |*_|
-    # unless email_verified?
-    #   validate_email!
-    # end
-
     !is_locked
+  end
+
+  # invalidate email verification status if email is updated
+  before :update do
+    if attribute_dirty?(:email)
+      self.email_verified = false
+    end
+  end
+
+  # generate an email verification notice if necessary
+  [ :create, :update ].each do |advice|
+    after advice do
+      unless email_verified? or awaiting_email_verification?
+        verify_email
+      end
+    end
   end
 
   after :create do
@@ -55,7 +69,10 @@ class User
     self.payment_methods.create({ name: "Cheque" })
     self.payment_methods.create({ name: "Credit Card" })
 
-    self.update!({ password: User.encrypt(password) })
+    # self.update!({
+      # password: User.encrypt(password),
+      # password_confirmation: User.encrypt(password)
+    # })
   end
 
   class << self
@@ -123,7 +140,10 @@ class User
 
   # dispatches an email verification notice
   def verify_email
-    unless n = notices.first_or_create({ data: self.email, type: 'email' })
+    # remove any notice(s) for past email addresses
+    pending_notices.all({ :data.not => self.email, type: 'email' }).destroy
+
+    unless n = pending_notices.first_or_create({ data: self.email, type: 'email' })
       errors.add :notices, n.collect_errors
       throw :halt
     end
