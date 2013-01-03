@@ -35,14 +35,6 @@ RSpec.configure do |config|
   module Capybara
     module Node
       module Matchers
-        # stolen from Capybara 2.0.2
-        # def normalize_whitespace(text)
-        #   # http://en.wikipedia.org/wiki/Whitespace_character#Unicode
-        #   # We should have a better reference.
-        #   # See also http://stackoverflow.com/a/11758133/525872
-        #   text.to_s.gsub(/[\s\u0085\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+/, ' ').strip
-        # end
-
         # This matcher that will perform a scan of the given keywords
         # in the specified order across the node's content, regardless
         # of what's in between the keywords.

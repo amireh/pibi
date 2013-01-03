@@ -8,6 +8,15 @@ require 'bundler/setup'
 
 Bundler.require(:default)
 
+# ----
+# Validating that configuration files exist and are readable...
+[ 'credentials', 'application', 'database' ].each { |config_file|
+  unless File.exists?(File.join($ROOT, 'config', "%s.yml" %[config_file] ))
+    class ConfigFileError < StandardError; end;
+    raise ConfigFileError, "Missing required config file: config/%s.yml" %[config_file]
+  end
+}
+
 require 'config/initializer'
 
 configure do
