@@ -73,11 +73,13 @@ helpers do
     html = ''
     if r.respond_to?(:url)
       html << "<a href=\"#{r.url}/edit\">Edit</a>"
-      html << " <a href=\"#{r.url}/destroy\" class=\"bad\">Delete</a>"
+
       if r.is_a?(Recurring)
         action = r.active? ? 'Deactivate' : 'Activate'
         html << " <a href=\"#{r.url}/toggle_activity\">#{action}</a>"
       end
+
+      html << " <a href=\"#{r.url}/destroy\" class=\"bad\">Delete</a>"
     end
 
     html

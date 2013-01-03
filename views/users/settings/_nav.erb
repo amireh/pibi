@@ -18,8 +18,11 @@
     <li><a data-placement="right" title="Name, email, etc." href="/settings/account">Account</a></li>
     <li><a data-placement="right" title="Change your password" href="/settings/password">Password</a></li>
     <li><a data-placement="right" title="Default currency, and other application settings" href="/settings/preferences">Preferences</a></li>
-    <li><a data-placement="right" title="Notifications you should accept" href="/settings/notifications">Notifications <span data-amount>(<%= current_user.pending_notices.size %>)</span></a>
-
+    <li><a data-placement="right" title="Notifications you should accept" href="/settings/notifications">Notifications
+      <% if current_user.pending_notices.any? %>
+        <span data-amount>(<%= current_user.pending_notices.size %>)</span>
+      <% end %>
+      </a>
     </li>
   </ul>
 </div>

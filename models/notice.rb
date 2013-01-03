@@ -39,8 +39,9 @@ class Notice
   end
 
   def url
-    "/users/#{self.user.id}/notices/#{self.salt}"
+    "/notices/#{self.salt}/accept"
   end
+  alias_method :acceptance_url, :url
 
   # is :locatable, by: :salt
 end

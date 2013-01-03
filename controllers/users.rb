@@ -96,7 +96,7 @@ namespace '/users' do
   end
 
   post do
-    u = create_from_pibi
+    u = build_from_pibi
     unless u.save || u.saved?
       flash[:error] = u.all_errors
       return redirect back
@@ -107,104 +107,5 @@ namespace '/users' do
     authorize(u)
 
     redirect '/'
-  end
-end
-
-namespace '/users/:user_id' do |user_id|
-  condition do
-    restrict_to(:user, :with => { id: params[:user_id].to_i })
-  end
-
-  before do current_page("manage") end
-
-  get '/accept/:token' do |token|
-    unless @n = @scope.notices.first({ salt: token })
-      halt 400, "No such verification link."
-    end
-
-    case @n.status
-    when :expired
-      return erb :"emails/expired"
-    when :accepted
-      flash[:error] = "This verification notice seems to have been accepted earlier."
-      return redirect "/settings/notifications"
-    else
-      @n.accept!
-      case @n.type
-      when 'email'
-        flash[:notice] = "Your email address '#{@n.user.email}' has been verified."
-        return redirect "/settings/account"
-      when 'password'
-        return redirect "/settings/account"
-      end
-    end
-  end
-
-  namespace '/settings' do
-    [ "account", "notifications", "preferences", 'password' ].each { |domain|
-      get "/#{domain}" do
-        @standalone = true
-
-        erb :"/users/settings/#{domain}"
-      end
-    }
-
-    post '/preferences' do
-      notices = []
-      errors  = []
-
-      if params[:payment_method] && !params[:payment_method].empty?
-        new_pm = @user.payment_methods.create({ name: params[:payment_method] })
-        if new_pm.saved?
-          notices << "The payment method '#{pm.name}' has been registered successfully."
-        else
-          errors << new_pm.all_errors
-        end
-      end
-
-      # update the user's default payment method
-      if params[:default_payment_method]
-        @user.payment_method = @user.payment_methods.get(params[:default_payment_method].to_i)
-        if @user.save
-          notices << "The default payment method now is '#{@user.payment_method.name}'"
-        else
-          errors << @user.all_errors
-        end
-      end
-
-      # possibly_new_default_pm = current_user.payment_methods.first({ id: params[:payment_method] })
-      # if possibly_new_default_pm && possibly_new_default_pm.id != current_user.payment_method.id
-      #   success = true
-      #   success = success && current_user.payment_method.update({ default: false })
-      #   success = success && possibly_new_default_pm.update({ default: true })
-
-      #   if success
-      #   else
-      #   end
-
-      # end
-
-      # update the account default currency
-      if @account.currency != params[:currency]
-        if @account.update({ currency: params[:currency] })
-          notices << "The default account currency now is '#{@account.currency}'"
-        else
-          errors << @account.all_errors
-        end
-      end
-
-      # update the payment method colors
-      params["pm_colors"].each_pair { |pm_id, color|
-        pm = @user.payment_methods.get(pm_id)
-        if pm && pm.color != color
-          pm.update({ color: color })
-        end
-      }
-
-      flash[:error]  = errors unless errors.empty?
-      flash[:notice] = notices unless notices.empty?
-
-      redirect back
-    end
   end
 end

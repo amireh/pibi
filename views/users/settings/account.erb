@@ -3,7 +3,7 @@
 <%= partial "/users/settings/_nav" %>
 
 <!-- <h1>Account</h1> -->
-<form action="/settings/profile" method="POST">
+<form action="/settings/account" method="POST">
   <fieldset>
     <legend>General</legend>
     <ol>
@@ -19,9 +19,9 @@
           <span class="good">Verified</span>
         <% else %>
           <% if current_user.awaiting_email_verification? %>
-            <span>Verification pending. <a href="/settings/verify/email?redispatch=true">Send again</a>.
+            <span class="small">Verification pending. <a href="/notices/email/new?redispatch=true">Send again</a>.
           <% else %>
-            <a href="/settings/verify/email" class="inline button thin bad">Verify</a>
+            <a href="/notices/email/new" class="inline button thin bad">Verify</a>
           <% end %>
         <% end %>
         <br />
@@ -33,7 +33,7 @@
       <li><input type="text" name="gravatar_email" class="fat" value="<%= current_user.gravatar_email || current_user.email %>" />
         <br />
         <br />
-        <%= gravatar_tag current_user, :default, html: { style: "vertical-align: middle;" } %>
+        <%= gravatar_tag @user.gravatar_email, :default, html: { style: "vertical-align: middle;" } %>
       </li>
 
     </ol>

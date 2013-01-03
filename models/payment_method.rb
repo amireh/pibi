@@ -1,6 +1,8 @@
 class PaymentMethod
   include DataMapper::Resource
 
+  default_scope(:default).update(:order => [ :name.asc ])
+
   Colors = [ 'EF7901', '98BF0D', 'D54421', '01B0EC', '7449F1', 'B147A3' ]
 
   belongs_to :user, required: true

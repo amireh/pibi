@@ -1,7 +1,10 @@
 <h1>Recurring Transies</h1>
 <% content_for :layout_classes do %>bills<% end %>
 
-<h2 class="timeframe">Yearly <span data-amount><%= current_account.yearly_expenses.to_f.round(2) %> <%= current_account.currency %></span></h2>
+<h2 class="timeframe">Yearly
+  <span>- <%= 'bills'.pluralize(@yearly_transies.count) %></span>
+  <span data-amount><%= current_account.yearly_expenses.to_f.round(2) %> <%= current_account.currency %></span>
+</h2>
 <% unless @yearly_transies.empty? %>
   <table data-confirmable="bills">
     <thead>
@@ -16,14 +19,18 @@
     </thead>
     <tbody>
       <% @yearly_transies.each do |t| %>
-        <tr>
+        <tr class="<%= t.active ? 'active' : 'inactive' %>">
           <td><%= t.note %></td>
-          <td class="<%= t.flow_type %>"><%= t.amount.to_f %></td>
+          <td class="<%= t.flow_type %>"><%= t.amount.to_f %> <%= t.currency %></td>
           <td><%= natural_recurrence_date(t) %></td>
           <td class="<%= t.active? ? 'positive' : 'negative' %>"><%= t.active ? 'Yes' : 'No' %></td>
           <td>
-            <% time_left = Timetastic.days_and_months_between(Time.now, t.next_billing_date) %>
-            <%= "#{time_left[1]} months and #{time_left[0]} days" %>
+            <% if t.active %>
+              <% time_left = Timetastic.days_and_months_between(Time.now, t.next_billing_date) %>
+              <%= "#{time_left[1]} months and #{time_left[0]} days" %>
+            <% else %>
+              --
+            <% end %>
           </td>
           <td>
             <%= actions_for(t) %>
@@ -53,7 +60,7 @@
       <% @monthly_transies.each do |t| %>
         <tr>
           <td><%= t.note %></td>
-          <td class="<%= t.flow_type %>"><%= t.amount.to_f %></td>
+          <td class="<%= t.flow_type %>"><%= t.amount.to_f %> <%= t.currency %></td>
           <!-- <td><% t.flow_type.capitalize %></td> -->
           <td><%= natural_recurrence_date(t) %></td>
           <td class="<%= t.active? ? 'positive' : 'negative' %>"><%= t.active ? 'Yes' : 'No' %></td>

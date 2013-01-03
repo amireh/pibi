@@ -43,7 +43,7 @@ describe User do
   it "should not create a user because of password length" do
     u = User.new(mock_params.merge(mock_password('foo')))
     u.valid?.should be_false
-    u.all_errors.first.should match(/too short/)
+    u.all_errors.first.should match(/must be at least/)
 
     u.save.should be_false
 

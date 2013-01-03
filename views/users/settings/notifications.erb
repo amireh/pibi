@@ -7,7 +7,7 @@
   <% pending_notices = current_user.pending_notices %>
   <% accepted_notices = current_user.notices({ :status.not => :pending }) %>
 
-  <strong>Pending Notifications</strong>
+  <strong>Pending...</strong>
   <% if pending_notices.empty? && !accepted_notices.empty?  %>
     <p>You have correctly closed all notifications, good job! Here's a snowman:</p>
     <p><span class="snowman"></span></p>
@@ -29,7 +29,7 @@
   <% end %>
 
   <% unless accepted_notices.empty? %>
-    <strong>Accepted Notifications</strong>
+    <strong>Accepted</strong>
     <ol>
     <% accepted_notices.each do |n| %>
       <li>

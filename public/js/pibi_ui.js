@@ -40,7 +40,7 @@ pibi_ui = function() {
           dynamism.configure({ debug: false, logging: false });
 
           // element tooltips
-          $("a[title]").tooltip({ placement: "bottom", delay: { show: 500, hide: 100 } });
+          $("a[title],span[title]").tooltip({ placement: "bottom", delay: { show: 500, hide: 100 } });
         },
 
         function() {

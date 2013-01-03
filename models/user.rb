@@ -39,8 +39,8 @@ class User
 
   validates_confirmation_of :password,
     message: 'Passwords must match.'
-  validates_length_of       :password, :min => 8,
-    message: 'Password is too short! Must be at least 8 characters long.'
+  validates_length_of       :password, :min => 7,
+    message: 'Password is too short! It must be at least 7 characters long.'
 
   # is :locatable
 

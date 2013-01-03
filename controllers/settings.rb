@@ -1,145 +1,150 @@
-# get '/settings' do
-#   redirect "/settings/account"
-# end
-
-
-
-
-delete '/settings/preferences/payment_methods/:pm_id', auth: :active_user do |pm_id|
-  unless pm = current_user.payment_methods.get(pm_id)
-    halt 400, "No such payment method '#{pm_id}'."
+namespace '/settings' do
+  condition do
+    restrict_to(:user)
   end
 
-  was_default = pm.default
-
-  pm.destroy
-
-  if was_default
-    if current_user.payment_methods.empty?
-      current_user.payment_methods.create({ name: "Cash", default: true })
-    else
-      pm = current_user.payment_methods.first
-      pm.update({ default: true })
-    end
+  before do
+    current_page("manage")
   end
 
-  flash[:notice] = "Payment method removed."
+  [ "account", "notifications", "preferences", 'password' ].each { |domain|
+    get "/#{domain}" do
+      @standalone = true
 
-  redirect back
-end
-
-post '/settings/password', auth: :active_user do
-  back_url = back
-
-  pw = User.encrypt(params[:password][:current])
-  if current_user.password == pw then
-    pw_new     = User.encrypt(params[:password][:new])
-    pw_confirm = User.encrypt(params[:password][:confirmation])
-
-    if params[:password][:new].empty? then
-      flash[:error] = "You've entered an empty password!"
-    elsif pw_new == pw_confirm then
-      current_user.password = pw_new
-      current_user.password_confirmation = pw_confirm
-      current_user.auto_password = false
-      if current_user.valid? && current_user.save then
-        notices = current_user.pending_notices({ type: 'password' })
-        unless notices.empty?
-          back_url = "/"
-          notices.each { |n| n.accept! }
-        end
-
-        flash[:notice] = "Your password has been changed."
-      else
-        flash[:error] = "Something bad happened while updating your password: #{@user.all_errors}"
-      end
-    else
-      flash[:error] = "The passwords you've entered do not match!"
-    end
-  else
-    flash[:error] = "The current password you've entered isn't correct!"
-  end
-
-  redirect back_url
-end
-
-post "/settings/profile", auth: :active_user do
-
-  { :name => "Your name can not be empty",
-    :email => "You must specify a primary email address.",
-    :gravatar_email => "Your gravatar email address can not be empty."
-  }.each_pair { |k, err|
-    if !params[k] || params[k].empty?
-      flash[:error] = err
-      return redirect back
-    else
-      current_user.send("#{k}=".to_sym, params[k])
+      erb :"/users/settings/#{domain}"
     end
   }
 
-  if current_user.save then
-    flash[:notice] = "Your profile has been updated."
-  else
-    flash[:error] = current_user.collect_errors
-  end
+  post '/preferences' do
+    notices = []
+    errors  = []
 
-  redirect back
-end
-
-get '/settings/verify/:type', auth: :active_user do |type|
-
-  # was a notice already issued and another is requested?
-  redispatch = params[:redispatch]
-
-  @type       = type       # useful in the view
-  @redispatch = redispatch # useful in the view
-
-  case type
-  when "email"
-    if current_user.email_verified?
-      return erb :"/emails/already_verified"
-    end
-
-    if redispatch
-      current_user.notices.all({ type: 'email' }).destroy
-    else # no re-dispatch requested
-
-      # notice already sent and is pending?
-      if current_user.awaiting_email_verification?
-        return erb :"/emails/already_dispatched"
+    if params[:payment_method] && !params[:payment_method][:name].empty?
+      new_pm = @user.payment_methods.create({ name: params[:payment_method][:name] })
+      if new_pm.saved?
+        notices << "The payment method '#{new_pm.name}' has been registered successfully."
+      else
+        errors << new_pm.all_errors
       end
     end
 
-    unless @n = current_user.verify_email
-      halt 500, "Unable to generate a verification link: #{current_user.collect_errors}"
+    # update the user's default payment method
+    if params[:default_payment_method]
+      if @user.payment_method.id != params[:default_payment_method].to_i
+        @user.payment_method = @user.payment_methods.get(params[:default_payment_method].to_i)
+        if @user.save
+          notices << "The default payment method now is '#{@user.payment_method.name}'"
+        else
+          errors << @user.all_errors
+        end
+      end
     end
 
-    dispatch_email_verification(current_user) { |success, msg|
-      unless success
-        current_user.notices.all({ type: 'email' }).destroy
-        halt 500, msg
+    # update the account default currency
+    if @account.currency != params[:currency]
+      if @account.update({ currency: params[:currency] })
+        notices << "The default account currency now is '#{@account.currency}'"
+      else
+        errors << @account.all_errors
+      end
+    end
+
+    # update the payment method colors
+    params["pm_colors"].each_pair { |pm_id, color|
+      pm = @user.payment_methods.get(pm_id)
+      if pm && pm.color != color
+        pm.update({ color: color })
       end
     }
 
-  when "password"
-    if redispatch
-      unless @n = current_user.generate_temporary_password
-        halt 500, "Unable to generate temporary password: #{current_user.collect_errors}"
-      end
+    flash[:error]  = errors.flatten unless errors.empty?
+    flash[:notice] = notices.flatten unless notices.empty?
 
-      dispatch_temp_password(current_user) { |success, msg|
-        unless success
-          current_user.notices.all({ type: 'password' }).destroy
-          halt 500, msg
-        end
-      }
-
-      flash[:notice] = "Another temporary password message has been sent to your email."
-    end
-
-  else # an unknown type
-    halt 400, "Unrecognized verification parameter '#{type}'."
+    redirect back
   end
 
-  erb :"/emails/dispatched"
+  delete '/preferences/payment_methods/:pm_id' do |pm_id|
+    unless pm = current_user.payment_methods.get(pm_id)
+      halt 400, "No such payment method '#{pm_id}'."
+    end
+
+    notices = []
+
+    was_default = pm.default
+    its_name    = pm.name
+
+    if pm.destroy
+      notices << "The payment method '#{its_name}' has been removed."
+    else
+      flash[:error] = pm.all_errors
+      return redirect back
+    end
+
+    if was_default
+      if current_user.payment_methods.empty?
+        current_user.payment_methods.create({ name: "Cash", default: true })
+      else
+        pm = current_user.payment_methods.first
+        pm.update({ default: true })
+      end
+
+      notices << "#{@user.payment_method.name} is now your default payment method."
+    end
+
+    flash[:notice] = notices
+
+    redirect back
+  end
+
+  post '/password' do
+
+    pw = User.encrypt(params[:password][:current])
+
+    if current_user.password != pw then
+      flash[:error] = "The current password you've entered isn't correct!"
+      return redirect back
+    end
+
+    # validate length
+    # we can't do it in the model because it gets the encrypted version
+    # which will always be longer than 8
+    if params[:password][:new].length < 7
+      flash[:error] = "That password is too short, it must be at least 7 characters long."
+      return redirect back
+    end
+
+    back_url = back
+
+    @user.password              = User.encrypt(params[:password][:new])
+    @user.password_confirmation = User.encrypt(params[:password][:confirmation])
+
+    if current_user.save then
+      notices = current_user.pending_notices({ type: 'password' })
+      unless notices.empty?
+        back_url = "/"
+        notices.each { |n| n.accept! }
+      end
+      flash[:notice] = "Your password has been changed."
+    else
+      flash[:error] = @user.all_errors
+    end
+
+    redirect back_url
+  end
+
+  post "/account" do
+    if current_user.update({
+      name: params[:name],
+      email: params[:email],
+      gravatar_email: params[:gravatar_email] }) then
+      flash[:notice] = "Your account info has been updated."
+    else
+      flash[:error] = current_user.all_errors
+    end
+
+    redirect back
+  end
+
 end
+
+
