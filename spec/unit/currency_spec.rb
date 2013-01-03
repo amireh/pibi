@@ -5,8 +5,8 @@ describe Currency do
   end
 
   it "should convert from USD to JOD" do
-    Currency['USD'].from('JOD', 10).to_f.should == 14.285714286
-    Currency['JOD'].to('USD', 10).to_f.should == 14.285714286
+    Currency['USD'].from('JOD', 10).to_f.should == 14.29
+    Currency['JOD'].to('USD', 10).to_f.should == 14.29
   end
 
   it "should not do anything with a USD amount on conversion" do

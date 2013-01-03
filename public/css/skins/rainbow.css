@@ -411,6 +411,12 @@ textarea:focus {
   border-bottom-right-radius: 3px;
   padding: 12px 10px;
 }
+
+.flashes ol {
+  margin: 0;
+  padding: 0 30px;
+}
+
 .flashes > span {
   width: 900px;
   display: block;

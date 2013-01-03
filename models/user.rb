@@ -42,7 +42,7 @@ class User
   validates_length_of       :password, :min => 8,
     message: 'Password is too short! Must be at least 8 characters long.'
 
-  is :locatable
+  # is :locatable
 
   # --------- -------
   # DISABLED: LOCKING

@@ -11,7 +11,7 @@ class Notice
   property    :displayed,   Boolean, default: false
   belongs_to  :user, required: true
 
-  after :create do |ctx|
+  before :create do |ctx|
     self.salt = Pibi.salt(self.user.email)
     true
   end
@@ -38,9 +38,9 @@ class Notice
     user.on_notice_expired(self)
   end
 
-  # def url
-  #   "/users/#{self.user.id}/accept/#{self.salt}"
-  # end
+  def url
+    "/users/#{self.user.id}/notices/#{self.salt}"
+  end
 
-  is :locatable, by: :salt
+  # is :locatable, by: :salt
 end

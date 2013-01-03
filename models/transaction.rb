@@ -6,8 +6,7 @@ class Transaction
   property :id,           Serial
 
   # The raw amount of the transaction.
-  property :amount,       Decimal, scale: 2, required: true,
-    message: 'Transaction amount is missing.'
+  property :amount,       Decimal, scale: 2, required: true, message: 'Transaction amount is missing.'
 
   # The transaction currency is the currency used when the transaction
   # was made, and if it differs from the account currency, the proper
@@ -32,18 +31,24 @@ class Transaction
     CategoryTransaction.all({ transaction_id: self.id }).destroy
   end
 
-  validates_with_method :currency, :method => :check_currency
+  validates_with_method :amount, :check_amount
+
+  def check_amount
+    if !self.amount || self.amount <= 0.0
+      return [ false, 'Transaction amount must be greater than 0' ]
+    end
+
+    true
+  end
+
+  validates_with_method :currency, :check_currency
 
   [ 'withdrawal', 'deposit', 'recurring' ].each { |t|
     define_method("#{t}?") { self.type.to_s == t.capitalize }
     alias_method :"is_#{t}?", :"#{t}?"
   }
 
-  is :locatable
-
-  # def url
-  #   "/transactions/#{self.type.to_s.downcase}s/#{self.id}"
-  # end
+  # is :locatable
 
   def check_currency
     unless Currency.valid?(self.currency)
@@ -117,7 +122,7 @@ class Transaction
 
   before :destroy do
     deduct(to_account_currency)
-    self.account.save
+    self.account.save!
   end
 
   def deduct(amt)
@@ -129,6 +134,10 @@ class Transaction
   # exposed only for unit tests, you really shouldn't need to use this
   def __to_account_currency # :nodoc:
     to_account_currency
+  end
+
+  def url
+    "/transactions/#{self.type.to_s.downcase.pluralize}/#{self.id}"
   end
 
   protected

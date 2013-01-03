@@ -20,13 +20,9 @@ class Category
     CategoryTransaction.all({ category_id: self.id }).destroy
   end
 
-  is :locatable
+  # is :locatable
 
   def url
     "/categories/#{id}"
-  end
-
-  def test
-    relationships
   end
 end

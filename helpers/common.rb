@@ -54,17 +54,34 @@ helpers do
     d.strftime("%m/%d/%Y")
   end
 
+  # Disabled: Is::Locatable
+  #
+  # def actions_for(r)
+  #   html = ''
+  #   if r.is_locatable?
+  #     html << "<a href=\"#{url_for(r, :edit)}\">Edit</a>"
+  #     html << " <a href=\"#{url_for(r, :destroy)}\" class=\"bad\">Delete</a>"
+  #     if r.is_a?(Recurring)
+  #       action = r.active? ? 'Deactivate' : 'Activate'
+  #       html << " <a href=\"#{url_for(r, :toggle_activity)}\">#{action}</a>"
+  #     end
+  #   end
+  #   html
+  # end
+
   def actions_for(r)
     html = ''
-    if r.is_locatable?
-      html << "<a href=\"#{url_for(r, :edit)}\">Edit</a>"
-      html << " <a href=\"#{url_for(r, :destroy)}\" class=\"bad\">Delete</a>"
+    if r.respond_to?(:url)
+      html << "<a href=\"#{r.url}/edit\">Edit</a>"
+      html << " <a href=\"#{r.url}/destroy\" class=\"bad\">Delete</a>"
       if r.is_a?(Recurring)
         action = r.active? ? 'Deactivate' : 'Activate'
-        html << " <a href=\"#{url_for(r, :toggle_activity)}\">#{action}</a>"
+        html << " <a href=\"#{r.url}/toggle_activity\">#{action}</a>"
       end
     end
 
     html
   end
+
+
 end

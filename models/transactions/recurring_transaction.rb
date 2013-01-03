@@ -9,6 +9,8 @@ class Recurring < Transaction
   property :last_commit, DateTime, allow_nil: true
   property :active,     Boolean, default: true
 
+  validates_presence_of :note, message: 'Must provide a name for this bill'
+
   def +(y)
     amount * (flow_type == :negative ? -1 : 1) + y
   end
