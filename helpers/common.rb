@@ -54,18 +54,15 @@ helpers do
     d.strftime("%m/%d/%Y")
   end
 
-  def actions_for(tx)
+  def actions_for(r)
     html = ''
-    if tx.is_a? Category
-      html << "<a href=\"#{tx.url}/edit\">Edit</a>"
-      html << " <a href=\"#{tx.url}/destroy\" class=\"bad\">Delete</a>"
-    elsif tx.is_a? Transaction
-      html << "<a href=\"#{tx.url}/edit\">Edit</a>"
-      if tx.recurring?
-        action = tx.active? ? 'Deactivate' : 'Activate'
-        html << " <a href=\"#{tx.url}/toggle_activity\">#{action}</a>"
+    if r.is_locatable?
+      html << "<a href=\"#{url_for(r, :edit)}\">Edit</a>"
+      html << " <a href=\"#{url_for(r, :destroy)}\" class=\"bad\">Delete</a>"
+      if r.is_a?(Recurring)
+        action = r.active? ? 'Deactivate' : 'Activate'
+        html << " <a href=\"#{url_for(r, :toggle_activity)}\">#{action}</a>"
       end
-      html << " <a href=\"#{tx.url}/destroy\" class=\"bad\">Delete</a>"
     end
 
     html

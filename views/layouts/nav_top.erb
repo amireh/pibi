@@ -11,7 +11,7 @@
     <h1><a href="/"><%= AppName %></a></h1>
     <div class="subheader">
       <span class="account_balance">Balance:
-        <span class="<%= current_account.balance > 0 ? 'positive' : 'negative' %>"><%= current_account.balance.to_f %></span> <%= current_account.currency %>
+        <span class="<%= current_account.balance > 0 ? 'positive' : 'negative' %>"><%= current_account.balance.to_f %></span> <%= current_account.currency %> <%= url_for(@user) %>
       </span>
       <span class="account_name">
         <% if current_user.is_admin %>
@@ -37,7 +37,8 @@
     <ol>
       <li><a id="nav_transactions" href="/" title="Your last month's activity">Transactions</a></li>
       <li><a id="nav_deposits" href="/transactions/deposits/new" title="Track some money you gained">Deposit</a></li>
-      <li><a id="nav_withdrawals" href="/transactions/withdrawals/new" title="Track something you spent">Withdraw</a></li>
+      <!-- <li><a id="nav_withdrawals" href="/transactions/withdrawals/new" title="Track something you spent">Withdraw</a></li> -->
+      <li><a id="nav_withdrawals" href="<%= url_for(@account, :withdrawals, :new) %>" title="Track something you spent">Withdraw</a></li>
       <li><a id="nav_recurrings" href="/transactions/recurrings/new" title="Track a bill or salary">Recurring</a></li>
       <li><a id="nav_reports" class="listlike" href="/reports">Reports<span>&darr;</span></a>
         <ol>

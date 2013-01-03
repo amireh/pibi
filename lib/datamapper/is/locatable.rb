@@ -48,18 +48,21 @@ module DataMapper
         def url_for(options = {})
           p = []
 
-          unless options[:shallow]
+          shallow = model.locatable_options[:shallow]
+          shallow = options[:shallow] if options.has_key?(:shallow)
+
+          unless shallow
             mto_relationships.each { |r|
               parent = self.send(r.name)
-              if parent.is_locatable?
-                p << parent.url_for(shallow: model.locatable_options[:shallow])
+              if parent && parent.is_locatable?
+                p << parent.url_for(shallow: true)# model.locatable_options[:shallow])
                 break
               end
             }
           end
 
           p << self.class.url_for
-          p << attribute_get(model.locatable_options[:by]).to_s
+          p << attribute_get(options[:by] || model.locatable_options[:by]).to_s
           p
         end
       end
@@ -75,27 +78,4 @@ module DataMapper
   end
 
   Model.append_extensions(Is::Locatable)
-end
-
-module Sinatra
-  module Locator
-    def self.url_for(*resources)
-      path = [ ]
-      resources.each { |r|
-        if r.is_a?(DataMapper::Resource) && r.respond_to?(:url_for)
-          path << r.url_for({ relative: true })
-        elsif r.is_a?(Symbol) || r.is_a?(String)
-          path << r
-        end
-      }
-      "/#{path.join('/')}"
-    end
-  end
-
-  puts "Locatable: registering helper"
-  helpers do
-    # unless defined?(:url_for)
-    include Locator
-    # end
-  end
 end

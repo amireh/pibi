@@ -1,6 +1,8 @@
 class Transaction
   include DataMapper::Resource
 
+  default_scope(:default).update(:order => [ :occured_on.desc ])
+
   property :id,           Serial
 
   # The raw amount of the transaction.
@@ -37,7 +39,7 @@ class Transaction
     alias_method :"is_#{t}?", :"#{t}?"
   }
 
-  is :locatable, shallow: true
+  is :locatable
 
   # def url
   #   "/transactions/#{self.type.to_s.downcase}s/#{self.id}"

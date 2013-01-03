@@ -1,6 +1,8 @@
 class Category
   include DataMapper::Resource
 
+  default_scope(:default).update(:order => [ :name.asc ])
+
   property :id, Serial
 
   property :name, String, length: 250,

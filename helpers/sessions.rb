@@ -1,4 +1,8 @@
 module SessionsHelper
+  Messages = {
+    lacks_privilege: "You lack privilege to visit this section.",
+    unauthorized:    "You must sign in first"
+  }
 
   def logged_in?
     !current_user.nil?
@@ -6,13 +10,13 @@ module SessionsHelper
 
   def restricted
     unless logged_in?
-      flash[:error] = "You must sign in first."
+      flash[:error] = Messages[:unauthorized]
       redirect "/", 303
     end
   end
 
   def restricted!(scope = nil)
-    halt 401, "You must sign in first." unless logged_in?
+    halt 401, Messages[:unauthorized] unless logged_in?
   end
 
   def restrict_to(roles, options = {})
@@ -35,11 +39,18 @@ module SessionsHelper
       @scope = @user = current_user
       @account ||= @user.accounts.first
 
-      if options[:with_id]
-        unless @user.key.first == options[:with_id].to_i
-          halt 403, "You do not have access to that user account."
+      if options[:with].is_a?(Hash)
+        options[:with].each_pair { |k, v|
+          unless @user[k] == v
+            halt 403, Messages[:lacks_privilege]
+          end
+        }
+      elsif options[:with].is_a?(Proc)
+        unless options[:with].call(@user)
+          halt 403, Messages[:lacks_privilege]
         end
       end
+
 
       if params[:account] then
         unless @account = current_user.accounts.get(params[:account])
@@ -48,7 +59,7 @@ module SessionsHelper
       end
 
       if roles.include?(:admin) && !@scope.is_admin
-        halt 403, "Admin privileges are needed to visit this section."
+        halt 403, Messages[:lacks_privilege]
       end
     end
   end

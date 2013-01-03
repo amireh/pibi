@@ -112,7 +112,7 @@ end
 
 namespace '/users/:user_id' do |user_id|
   condition do
-    restrict_to(:user, :with_id => params[:user_id])
+    restrict_to(:user, :with => { id: params[:user_id].to_i })
   end
 
   before do current_page("manage") end

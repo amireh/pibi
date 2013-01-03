@@ -114,8 +114,7 @@ class Account
     transactions.all({
       :occured_on.gte => range[:begin],
       :occured_on.lt => range[:end],
-      :type.not => Recurring,
-      :order => [ :occured_on.desc ]
+      :type.not => Recurring
     }.merge(q))
   end
 

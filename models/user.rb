@@ -93,10 +93,6 @@ class User
     new_default_pm.update({ default: true })
   end
 
-  def categories
-    Category.all({ conditions: { user_id: id }, :order => [ :name.asc ] })
-  end
-
   # ----
   # Notifications
   # ----
