@@ -15,7 +15,7 @@ module SessionsHelper
     halt 401, "You must sign in first." unless logged_in?
   end
 
-  def restrict_to(roles)
+  def restrict_to(roles, options = {})
     roles = [ roles ] if roles.is_a? Symbol
 
     if roles.include?(:active_user)
@@ -34,6 +34,12 @@ module SessionsHelper
       restricted!
       @scope = @user = current_user
       @account ||= @user.accounts.first
+
+      if options[:with_id]
+        unless @user.key.first == options[:with_id].to_i
+          halt 403, "You do not have access to that user account."
+        end
+      end
 
       if params[:account] then
         unless @account = current_user.accounts.get(params[:account])
@@ -55,24 +61,24 @@ module SessionsHelper
 
   def current_user
     return @user if @user
-    if params[:public_uid]
-      @user = User.first({ id: params[:public_uid], is_public: true })
-      @account = @user.accounts.first
-      return @user
-    end
+
+    # disabled: locking & public accounts
+    # if params[:public_uid]
+    #   @user = User.first({ id: params[:public_uid], is_public: true })
+    #   @account = @user.accounts.first
+    #   return @user
+    # end
 
     return nil unless session[:id]
     @user = User.get(session[:id])
   end
 
   def current_account
-    return @account if @account
-
     # unless session[:account]
     #   session[:account] = current_user.accounts.first.id
     # end
 
-    @account = current_user.accounts.first
+    @account ||= current_user.accounts.first
   end
 
   def authorize(user)

@@ -126,9 +126,9 @@
       attach_transie_categories(tx, params[:categories])
 
       if tx.save
-        flash[:notice] = "Transaction #{tx.id} was updated successfully."
+        flash[:notice] = "Transie##{tx.id} was updated."
       else
-        flash[:error] = "Transaction #{tx.id} could not be updated: #{tx.collect_errors}, #{tx.account.collect_errors}."
+        flash[:error] = tx.all_errors
       end
 
       redirect back
@@ -144,7 +144,7 @@
         return redirect back
       end
 
-      flash[:notice] = "Transaction was successfully removed."
+      flash[:notice] = "Transaction was removed."
 
       redirect back
     end

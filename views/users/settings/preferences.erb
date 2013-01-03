@@ -26,7 +26,7 @@
       </li>
       <li>
         <!-- <form method="POST" action="/settings/payment_methods"> -->
-          <input type="text" name="new_payment_method" placeholder="Credit Card" />
+          <input type="text" name="payment_method[name]" placeholder="Credit Card" />
           <input type="submit" value="Add" class="inline" />
         <!-- </form> -->
         <br />
@@ -41,7 +41,7 @@
         <% @user.payment_methods.each do |pm| %>
         <input type="text" class="color" name="pm_colors[<%=pm.id%>]" value="<%= pm.color %>" />
           <label>
-            <input type="radio" name="payment_method" value="<%= pm.id %>" <%= 'checked="checked"' if @user.payment_method.id == pm.id %> />
+            <input type="radio" name="default_payment_method" value="<%= pm.id %>" <%= 'checked="checked"' if @user.payment_method.id == pm.id %> />
             <%= pm.name %>
           </label>
           <a href="/settings/preferences/payment_methods/<%= pm.id %>/destroy" class="bad">delete</a>

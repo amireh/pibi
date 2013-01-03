@@ -56,8 +56,8 @@ def mockup_user()
     name: 'Mysterious Mocker',
     email: 'very@mysterious.com',
     provider: 'pibi',
-    password: @some_salt,
-    password_confirmation: @some_salt
+    password:               User.encrypt(@some_salt),
+    password_confirmation:  User.encrypt(@some_salt)
   })
   @account = @a = @user.accounts.first
 end

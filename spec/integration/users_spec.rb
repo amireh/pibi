@@ -8,7 +8,7 @@ feature "Signing in" do
 
     within("form") do
       fill_in 'email', :with => @user.email
-      fill_in 'password', :with => @raw_password
+      fill_in 'password', :with => @some_salt
     end
 
     click_button 'Login'
@@ -67,19 +67,19 @@ feature "Signing up" do
 
   scenario "Signing up with no name" do
     fill_form({ name: '' }) do |page|
-      page.find('.flashes.error').should have_keywords('must fill name')
+      page.find('.flashes.error').should have_keywords('need your name')
     end
   end
 
   scenario "Signing up with no email" do
     fill_form({ email: '' }) do |page|
-      page.find('.flashes.error').should have_keywords('must fill email')
+      page.find('.flashes.error').should have_keywords('need your email')
     end
   end
 
   scenario "Signing up with an invalid email" do
     fill_form({ email: 'this is no email' }) do |page|
-      page.find('.flashes.error').should have_keywords('email valid')
+      page.find('.flashes.error').should have_keywords('look like an email')
     end
   end
 
@@ -91,13 +91,13 @@ feature "Signing up" do
 
   scenario "Signing up without a password" do
     fill_form({ password: '' }) do |page|
-      page.find('.flashes.error').should have_keywords('type password twice')
+      page.find('.flashes.error').should have_keywords('must provide password')
     end
   end
 
   scenario "Signing up with mis-matched passwords" do
     fill_form({ password: 'barfoo123' }) do |page|
-      page.find('.flashes.error').should have_keywords('do not match')
+      page.find('.flashes.error').should have_keywords('must match')
     end
   end
 

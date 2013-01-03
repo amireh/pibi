@@ -1,37 +1,3 @@
-require 'json'
-require 'uuid'
-require 'base64'
-
-def create_from_oauth(provider, auth)
-  # create the user if it's their first time
-  unless u = User.first({ uid: auth.uid, provider: provider })
-    uparams = { uid: auth.uid, provider: provider, name: auth.info.name }
-    uparams[:email] = auth.info.email if auth.info.email
-    uparams[:oauth_token] = auth.credentials.token if auth.credentials.token
-    uparams[:oauth_secret] = auth.credentials.secret if auth.credentials.secret
-    uparams[:password] = uparams[:password_confirmation] = Pibi::salt
-    uparams[:auto_password] = true
-
-    if auth.extra.raw_info then
-      uparams[:extra] = auth.extra.raw_info.to_json.to_s
-    end
-
-    # puts "Creating a new user from #{provider} with params: \n#{uparams.inspect}"
-    u = User.create(uparams)
-  end
-
-  u
-end
-
-def create_from_pibi()
-
-  # Validate input
-  User.create(params.merge({
-    uid:      UUID.generate,
-    provider: "pibi"
-  }))
-end
-
 after do
   if current_user
     if response.status == 200
@@ -87,52 +53,158 @@ before do
   end
 end
 
-get '/users/new' do
-  current_page("signup")
-  erb :"/users/new"
-end
+namespace '/users' do
 
-post '/users' do
-  u = create_from_pibi
-  unless u.valid? || u.saved?
-    flash[:error] = u.all_errors
-    return redirect back
+  get '/new' do
+    current_page("signup")
+    erb :"/users/new"
   end
 
-  flash[:notice] = "Welcome to #{AppName}! Your new personal account has been registered."
+  def create_from_oauth(provider, auth)
+    # create the user if it's their first time
+    unless u = User.first({ uid: auth.uid, provider: provider })
+      uparams = { uid: auth.uid, provider: provider, name: auth.info.name }
+      uparams[:email] = auth.info.email if auth.info.email
+      uparams[:oauth_token] = auth.credentials.token if auth.credentials.token
+      uparams[:oauth_secret] = auth.credentials.secret if auth.credentials.secret
+      uparams[:password] = uparams[:password_confirmation] = User.encrypt(Pibi::salt)
+      uparams[:auto_password] = true
 
-  authorize(u)
+      if auth.extra.raw_info then
+        uparams[:extra] = auth.extra.raw_info.to_json.to_s
+      end
 
-  redirect '/'
-end
+      # puts "Creating a new user from #{provider} with params: \n#{uparams.inspect}"
+      u = User.create(uparams)
+    end
 
-get '/users/:id/accept/:token', auth: :active_user do |uid, token|
-  unless @n = @scope.notices.first({ salt: token })
-    halt 400, "No such verification link."
+    u
   end
 
-  case @n.status
-  when :expired
-    return erb :"emails/expired"
+  def build_from_pibi()
+    u = User.new(params.merge({
+      uid:      UUID.generate,
+      provider: "pibi"
+    }))
 
-  when :accepted
-    case @n.type
-    when 'email'
+    if u.valid?
+      u.password = User.encrypt(params[:password])
+      u.password_confirmation = User.encrypt(params[:password_confirmation])
+    end
+
+    u
+  end
+
+  post do
+    u = create_from_pibi
+    unless u.save || u.saved?
+      flash[:error] = u.all_errors
+      return redirect back
+    end
+
+    flash[:notice] = "Welcome to #{AppName}! Your new personal account has been registered."
+
+    authorize(u)
+
+    redirect '/'
+  end
+end
+
+namespace '/users/:user_id' do |user_id|
+  condition do
+    restrict_to(:user, :with_id => params[:user_id])
+  end
+
+  before do current_page("manage") end
+
+  get '/accept/:token' do |token|
+    unless @n = @scope.notices.first({ salt: token })
+      halt 400, "No such verification link."
+    end
+
+    case @n.status
+    when :expired
+      return erb :"emails/expired"
+    when :accepted
       flash[:error] = "This verification notice seems to have been accepted earlier."
-    end
-
-    return redirect "/settings/account"
-
-  else
-    @n.accept!
-
-    case @n.type
-    when 'email'
-      flash[:notice] = "Your email address '#{@n.user.email}' has been verified."
-      return redirect "/settings/account"
-    when 'password'
-      return redirect "/settings/account"
+      return redirect "/settings/notifications"
+    else
+      @n.accept!
+      case @n.type
+      when 'email'
+        flash[:notice] = "Your email address '#{@n.user.email}' has been verified."
+        return redirect "/settings/account"
+      when 'password'
+        return redirect "/settings/account"
+      end
     end
   end
 
+  namespace '/settings' do
+    [ "account", "notifications", "preferences", 'password' ].each { |domain|
+      get "/#{domain}" do
+        @standalone = true
+
+        erb :"/users/settings/#{domain}"
+      end
+    }
+
+    post '/preferences' do
+      notices = []
+      errors  = []
+
+      if params[:payment_method] && !params[:payment_method].empty?
+        new_pm = @user.payment_methods.create({ name: params[:payment_method] })
+        if new_pm.saved?
+          notices << "The payment method '#{pm.name}' has been registered successfully."
+        else
+          errors << new_pm.all_errors
+        end
+      end
+
+      # update the user's default payment method
+      if params[:default_payment_method]
+        @user.payment_method = @user.payment_methods.get(params[:default_payment_method].to_i)
+        if @user.save
+          notices << "The default payment method now is '#{@user.payment_method.name}'"
+        else
+          errors << @user.all_errors
+        end
+      end
+
+      # possibly_new_default_pm = current_user.payment_methods.first({ id: params[:payment_method] })
+      # if possibly_new_default_pm && possibly_new_default_pm.id != current_user.payment_method.id
+      #   success = true
+      #   success = success && current_user.payment_method.update({ default: false })
+      #   success = success && possibly_new_default_pm.update({ default: true })
+
+      #   if success
+      #   else
+      #   end
+
+      # end
+
+      # update the account default currency
+      if @account.currency != params[:currency]
+        if @account.update({ currency: params[:currency] })
+          notices << "The default account currency now is '#{@account.currency}'"
+        else
+          errors << @account.all_errors
+        end
+      end
+
+      # update the payment method colors
+      params["pm_colors"].each_pair { |pm_id, color|
+        pm = @user.payment_methods.get(pm_id)
+        if pm && pm.color != color
+          pm.update({ color: color })
+        end
+      }
+
+      flash[:error]  = errors unless errors.empty?
+      flash[:notice] = notices unless notices.empty?
+
+      redirect back
+    end
+  end
 end

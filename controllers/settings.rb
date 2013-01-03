@@ -1,64 +1,9 @@
-get '/settings' do
-  redirect "/settings/account"
-end
+# get '/settings' do
+#   redirect "/settings/account"
+# end
 
-[ "account", "notifications", "preferences", 'password' ].each { |domain|
-  get "/settings/#{domain}", auth: :active_user do
-    current_page("manage")
-    @standalone = true
 
-    erb :"/users/settings/#{domain}"
-  end
-}
 
-post '/settings/preferences', auth: :active_user do
-  notices = []
-  errors  = []
-
-  if params[:new_payment_method] && !params[:new_payment_method].empty?
-    if current_user.payment_methods.first({ name: params[:new_payment_method] })
-      errors << "You already have '#{params[:new_payment_method]}' as a payment method!"
-    else
-      current_user.payment_methods.create({ name: params[:new_payment_method] })
-      notices << "The payment method '#{params[:new_payment_method]}' has been registered successfully."
-    end
-  end
-
-  # update the user's default payment method
-  possibly_new_default_pm = current_user.payment_methods.first({ id: params[:payment_method] })
-  if possibly_new_default_pm && possibly_new_default_pm.id != current_user.payment_method.id
-    success = true
-    success = success && current_user.payment_method.update({ default: false })
-    success = success && possibly_new_default_pm.update({ default: true })
-
-    if success
-      notices << "The default payment method now is '#{current_user.payment_method.name}'"
-    else
-      errors << "Unable to update default payment method: #{current_user.collect_errors}"
-    end
-
-  end
-
-  # update the account default currency
-  if current_account.currency != params[:currency]
-    if current_account.update({ currency: params[:currency] })
-      notices << "The default account currency now is '#{current_account.currency}'"
-    else
-      errors << "Unable to update the default currency: #{current_account.collect_errors}"
-    end
-  end
-
-  # update the payment method colors
-  params["pm_colors"].each_pair { |pm_id, color|
-    pm = current_user.payment_methods.get(pm_id)
-    pm.update({ color: color }) if pm.color != color
-  }
-
-  flash[:error]  = errors unless errors.empty?
-  flash[:notice] = notices unless notices.empty?
-
-  redirect '/settings/preferences'
-end
 
 delete '/settings/preferences/payment_methods/:pm_id', auth: :active_user do |pm_id|
   unless pm = current_user.payment_methods.get(pm_id)

@@ -38,8 +38,9 @@ class Notice
     user.on_notice_expired(self)
   end
 
-  def url
-    "/users/#{self.user.id}/accept/#{self.salt}"
-  end
+  # def url
+  #   "/users/#{self.user.id}/accept/#{self.salt}"
+  # end
 
+  is :locatable, by: :salt
 end

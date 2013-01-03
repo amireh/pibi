@@ -37,9 +37,11 @@ class Transaction
     alias_method :"is_#{t}?", :"#{t}?"
   }
 
-  def url
-    "/transactions/#{self.type.to_s.downcase}s/#{self.id}"
-  end
+  is :locatable, shallow: true
+
+  # def url
+  #   "/transactions/#{self.type.to_s.downcase}s/#{self.id}"
+  # end
 
   def check_currency
     unless Currency.valid?(self.currency)

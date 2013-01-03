@@ -42,7 +42,7 @@ class String
   end
 
   def pluralize(n)
-    n == 1 ? "#{n} #{self}" : "#{n} #{self}s"
+    "#{n} #{DataMapper::Inflector.pluralize(self)}"
   end
 
   def vowelize
@@ -68,16 +68,17 @@ end
 
 class Fixnum
   def ordinalize
-    if (11..13).include?(self % 100)
-      "#{self}th"
-    else
-      case self % 10
-        when 1; "#{self}st"
-        when 2; "#{self}nd"
-        when 3; "#{self}rd"
-        else    "#{self}th"
-      end
-    end
+    DataMapper::Inflector.ordinalize(self)
+    # if (11..13).include?(self % 100)
+    #   "#{self}th"
+    # else
+    #   case self % 10
+    #     when 1; "#{self}st"
+    #     when 2; "#{self}nd"
+    #     when 3; "#{self}rd"
+    #     else    "#{self}th"
+    #   end
+    # end
   end
 end
 

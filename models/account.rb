@@ -31,6 +31,8 @@ class Account
 
   validates_with_method :currency, :method => :check_currency
 
+  is :locatable
+
   # --------- -------
   # DISABLED: LOCKING
   # --
