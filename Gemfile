@@ -1,7 +1,11 @@
 source :rubygems
 
 gem 'sinatra', '=1.3.3'
-gem 'sinatra-contrib', :require => [ 'sinatra/content_for', 'sinatra/namespace' ]
+gem 'sinatra-contrib', :require => [
+  'sinatra/content_for',
+  'sinatra/namespace',
+  'sinatra/config_file'
+]
 gem 'sinatra-flash', :require => 'sinatra/flash'
 gem 'mysql'
 gem 'json'
@@ -21,6 +25,10 @@ gem 'uuid'
 gem 'gravatarify', ">= 3.1.0"
 gem 'timetastic', '>= 0.1.2', path: '~/Workspace/Projects/timetastic'
 gem "pony"
+gem 'omniauth'
+gem 'omniauth-facebook'
+gem 'omniauth-github'
+gem 'omniauth-twitter', '0.0.9'
 
 group :development do
   gem 'capybara-webkit', '>= 0.13.0', :git => 'https://github.com/thoughtbot/capybara-webkit'
@@ -32,9 +40,5 @@ group :development do
   # gem 'rake'
 end
 
-gem 'omniauth'
-gem 'omniauth-facebook'
-gem 'omniauth-github'
-gem 'omniauth-twitter', '0.0.9'
 group :production do
 end

@@ -1,0 +1,7 @@
+courier:
+  enabled:  true
+  from:     'noreply@pibi.com'
+
+test:
+  courier:
+    enabled: false

@@ -1,0 +1,14 @@
+production: &common
+  database:
+    host: 'localhost'
+    un:   'root'
+    pw:   ''
+    db:   'pibi'
+
+test:
+  <<: *common
+  database:
+    db: 'pibi_test'
+
+development:
+  <<: *common
