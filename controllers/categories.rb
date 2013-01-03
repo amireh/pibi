@@ -46,7 +46,7 @@ namespace '/categories' do
       halt 400, "No such category"
     end
 
-    if c.update(params)
+    if c.update({ name: params[:name] })
       flash[:notice] = "Category '#{c.name}' has been updated."
     else
       flash[:error] = c.all_errors
