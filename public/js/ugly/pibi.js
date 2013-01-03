@@ -1,1 +1,1 @@
-;
+pibi=function(){},pibi=new pibi;

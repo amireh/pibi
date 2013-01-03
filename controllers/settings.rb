@@ -15,6 +15,19 @@ namespace '/settings' do
     end
   }
 
+  post "/account" do
+    if current_user.update({
+      name: params[:name],
+      email: params[:email],
+      gravatar_email: params[:gravatar_email] }) then
+      flash[:notice] = "Your account info has been updated."
+    else
+      flash[:error] = current_user.all_errors
+    end
+
+    redirect back
+  end
+
   post '/preferences' do
     notices = []
     errors  = []
@@ -130,19 +143,6 @@ namespace '/settings' do
     end
 
     redirect back_url
-  end
-
-  post "/account" do
-    if current_user.update({
-      name: params[:name],
-      email: params[:email],
-      gravatar_email: params[:gravatar_email] }) then
-      flash[:notice] = "Your account info has been updated."
-    else
-      flash[:error] = current_user.all_errors
-    end
-
-    redirect back
   end
 
 end

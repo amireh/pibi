@@ -5,6 +5,7 @@ ENV['RACK_ENV'] = 'test'
 require 'rspec'
 require 'rack/test'
 require 'capybara/rspec'
+require 'capybara/webkit'
 require 'capybara/node/matchers'
 require 'app'
 
@@ -28,18 +29,42 @@ RSpec.configure do |config|
   config.include Rack::Test::Methods
   Capybara.app = Sinatra::Application
   Capybara.automatic_reload = false
+  Capybara.default_driver    = :webkit
+  Capybara.javascript_driver = :webkit
 
   module Capybara
     module Node
       module Matchers
+        # stolen from Capybara 2.0.2
+        # def normalize_whitespace(text)
+        #   # http://en.wikipedia.org/wiki/Whitespace_character#Unicode
+        #   # We should have a better reference.
+        #   # See also http://stackoverflow.com/a/11758133/525872
+        #   text.to_s.gsub(/[\s\u0085\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+/, ' ').strip
+        # end
+
+        # This matcher that will perform a scan of the given keywords
+        # in the specified order across the node's content, regardless
+        # of what's in between the keywords.
+        #
+        # Usage example: some HTML node might have the following inner text:
+        # => 'The payment method "Cash" has been removed.'
+        #
+        # That content can be matched by:
+        #
+        # => has_keywords?('method removed')          # => true
+        # => has_keywords?('method payment removed')  # => false
         def has_keywords?(*keywords)
           if keywords.size == 1
             keywords = keywords.first.split(/\s/)
           end
-          return has_text?(Regexp.new(keywords.join('.*')))
-          # has_content?()
-          # has_xpath?(XPath::HTML.content(Regexp.new(keywords.join('.*'))))
+          if self.respond_to?(:has_text?)
+            has_text?(Regexp.new(keywords.join('.*')))
+          else
+            normalize_whitespace(text).match(Regexp.new(keywords.join('.*')))
+          end
         end
+
         alias_method :have_keywords, :has_keywords?
       end
     end
@@ -52,12 +77,29 @@ def mockup_user()
   User.destroy
 
   @some_salt = Pibi.salt
-  @user = @u = User.create({
+  @mockup_user_params = {
     name: 'Mysterious Mocker',
     email: 'very@mysterious.com',
     provider: 'pibi',
     password:               User.encrypt(@some_salt),
     password_confirmation:  User.encrypt(@some_salt)
-  })
+  }
+  @user = @u = User.create(@mockup_user_params)
   @account = @a = @user.accounts.first
+end
+
+FlashTypes = [ 'notice', 'error', 'warning' ]
+
+def should_flash(type, keywords)
+  page.should have_selector('.flashes.' + type.to_s)
+  page.find('.flashes.' + type.to_s).should have_keywords(keywords)
+end
+
+def should_only_flash(type, keywords)
+  FlashTypes.each { |excluded_type|
+    next if excluded_type == type.to_s
+    page.should_not have_selector(".flashes.#{excluded_type}")
+  }
+
+  should_flash(type, keywords)
 end

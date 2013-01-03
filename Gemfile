@@ -23,7 +23,8 @@ gem 'timetastic', '>= 0.1.2', path: '~/Workspace/Projects/timetastic'
 gem "pony"
 
 group :development do
-  gem 'capybara'
+  gem 'capybara-webkit', '>= 0.13.0', :git => 'https://github.com/thoughtbot/capybara-webkit'
+  gem 'capybara', '>= 2.0.2'
   gem 'launchy'
   gem 'thin'
   gem 'rspec'

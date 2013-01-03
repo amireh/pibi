@@ -216,7 +216,7 @@ pibi_ui = function() {
 
     report_error: function(err_msg) {
       ui.status.show("A script error has occured, please try to reproduce the bug and report it.", "bad");
-      console.log(err_msg);
+      console.log("Script error:"); console.log(err_msg);
     },
 
     process_hooks: function() {

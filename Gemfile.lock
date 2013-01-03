@@ -1,3 +1,11 @@
+GIT
+  remote: https://github.com/thoughtbot/capybara-webkit
+  revision: 8a8d12af5cb644537f6220cd332cc916c4b1f5ef
+  specs:
+    capybara-webkit (0.13.0)
+      capybara (>= 2.0.1)
+      json
+
 PATH
   remote: ~/Workspace/Projects/timetastic
   specs:
@@ -161,7 +169,8 @@ PLATFORMS
 
 DEPENDENCIES
   addressable
-  capybara
+  capybara (>= 2.0.2)
+  capybara-webkit (>= 0.13.0)!
   dm-constraints (>= 1.2.0)
   dm-core (>= 1.2.0)
   dm-migrations (>= 1.2.0)

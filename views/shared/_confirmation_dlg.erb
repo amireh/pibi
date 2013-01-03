@@ -6,8 +6,11 @@
     pibi.confirm = function(msg, heading, callback) {
       var accept_dialogue = function() {
         if($(this).attr("id") == 'confirm_accepted') {
+          // console.log("jqModal-Confirm has been accepted");
+
           if (typeof callback == "string") {
             window.location.href = callback;
+            // console.log("JS-driven page redirection failed");
           } else {
             try {
               callback();
@@ -55,7 +58,6 @@
 
         if (!msg || msg.length == "") {
           var confirmable_parent = a.parents("[data-confirmable]:first");
-          console.log(confirmable_parent[0])
           obj = confirmable_parent;
           if (confirmable_parent.length > 0) {
             var id = confirmable_parent.attr("data-confirmable");
