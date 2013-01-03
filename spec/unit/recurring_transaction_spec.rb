@@ -4,15 +4,22 @@ describe "Recurring Transactions" do
     mockup_user
   end
 
+  def mockup_rt(q = {})
+    @account.recurrings.create({
+      amount: 1,
+      note: 'tester'
+    }.merge(q))
+  end
+
   it "should create a recurring transaction" do
     @account.recurrings.all.count.should == 0
-    @account.recurrings.create({ amount: 5, account: @account })
+    mockup_rt({ amount: 5 })
     @account.recurrings.all.count.should == 1
   end
 
   it "should commit a recurring transaction" do
     @account.recurrings.all.count.should == 0
-    rt = @account.recurrings.create({ amount: 5, account: @account })
+    rt = mockup_rt({ amount: 5 })
     @account.recurrings.all.count.should == 1
 
     @account.balance.to_f.should == 0
@@ -25,7 +32,7 @@ describe "Recurring Transactions" do
 
   it "should respect the type of a recurring transaction" do
     @account.recurrings.all.count.should == 0
-    rt = @account.recurrings.create({ amount: 5, flow_type: :negative, account: @account })
+    rt = mockup_rt({ amount: 5, flow_type: :negative })
     @account.recurrings.all.count.should == 1
 
     @account.balance.to_f.should == 0
@@ -38,7 +45,7 @@ describe "Recurring Transactions" do
 
   it "should not commit the transaction more than necessary" do
     @account.recurrings.all.count.should == 0
-    rt = @account.recurrings.create({ amount: 5, flow_type: :negative, account: @account })
+    rt = mockup_rt({ amount: 5, flow_type: :negative })
     @account.recurrings.all.count.should == 1
 
     @account.balance.to_f.should == 0
@@ -54,7 +61,7 @@ describe "Recurring Transactions" do
   end
 
   it "should commit a daily RT only once a day" do
-    rt = @account.recurrings.create({
+    rt = mockup_rt({
       amount: 10,
       flow_type: :negative,
       frequency: :daily,
@@ -79,7 +86,7 @@ describe "Recurring Transactions" do
   end
 
   it "should commit a monthly RT only once a month" do
-    rt = @account.recurrings.create({
+    rt = mockup_rt({
       amount: 10,
       flow_type: :negative,
       frequency: :monthly,
@@ -105,7 +112,7 @@ describe "Recurring Transactions" do
   end
 
   it "should commit a yearly RT only once a year" do
-    rt = @account.recurrings.create({
+    rt = mockup_rt({
       amount: 10,
       flow_type: :negative,
       frequency: :yearly,

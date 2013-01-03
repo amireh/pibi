@@ -1,3 +1,50 @@
+module Sinatra
+  module UsersController
+    module Helpers
+      def create_user_from_oauth(provider, auth)
+        # create the user if it's their first time
+        unless u = User.first({ uid: auth.uid, provider: provider })
+          uparams = { uid: auth.uid, provider: provider, name: auth.info.name }
+          uparams[:email] = auth.info.email if auth.info.email
+          uparams[:oauth_token] = auth.credentials.token if auth.credentials.token
+          uparams[:oauth_secret] = auth.credentials.secret if auth.credentials.secret
+          uparams[:password] = uparams[:password_confirmation] = User.encrypt(Pibi::salt)
+          uparams[:auto_password] = true
+
+          if auth.extra.raw_info then
+            uparams[:extra] = auth.extra.raw_info.to_json.to_s
+          end
+
+          # puts "Creating a new user from #{provider} with params: \n#{uparams.inspect}"
+          u = User.create(uparams)
+        end
+
+        u
+      end
+
+      def build_user_from_pibi()
+        u = User.new(params.merge({
+          uid:      UUID.generate,
+          provider: "pibi"
+        }))
+
+        if u.valid?
+          u.password = User.encrypt(params[:password])
+          u.password_confirmation = User.encrypt(params[:password_confirmation])
+        end
+
+        u
+      end
+    end # Helpers
+
+    def self.registered(app)
+      app.helpers UsersController::Helpers
+    end
+  end # UsersController
+
+  register UsersController
+end # Sinatra
+
 after do
   if current_user
     if response.status == 200
@@ -50,7 +97,7 @@ before do
     unless messages.empty?
       flash[:warning] = messages
     end
-  end
+  end # if current_user
 end
 
 namespace '/users' do
@@ -60,43 +107,8 @@ namespace '/users' do
     erb :"/users/new"
   end
 
-  def create_from_oauth(provider, auth)
-    # create the user if it's their first time
-    unless u = User.first({ uid: auth.uid, provider: provider })
-      uparams = { uid: auth.uid, provider: provider, name: auth.info.name }
-      uparams[:email] = auth.info.email if auth.info.email
-      uparams[:oauth_token] = auth.credentials.token if auth.credentials.token
-      uparams[:oauth_secret] = auth.credentials.secret if auth.credentials.secret
-      uparams[:password] = uparams[:password_confirmation] = User.encrypt(Pibi::salt)
-      uparams[:auto_password] = true
-
-      if auth.extra.raw_info then
-        uparams[:extra] = auth.extra.raw_info.to_json.to_s
-      end
-
-      # puts "Creating a new user from #{provider} with params: \n#{uparams.inspect}"
-      u = User.create(uparams)
-    end
-
-    u
-  end
-
-  def build_from_pibi()
-    u = User.new(params.merge({
-      uid:      UUID.generate,
-      provider: "pibi"
-    }))
-
-    if u.valid?
-      u.password = User.encrypt(params[:password])
-      u.password_confirmation = User.encrypt(params[:password_confirmation])
-    end
-
-    u
-  end
-
   post do
-    u = build_from_pibi
+    u = build_user_from_pibi
     unless u.save || u.saved?
       flash[:error] = u.all_errors
       return redirect back

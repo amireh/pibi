@@ -109,14 +109,15 @@ class User
     when 'email'
       update({ email_verified: true })
     when 'password'
-      # nothing to do really
+      update({ auto_password: false })
     end
 
     # don't destroy it for history sake
   end
 
   def on_notice_expired(notice)
-    notice.destroy
+    # don't destroy for now
+    # notice.destroy
   end
 
   # Replaces the current password with an auto generated one and
@@ -127,6 +128,9 @@ class User
   def generate_temporary_password
     pw = Pibi.salt
     update!({ password: User.encrypt(pw), auto_password: true })
+
+    # expire all current/old temp passwords that weren't used
+    pending_notices.all({ type: 'password' }).each { |n| n.expire! }
 
     notices.create({ type: 'password', data: pw })
   end

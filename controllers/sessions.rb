@@ -29,17 +29,20 @@ end
 # Support both GET and POST for callbacks
 %w(get post).each do |method|
   send(method, "/auth/:provider/callback") do |provider|
-    if u = create_from_oauth(provider, env['omniauth.auth'])
+    u = create_user_from_oauth(provider, env['omniauth.auth'])
+    if u.saved?
       flash[:notice] = "Welcome to #{AppName}! You have successfully signed up using your #{provider.capitalize} account."
       authorize(u)
       redirect '/'
     else
-      halt 500, "Sorry! Something wrong happened while signing you up using your #{provider.capitalize} account: #{u.collect_errors}"
+      halt 500,
+        "Sorry! Something wrong happened while signing you up using your #{provider.capitalize}" +
+        " account:<br /><br /> #{u.all_errors}"
     end
   end
 end
 
 get '/auth/failure' do
-  flash[:error] = params[:message]
+  flash[:error] = "Sorry! Something wrong happened while signing you up: #{params[:message]}"
   redirect '/sessions/new'
 end

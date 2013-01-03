@@ -73,7 +73,7 @@ RSpec.configure do |config|
   set :courier_service_enabled, false
 end
 
-def mockup_user()
+def mockup_user(q = {})
   User.destroy
 
   @some_salt = Pibi.salt
@@ -83,7 +83,7 @@ def mockup_user()
     provider: 'pibi',
     password:               User.encrypt(@some_salt),
     password_confirmation:  User.encrypt(@some_salt)
-  }
+  }.merge(q)
   @user = @u = User.create(@mockup_user_params)
   @account = @a = @user.accounts.first
 end
