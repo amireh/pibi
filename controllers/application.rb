@@ -1,6 +1,10 @@
+def set_layout()
+  @layout ||= "layouts/#{logged_in? ? 'primary' : 'guest' }".to_sym
+end
+
 # anonymous vs authenticated view layouts
 before do
-  @layout = "layouts/#{logged_in? ? 'primary' : 'guest' }".to_sym
+  set_layout
 end
 
 # authenticated landing page

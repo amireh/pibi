@@ -1,5 +1,5 @@
 <% content_for :title do %> Preferences | <%= current_user.name %> | <%= AppName %> <% end %>
-<% content_for :js do %>
+<% content_for :deferred_js do %>
   <script type="text/javascript" src="/js/jscolor/jscolor.js"></script>
 <% end %>
 
@@ -27,7 +27,7 @@
       <li>
         <!-- <form method="POST" action="/settings/payment_methods"> -->
           <input type="text" name="payment_method[name]" placeholder="Credit Card" />
-          <input type="submit" value="Add" class="inline" />
+          <input type="submit" data-linked-to="payment_method" value="Add" class="inline" />
         <!-- </form> -->
         <br />
         <br />

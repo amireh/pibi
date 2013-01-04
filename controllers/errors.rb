@@ -4,7 +4,7 @@ not_found do
     return r.include?("<html>") ? "404 - bad link!" : r.to_json
   end
 
-  erb :"404"
+  erb :"404", layout: set_layout
 end
 
 error 401 do
@@ -13,7 +13,7 @@ error 401 do
     return r.include?("<html>") ? "401 - unauthorized!" : r.to_json
   end
 
-  erb :"401"
+  erb :"401", layout: set_layout
 end
 
 error 403 do
@@ -22,11 +22,11 @@ error 403 do
     return r.include?("<html>") ? "403 - forbidden!" : r.to_json
   end
 
-  erb :"403"
+  erb :"403", layout: set_layout
 end
 
 error 400 do
-  erb :"400"
+  erb :"400", layout: set_layout
 end
 
 error 500 do
@@ -34,5 +34,5 @@ error 500 do
     halt 500, "500 - internal error: " + env['sinatra.error'].name + " => " + env['sinatra.error'].message
   end
 
-  erb :"500"
+  erb :"500", layout: set_layout
 end

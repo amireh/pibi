@@ -225,7 +225,7 @@ nav li a.listlike + ol {
   background: #383438;
   border-bottom-left-radius: 3px;
   border-bottom-right-radius: 3px;
-  box-shadow: 0 0 5px 1px black;
+  box-shadow: 0 0 2px 0px black;
   z-index: 1;
 }
 nav li a.listlike + ol a {
@@ -246,8 +246,9 @@ nav li a.listlike + ol li:hover a {
   /*background: rgba(0,0,0,0.15);*/
   /*opacity: 0.75;*/
 }
-nav li a.listlike + ol li:last-of-type {
-  border-bottom-left-radius: 3px;
+nav li a.listlike + ol li:last-of-type a,
+nav li a.listlike + ol {
+  border-bottom-left-radius:  3px;
   border-bottom-right-radius: 3px;
 }
 
@@ -341,6 +342,8 @@ button:disabled,
 .button:disabled,
 input[type=submit]:disabled {
   cursor: inherit;
+  /*color: #aaa;*/
+  opacity: 0.5;
 }
 
 button:hover:not(:disabled),

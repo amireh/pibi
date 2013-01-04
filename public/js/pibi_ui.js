@@ -71,6 +71,19 @@ pibi_ui = function() {
         function() {
           $("a.listlike:not(.selected),a[data-listlike]:not(.selected)").bind('click', show_list);
         },
+        function() {
+          $("input[data-linked-to],button[data-linked-to]").each(function() {
+              var target = $(this).siblings("input[name^=" + $(this).attr("data-linked-to") + "]:first");
+              var button = $(this);
+              target.keyup(function() {
+              if ($(this).attr("value").length > 0) {
+                button.attr("disabled", null);
+              } else {
+                button.attr("disabled", "disabled");
+              }
+            }).keyup();
+          });
+        },
 
         // colorize balance labels (positive or negative balances)
         function() {

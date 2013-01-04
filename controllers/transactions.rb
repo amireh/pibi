@@ -240,13 +240,19 @@ helpers do
 end
 
 get '/transactions/:year', auth: :user do |year|
+  pass if year.to_i == 0
+
   render_transactions_for(year, 0, 0)
 end
 
 get '/transactions/:year/:month', auth: :user do |year, month|
+  pass if year.to_i == 0 || month.to_i == 0
+
   render_transactions_for(year,month,0)
 end
 
 get '/transactions/:year/:month/:day', auth: :user do |year, month, day|
+  pass if year.to_i == 0 || month.to_i == 0 || day.to_i == 0
+
   render_transactions_for(year,month,day)
 end
