@@ -75,6 +75,7 @@ configure :development, :production do
     provider :developer if settings.development?
     provider :facebook, settings.credentials['facebook']['key'], settings.credentials['facebook']['secret']
     provider :twitter,  settings.credentials['twitter']['key'],  settings.credentials['twitter']['secret']
+    provider :github,   settings.credentials['github']['key'],  settings.credentials['github']['secret']
   end
 
   Pony.options = {
