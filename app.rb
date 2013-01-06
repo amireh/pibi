@@ -24,6 +24,7 @@ configure do
   config_file 'config/credentials.yml'
   config_file 'config/database.yml'
 
+
   use Rack::Session::Cookie, :secret => settings.credentials['cookie']['secret']
   use OmniAuth::Builder do
     OmniAuth.config.on_failure = Proc.new { |env|

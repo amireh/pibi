@@ -1,4 +1,4 @@
-namespace '/categories' do
+route_namespace '/categories' do
   condition do
     restrict_to(:user)
   end

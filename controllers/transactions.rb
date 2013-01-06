@@ -1,6 +1,6 @@
 [ 'deposits', 'withdrawals', 'recurrings' ].each do |tx_type|
 
-  namespace "/transactions/#{tx_type}" do
+  route_namespace "/transactions/#{tx_type}" do
 
     condition do
       restrict_to(:user)

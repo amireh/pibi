@@ -1,4 +1,4 @@
-namespace '/settings' do
+route_namespace '/settings' do
   condition do
     restrict_to(:user)
   end

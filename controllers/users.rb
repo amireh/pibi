@@ -100,7 +100,7 @@ before do
   end # if current_user
 end
 
-namespace '/users' do
+route_namespace '/users' do
 
   get '/new' do
     current_page("signup")

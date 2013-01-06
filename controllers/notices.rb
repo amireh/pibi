@@ -1,4 +1,4 @@
-namespace '/notices' do
+route_namespace '/notices' do
 
   condition do
     restrict_to(:user)
