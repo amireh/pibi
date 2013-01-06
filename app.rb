@@ -25,9 +25,12 @@ configure :test do
   set :credentials, { 'cookie' => { 'secret' => 'adooken' } }
 end
 
+configure :development, :production do
+  config_file 'config/credentials.yml'
+end
+
 configure do
   config_file 'config/application.yml'
-  config_file 'config/credentials.yml' unless settings.test?
   config_file 'config/database.yml'
 
   use Rack::Session::Cookie, :secret => settings.credentials['cookie']['secret']
