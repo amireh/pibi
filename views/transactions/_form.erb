@@ -32,6 +32,8 @@
             <option value="<%= c %>" <%= 'selected="selected"' if @tx.currency == c %>><%= c %></option>
           <% end %>
         </select>
+
+        <input type="submit" value="Quick save" class="inline smaller quick_tx bad" />
       </li>
       <li>Note*</li>
       <li><textarea name="note" rows="3" cols="80" placeholder="Something to remind you of this transaction"><%= @tx.note %></textarea></li>
