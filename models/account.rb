@@ -24,7 +24,7 @@ class Account
   [ :daily, :monthly, :yearly ].each { |period|
     define_method(:"#{period}_expenses") {
       expenses = 0.0
-      recurrings.all({frequency: period }).each { |t| expenses = t + expenses }
+      recurrings.all({frequency: period, active: true }).each { |t| expenses = t + expenses }
       expenses
     }
   }
