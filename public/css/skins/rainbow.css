@@ -1,5 +1,5 @@
 body {
-  font: 14px Arial, Verdana, Helvetica, sans-serif;
+  font: 14px "Gill Sans", Verdana, Arial, Helvetica, sans-serif;
   /*background: #222;*/
   /*background: #222 url(/images/bgs/twinkle_twinkle/twinkle_twinkle.png) repeat;*/
   /*background: #222 url(/images/bgs/twinkle_twinkle/twinkle_twinkle2.png) repeat;*/
@@ -932,4 +932,21 @@ p.warning:before {
   position: relative;
   /*height: 30px;*/
 
+}
+
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+  color: #999;
+}
+input:-moz-placeholder,
+textarea:-moz-placeholder {
+  color: #999;
+}
+input::-moz-placeholder,
+textarea::-moz-placeholder {
+  color: #999;
+}
+input:-ms-input-placeholder,
+textarea:-ms-input-placeholder {
+  color: #999;
 }
