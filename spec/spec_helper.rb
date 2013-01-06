@@ -4,6 +4,7 @@ ENV['RACK_ENV'] = 'test'
 
 require 'rspec'
 require 'rack/test'
+require 'rack/utils'
 require 'capybara/rspec'
 require 'capybara/webkit'
 require 'capybara/node/matchers'
@@ -27,7 +28,8 @@ RSpec.configure do |config|
   config.order = 'random'
 
   config.include Rack::Test::Methods
-  Capybara.app = Sinatra::Application
+  # Capybara.app = Sinatra::Application
+  Capybara.app = Rack::ShowExceptions.new(Sinatra::Application)
   Capybara.automatic_reload = false
   Capybara.default_driver    = :webkit
   Capybara.javascript_driver = :webkit

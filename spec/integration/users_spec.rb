@@ -25,7 +25,6 @@ feature "Signing up for a new account" do
     # expect to fail when any of the default params are overridden
     unless in_q.empty?
       current_path.should == '/users/new'
-      page.should have_selector('.flashes.error')
     end
 
     cb.call(page) if block_given?
@@ -33,50 +32,50 @@ feature "Signing up for a new account" do
 
   scenario "Signing up with no name" do
     fill_form({ name: '' }) do |page|
-      page.find('.flashes.error').should have_keywords('need your name')
+      should_only_flash(:error, 'need your name')
     end
   end
 
   scenario "Signing up with no email" do
     fill_form({ email: '' }) do |page|
-      page.find('.flashes.error').should have_keywords('need your email')
+      should_only_flash(:error, 'need your email')
     end
   end
 
   scenario "Signing up with an invalid email" do
     fill_form({ email: 'this is no email' }) do |page|
-      page.find('.flashes.error').should have_keywords('look like an email')
+      should_only_flash(:error, 'look like an email')
     end
   end
 
   scenario "Signing up with a taken email" do
     fill_form({ email: @user.email }) do |page|
-      page.find('.flashes.error').should have_keywords('already registered')
+      should_only_flash(:error, 'already registered')
     end
   end
 
   scenario "Signing up without a password" do
     fill_form({ password: '' }) do |page|
-      page.find('.flashes.error').should have_keywords('must provide password')
+      should_only_flash(:error, 'must provide password')
     end
   end
 
   scenario "Signing up with mis-matched passwords" do
     fill_form({ password: 'barfoo123' }) do |page|
-      page.find('.flashes.error').should have_keywords('must match')
+      should_only_flash(:error, 'must match')
     end
   end
 
   scenario "Signing up with a password too short" do
     fill_form({ password: 'bar', password_confirmation: 'bar' }) do |page|
-      page.find('.flashes.error').should have_keywords('be at least characters long')
+      should_only_flash(:error, 'be at least characters long')
     end
   end
 
   scenario "Signing up with correct info" do
-    fill_form do |page|
+    fill_form({}) do
       current_path.should == '/'
-      page.should have_selector('.flashes.notice')
+      should_only_flash(:notice, 'new account has been registered')
     end
   end
 
