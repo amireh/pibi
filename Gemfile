@@ -36,6 +36,7 @@ group :development do
 end
 
 group :test do
+  gem 'rake'
   gem 'rspec'
   gem 'rspec-core'
   gem 'capybara-webkit', '>= 0.13.0', :git => 'https://github.com/thoughtbot/capybara-webkit'
