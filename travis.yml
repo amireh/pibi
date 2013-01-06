@@ -10,7 +10,5 @@ rvm:
 services: mysql
 before_install:
   - sudo apt-get install libqt4-dev libqtwebkit-dev
-before_script:
-  - bundle exec rake pibi:db:setup
-# uncomment this line if your project needs to run something other than `rake`:
-script: bundle exec rspec spec
+before_script: "bundle exec rake pibi:db:setup"
+script: "bundle exec rspec spec"

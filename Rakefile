@@ -12,4 +12,7 @@ task :environment do
   require File.expand_path('app', File.dirname(__FILE__))
 end
 
+task :default => :environment do
+end
+
 Dir.glob('lib/tasks/*.rake').each { |f| import f }
