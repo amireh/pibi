@@ -10,7 +10,9 @@ Bundler.require(:default)
 
 # ----
 # Validating that configuration files exist and are readable...
-[ 'credentials', 'application', 'database' ].each { |config_file|
+config_files = [ 'application', 'database' ]
+config_files << 'credentials' unless settings.test?
+config_files.each { |config_file|
   unless File.exists?(File.join($ROOT, 'config', "%s.yml" %[config_file] ))
     class ConfigFileError < StandardError; end;
     raise ConfigFileError, "Missing required config file: config/%s.yml" %[config_file]
@@ -19,22 +21,16 @@ Bundler.require(:default)
 
 require 'config/initializer'
 
+configure :test do
+  set :credentials, { 'cookie' => { 'secret' => 'adooken' } }
+end
+
 configure do
   config_file 'config/application.yml'
-  config_file 'config/credentials.yml'
+  config_file 'config/credentials.yml' unless settings.test?
   config_file 'config/database.yml'
 
-
   use Rack::Session::Cookie, :secret => settings.credentials['cookie']['secret']
-  use OmniAuth::Builder do
-    OmniAuth.config.on_failure = Proc.new { |env|
-      OmniAuth::FailureEndpoint.new(env).redirect_to_failure
-    }
-
-    provider :developer if settings.development?
-    provider :facebook, settings.credentials['facebook']['key'], settings.credentials['facebook']['secret']
-    provider :twitter,  settings.credentials['twitter']['key'],  settings.credentials['twitter']['secret']
-  end
 
   dbc = settings.database
   # DataMapper::Logger.new($stdout, :debug)
@@ -51,20 +47,6 @@ configure do
   set :config_path, File.join($ROOT, "config")
   set :default_preferences, JSON.parse(File.read(File.join(settings.config_path, "preferences.json")))
 
-  Pony.options = {
-    :from => settings.courier[:from],
-    :via => :smtp,
-    :via_options => {
-      :address    => settings.credentials['courier']['address'],
-      :port       => settings.credentials['courier']['port'],
-      :user_name  => settings.credentials['courier']['key'],
-      :password   => settings.credentials['courier']['secret'],
-      :enable_starttls_auto => true,
-      :authentication => :plain, # :plain, :login, :cram_md5, no auth by default
-      :domain => "HELO", # don't know exactly what should be here
-    }
-  }
-
   Currencies = Currency.all_names
 
   helpers Gravatarify::Helper
@@ -78,6 +60,33 @@ configure do
     profile:  { size: 128, html: { :class => 'gravatar' } }
   })
 
+end
+
+# skip OmniAuth and Pony in test mode
+configure :development, :production do
+  use OmniAuth::Builder do
+    OmniAuth.config.on_failure = Proc.new { |env|
+      OmniAuth::FailureEndpoint.new(env).redirect_to_failure
+    }
+
+    provider :developer if settings.development?
+    provider :facebook, settings.credentials['facebook']['key'], settings.credentials['facebook']['secret']
+    provider :twitter,  settings.credentials['twitter']['key'],  settings.credentials['twitter']['secret']
+  end
+
+  Pony.options = {
+    :from => settings.courier[:from],
+    :via => :smtp,
+    :via_options => {
+      :address    => settings.credentials['courier']['address'],
+      :port       => settings.credentials['courier']['port'],
+      :user_name  => settings.credentials['courier']['key'],
+      :password   => settings.credentials['courier']['secret'],
+      :enable_starttls_auto => true,
+      :authentication => :plain, # :plain, :login, :cram_md5, no auth by default
+      :domain => "HELO", # don't know exactly what should be here
+    }
+  }
 end
 
 configure :production do
