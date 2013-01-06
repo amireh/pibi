@@ -20,7 +20,7 @@ module Sinatra
 
   class Base
     def dispatch_email(addr, tmpl, title, &cb)
-      if !@courier_service_enabled
+      unless settings.courier['enabled']
         cb.call(false, 'Courier service is currently turned off.') if block_given?
         return
       end

@@ -109,7 +109,7 @@ route_namespace '/users' do
 
   post do
     u = build_user_from_pibi
-    unless u.valid? || u.save || u.saved?
+    if !u.valid? || !u.save || !u.saved?
       flash[:error] = u.all_errors
       return redirect back
     end
