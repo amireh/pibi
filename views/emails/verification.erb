@@ -1,16 +1,16 @@
 <p>Hi,</p>
 
 <p>
-  We would like to verify that you are the <a href="<%= AppURL %>"><%= AppName %></a>&trade;
-  user "<%= current_user.name %>".
+  We would like to verify that you are the <a href="<%= AppURL %>"><%= AppName %></a>
+  user <%= current_user.name %>.
 
   If you are, please visit this link to verify this email address:
 </p>
 
 <p><a href="<%= "#{__host}#{@n.url}" %>"><%= __host %><%= @n.url %></a></p>
 
-<p>Thank you for using <a href="<%=AppURL%>">Pibi</a>&trade;,<br />
-  The Pibi&trade; Team
+<p>Thank you for using <a href="<%=AppURL%>">Pibi</a>,<br />
+  - The Pibi Team
 </p>
 
-<p><em>If you are not "<%= current_user.name %>" or didn't request this verification, you can safely ignore this email.</em></p>
+<p><em>If you are not <%= current_user.name %> or didn't request this verification, you can safely ignore this email.</em></p>
