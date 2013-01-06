@@ -23,7 +23,7 @@ gem 'multi_json'
 gem 'addressable'
 gem 'uuid'
 gem 'gravatarify', ">= 3.1.0"
-gem 'timetastic', '>= 0.1.2', path: '~/Workspace/Projects/timetastic'
+gem 'timetastic', '>= 0.1.3', :git => 'https://github.com/amireh/timetastic'
 gem "pony"
 gem 'omniauth'
 gem 'omniauth-facebook'
