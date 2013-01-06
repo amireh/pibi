@@ -126,7 +126,7 @@ class User
   # Note: since the password is encrypted prior to saving, the raw version
   # is kept in the notice's @data field for use when sending the notice email
   def generate_temporary_password
-    pw = Pibi.salt
+    pw = Pibi.tiny_salt
     update!({ password: User.encrypt(pw), auto_password: true })
 
     # expire all current/old temp passwords that weren't used
@@ -164,7 +164,7 @@ class User
       return false
     end
 
-    return !pending_notices({ type: 'email' }).empty?
+    return !pending_notices({ type: 'email', dispatched: true }).empty?
   end
 
   private

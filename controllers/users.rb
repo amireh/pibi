@@ -69,6 +69,7 @@ before do
       unless current_user.awaiting_email_verification?
         if @n = current_user.verify_email
           dispatch_email_verification(current_user)
+          @n.update({ dispatched: true })
         end
       end
 
