@@ -31,13 +31,16 @@ gem 'omniauth-github'
 gem 'omniauth-twitter', '0.0.9'
 
 group :development do
+  # gem 'thin'
+  # gem 'rake'
+end
+
+group :test do
+  gem 'rspec'
+  gem 'rspec-core'
   gem 'capybara-webkit', '>= 0.13.0', :git => 'https://github.com/thoughtbot/capybara-webkit'
   gem 'capybara', '>= 2.0.2'
   gem 'launchy'
-  gem 'thin'
-  gem 'rspec'
-  gem 'rspec-core'
-  # gem 'rake'
 end
 
 group :production do
