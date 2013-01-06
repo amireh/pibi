@@ -51,7 +51,7 @@ nav {
   position: relative;
   width: auto;
   width: 1000px; margin-left: -20px;
-  height: 106px;
+  /*height: 106px;*/
 }
 
 #content {
@@ -855,7 +855,7 @@ a.bad { font-size: 0.75em; }
 .guest #content h2 { border-bottom: 1px solid #ddd; padding-bottom: 5px;}
 
 .guest.sessions img { vertical-align: middle; }
-.guest nav { height: 106px;}
+/*.guest nav { height: 106px;}*/
 .guest .stuff { margin-top: 20px;}
 .guest.welcome #content p,
 .guest.welcome #content li { font-size: 13px;}

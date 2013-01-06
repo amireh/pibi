@@ -13,7 +13,6 @@ module Sinatra
 
     def self.registered(app)
       app.helpers Courier::Helpers
-      app.set :courier_service_enabled, true
     end
   end
 
