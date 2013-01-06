@@ -31,7 +31,7 @@ gem 'omniauth-github'
 gem 'omniauth-twitter', '0.0.9'
 
 group :development do
-  # gem 'thin'
+  gem 'thin'
   # gem 'rake'
 end
 
