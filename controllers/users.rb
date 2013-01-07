@@ -19,22 +19,31 @@ module Sinatra
           end
 
           # puts "Creating a new user from #{provider} with params: \n#{uparams.inspect}"
-          u = User.create(uparams)
           new_user = true
+          # create the user
+          slave = User.create(uparams)
+
+          # create a pibi user and link the provider-specific one to it
+          master = build_user_from_pibi(uparams)
+          master.save
+          slave.link_to(master)
+
+          u = master
         end
 
         [ u, new_user ]
       end
 
-      def build_user_from_pibi()
-        u = User.new(params.merge({
+      def build_user_from_pibi(p = {})
+        p = params if p.empty?
+        u = User.new(p.merge({
           uid:      UUID.generate,
           provider: "pibi"
         }))
 
         if u.valid?
-          u.password = User.encrypt(params[:password])
-          u.password_confirmation = User.encrypt(params[:password_confirmation])
+          u.password = User.encrypt(p[:password])
+          u.password_confirmation = User.encrypt(p[:password_confirmation])
         end
 
         u
@@ -73,17 +82,20 @@ before do
       unless current_user.awaiting_email_verification?
         if @n = current_user.verify_email
           dispatch_email_verification(current_user)
-          @n.update({ dispatched: true })
         end
       end
 
-      @n = current_user.pending_notices({ type: 'email' }).first
+      @n = current_user.pending_notices.first({ type: 'email' })
       unless @n.displayed
         m = 'Your email address is not yet verified. ' <<
             'Please check your email, or visit <a href="/settings/account">this page</a> for more info.'
         messages << m
 
         @n.update({ displayed: true })
+      end
+
+      unless @n.dispatched
+        dispatch_email_verification(current_user)
       end
     end
 
@@ -92,6 +104,11 @@ before do
       if current_user.pending_notices({ type: 'password' }).empty?
         @n = current_user.generate_temporary_password
         dispatch_temp_password(current_user)
+      else
+        @n = current_user.pending_notices.first({ type: 'password' })
+        if !@n.dispatched
+          dispatch_temp_password(current_user)
+        end
       end
     end
 
