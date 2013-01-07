@@ -105,6 +105,11 @@ nav li a:hover {
   color: #fff;
 }
 
+nav li > a:focus {
+  box-shadow: 0 0 15px 1px white;
+  outline: none;
+}
+
 /* Coloured buttons */
 /* Orange */
 nav li:nth-child(1) > a,
