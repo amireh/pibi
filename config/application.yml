@@ -1,6 +1,10 @@
-courier:
-  enabled:  true
-  from:     'noreply@pibi.com'
+development: &common
+  courier:
+    enabled:  true
+    from:     'noreply@pibi.com'
+
+production:
+  <<: *common
 
 test:
   courier:
