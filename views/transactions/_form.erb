@@ -47,7 +47,7 @@
       <li>
         <% @user.payment_methods.each do |pm| %>
           <label style="color: #<%= pm.color %>;">
-            <input type="radio" name="payment_method" value="<%= pm.id %>" <%= 'checked="checked"' if @tx && @tx.payment_method == pm%> />
+            <input type="radio" name="payment_method" value="<%= pm.id %>" <%= 'checked="checked"' if @tx && @tx.payment_method == pm %> />
             <%= pm.name %>
           </label>
         <% end %>

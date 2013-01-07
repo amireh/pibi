@@ -2,6 +2,7 @@ describe User do
 
   before do
     User.destroy
+    User.count.should == 0
   end
 
   def mock_params()
@@ -95,6 +96,16 @@ describe User do
     u.save.should be_false
   end
 
+  it "should create a user with a registered email within a different provider scope" do
+    u = User.create(mock_params)
+    u.valid?.should be_true
+    u.saved?.should be_true
+
+    u = User.create(mock_params.merge({ provider: 'facebook' }))
+    u.valid?.should be_true
+    u.saved?.should be_true
+  end
+
   it "should not create a user because of missing name" do
     u = User.new(mock_params.merge({name: ''}))
     u.valid?.should be_false
@@ -102,4 +113,48 @@ describe User do
 
     u.save.should be_false
   end
+
+  it "should link a user account to a master one" do
+    master = User.create(mock_params)
+    puts master.all_errors
+    master.saved?.should be_true
+
+    slave = User.create(mock_params.merge({ provider: 'facebook' }))
+    slave.saved?.should be_true
+
+    slave.link.should be_false
+    slave.linked_to?(master).should be_false
+
+    slave.link_to(master)
+    slave.linked_to?(master).should be_true
+    master.linked_to?(slave).should be_true
+  end
+
+  it "should link a user account and its linked slaves to a master one" do
+    master = User.create(mock_params)
+    master.saved?.should be_true
+
+    slave = User.create(mock_params.merge({ provider: 'facebook' }))
+    slave.saved?.should be_true
+
+    distant_slave = User.create(mock_params.merge({ provider: 'github' }))
+    distant_slave.saved?.should be_true
+
+    distant_slave.link_to(slave).should be_true
+    distant_slave.linked_to?(slave).should be_true
+
+    # link the slave to the master
+    slave.linked_to?(master).should be_false
+    slave.link_to(master).should be_true
+    slave.linked_to?(master).should be_true
+
+    # distant slave should be linked to the master now too
+    distant_slave.linked_to?(master).should be_true
+    distant_slave.linked_to?(slave).should be_false
+
+    # master should be linked to both
+    master.linked_to?(slave).should be_true
+    master.linked_to?(distant_slave).should be_true
+  end
+
 end

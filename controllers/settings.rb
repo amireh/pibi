@@ -43,14 +43,22 @@ route_namespace '/settings' do
 
     # update the user's default payment method
     if params[:default_payment_method]
-      if @user.payment_method.id != params[:default_payment_method].to_i
-        @user.payment_method = @user.payment_methods.get(params[:default_payment_method].to_i)
-        if @user.save
-          notices << "The default payment method now is '#{@user.payment_method.name}'"
-        else
-          errors << @user.all_errors
+      pm = @user.payment_methods.get(params[:default_payment_method].to_i)
+      unless pm
+        errors << "No such payment method."
+      else
+        if @user.payment_method.id != params[:default_payment_method].to_i
+          if pm.update({ default: true })
+            notices << "The default payment method now is '#{@user.payment_method.name}'"
+          else
+            errors << @user.all_errors
+          end
         end
       end
+    end
+
+    unless @user.payment_method
+      @user.payment_methods.first.update({ default: true })
     end
 
     # update the account default currency
@@ -63,7 +71,7 @@ route_namespace '/settings' do
     end
 
     # update the payment method colors
-    params["pm_colors"].each_pair { |pm_id, color|
+    params["pm_colors"] && params["pm_colors"].each_pair { |pm_id, color|
       pm = @user.payment_methods.get(pm_id)
       if pm && pm.color != color
         pm.update({ color: color })
@@ -77,7 +85,7 @@ route_namespace '/settings' do
   end
 
   delete '/preferences/payment_methods/:pm_id' do |pm_id|
-    unless pm = current_user.payment_methods.get(pm_id)
+    unless pm = @user.payment_methods.get(pm_id.to_i)
       halt 400, "No such payment method '#{pm_id}'."
     end
 
@@ -90,23 +98,23 @@ route_namespace '/settings' do
       notices << "The payment method '#{its_name}' has been removed."
     else
       flash[:error] = pm.all_errors
-      return redirect back
+      return redirect '/settings/preferences'
+    end
+
+    @user = @user.refresh
+
+    if @user.payment_methods.empty?
+      @user.create_default_pm
     end
 
     if was_default
-      if current_user.payment_methods.empty?
-        current_user.payment_methods.create({ name: "Cash", default: true })
-      else
-        pm = current_user.payment_methods.first
-        pm.update({ default: true })
-      end
-
+      @user.payment_methods.first.update!({ default: true })
       notices << "#{@user.payment_method.name} is now your default payment method."
     end
 
     flash[:notice] = notices
 
-    redirect back
+    redirect '/settings/preferences'
   end
 
   post '/password' do

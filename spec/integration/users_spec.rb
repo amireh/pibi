@@ -1,6 +1,7 @@
 feature "Signing up for a new account" do
   background do
     mockup_user
+    visit "/sessions/destroy"
   end
 
   def fill_form(in_q = {}, &cb)

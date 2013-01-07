@@ -4,6 +4,7 @@ feature "User pereferences" do
   end
 
   def sign_in
+    visit "/sessions/destroy"
     visit "/sessions/new"
 
     within("form") do

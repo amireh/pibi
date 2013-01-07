@@ -15,7 +15,7 @@ class Account
 
   property :created_at,   DateTime, default: lambda { |*_| DateTime.now }
 
-  belongs_to :user
+  belongs_to :user, required: true
   has n, :transactions, :constraint => :destroy
   has n, :deposits,     :constraint => :destroy
   has n, :withdrawals, :constraint => :destroy

@@ -6,13 +6,14 @@ class User
   property :id, Serial
 
   property :name,     String, length: 255, required: true, message: 'We need your name.'
-  property :provider, String, length: 255, required: true
+  property :provider, String, length: 255, required: true, unique_index: :provider_email
   property :uid,      String, length: 255, default: lambda { |*u| UUID.generate }
   property :password, String, length: 64,  required: true, message: 'You must provide a password!'
 
   property :email,    String, length: 255, required: true,
     format: :email_address,
-    unique: :provider,
+    unique: [ :provider ],
+    unique_index: :provider_email,
     messages: {
       presence:   'We need your email address.',
       is_unique:  "There's already an account registered to this email address.",
@@ -31,7 +32,7 @@ class User
   # property :is_public,      Boolean, default: false
 
   belongs_to :link, self, :child_key => [ :link_id ], :required => false
-  has n, :links, self, :child_key => [ :link_id ]
+  has n, :links, self, :child_key => [ :link_id ], :constraint => :set_nil
 
   has n, :notices, :constraint => :destroy
   has n, :accounts, :constraint => :destroy
@@ -44,6 +45,8 @@ class User
     message: 'Passwords must match.'
   validates_length_of       :password, :min => 7,
     message: 'Password is too short! It must be at least 7 characters long.'
+
+  # validates_uniqueness_of :email, :scope => :provider
 
   # is :locatable
 
@@ -62,6 +65,10 @@ class User
     if attribute_dirty?(:email)
       self.email_verified = false
     end
+  end
+
+  def create_default_pm()
+    self.payment_methods.first_or_create({ name: "Cash", default: true })
   end
 
   # generate an email verification notice if necessary
@@ -88,11 +95,16 @@ class User
   end
 
   def payment_method
-    payment_methods.first({ default: true })
+    pm = payment_methods.first({ default: true })
   end
 
   def linked_to?(provider)
-    links.first({ provider: provider.to_s })
+    if provider.is_a?(User)
+      provider = provider.provider
+    end
+
+    links.first({ provider: provider.to_s }) ||
+    (self.link && self.link.provider == provider)
   end
 
   # will link this user resource to the given 'master' user
@@ -102,23 +114,23 @@ class User
     master.links << self
 
     self.link = master
-    self.links.each { |linked_user| linked_user.link_to(master, true) }
+    self.links.each { |linked_user|
+      linked_user.link_to(master, false)
+    }
+    self.links = []
+
+    rc = self.save
 
     unless soft
-      return master.save
+      rc = master.save && rc
     end
 
-    true
+    rc
   end
 
   def detach_from_master()
     self.link = nil
     self.save
-  end
-
-  def payment_method=(new_default_pm)
-    self.payment_method.update({ default: false })
-    new_default_pm.update({ default: true })
   end
 
   # ----

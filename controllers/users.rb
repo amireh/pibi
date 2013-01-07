@@ -105,40 +105,37 @@ before do
   end # if current_user
 end
 
-route_namespace '/users' do
+get '/users/new', auth: :guest  do
+  current_page("signup")
+  erb :"/users/new"
+end
 
-  get '/new', auth: :guest do
-    current_page("signup")
-    erb :"/users/new"
+post '/users', auth: :guest do
+  u = build_user_from_pibi
+  if !u.valid? || !u.save || !u.saved?
+    flash[:error] = u.all_errors
+    return redirect '/users/new'
   end
 
-  post '/', auth: :guest do
-    u = build_user_from_pibi
-    if !u.valid? || !u.save || !u.saved?
-      flash[:error] = u.all_errors
-      return redirect back
-    end
+  flash[:notice] = "Welcome to #{AppName}! Your new personal account has been registered."
 
-    flash[:notice] = "Welcome to #{AppName}! Your new personal account has been registered."
+  authorize(u)
 
-    authorize(u)
+  redirect '/'
+end
 
-    redirect '/'
-  end
+delete '/users/links/:provider', auth: :user do |provider|
 
-  delete '/links/:provider', auth: :user do |provider|
-
-    if u = current_user.linked_to?(provider)
-      if u.detach_from_master
-        flash[:notice] = "Your current account is no longer linked to the #{provider_name(provider)} one" +
-                         " with the email '#{u.email}'."
-      else
-        flash[:error] = "Unable to unlink accounts: #{u.all_errors}"
-      end
+  if u = current_user.linked_to?(provider)
+    if u.detach_from_master
+      flash[:notice] = "Your current account is no longer linked to the #{provider_name(provider)} one" +
+                       " with the email '#{u.email}'."
     else
-      flash[:error] = "Your current account is not linked to a #{provider_name(provider)} one!"
+      flash[:error] = "Unable to unlink accounts: #{u.all_errors}"
     end
-
-    redirect '/settings/account'
+  else
+    flash[:error] = "Your current account is not linked to a #{provider_name(provider)} one!"
   end
+
+  redirect '/settings/account'
 end
