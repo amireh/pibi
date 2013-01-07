@@ -1,8 +1,11 @@
-$data_path = File.join(File.dirname(__FILE__), 'pibi')
+# $data_path = File.join(File.dirname(__FILE__), 'pibi')
 
 namespace :pibi do
   desc "migrate from the live pibi data to the new structure"
-  task :migrate => :environment do
+  task :migrate, [ :path ] => [ :environment ] do |t, args|
+    path = args[:path]
+    raise ArgumentError.new "Missing path to MongoDB JSON collection dumps" if !path || path.empty?
+
     json = {}
 
     # migrate the users
@@ -12,31 +15,27 @@ namespace :pibi do
 
     puts "Cleaning up old records."
 
-    # CategoryTransaction.destroy
-    # Transaction.destroy!
-    # Category.destroy
-    # Account.destroy
     User.destroy
 
-    json[:users] = JSON.parse(File.read(File.join($data_path, 'pibi_users.json')))
-    json[:stashes] = JSON.parse(File.read(File.join($data_path, 'pibi_stashes.json')))
-    json[:tags] = JSON.parse(File.read(File.join($data_path, 'pibi_tags.json')))
-    json[:transactions] = JSON.parse(File.read(File.join($data_path, 'pibi_transactions.json')))
+    errors = []
+    json[:users] = JSON.parse(File.read(        File.join(path, 'pibi_users.json')))
+    json[:stashes] = JSON.parse(File.read(      File.join(path, 'pibi_stashes.json')))
+    json[:tags] = JSON.parse(File.read(         File.join(path, 'pibi_tags.json')))
+    json[:transactions] = JSON.parse(File.read( File.join(path, 'pibi_transactions.json')))
     i = 0
     json[:users].each { |r|
       next if r['email'].include? 'tester'
       # break if i == 1
       # i += 1
 
+      some_salt = Pibi.salt
       u = User.create({
-        provider: 'pibi',
-        name:     name_from_email(r['email']),
-        nickname: name_from_email(r['email']),
-        email:    r['email'],
-        uid:      UUID.generate,
-        password: nickname_salt,
-        auto_nickname: true,
-        auto_password: true
+        provider:               'pibi',
+        email:                  r['email'],
+        name:                   name_from_email(r['email']),
+        password:               User.encrypt(some_salt),
+        password_confirmation:  User.encrypt(some_salt),
+        auto_password:          true
       })
 
       locate_account = lambda { |oid|
@@ -47,8 +46,6 @@ namespace :pibi do
       }
 
       raise RuntimeError.new "#{u.collect_errors}" unless u
-
-      puts u.inspect
 
       # update the account (we don't update the balance as it will be automatically
       # calculated when migrating the transactions)
@@ -70,10 +67,14 @@ namespace :pibi do
         next unless tr['stash_id']['$oid'] == account_record['_id']['$oid']
 
         # create the tag & track it so we can attach txs to it later
-        c = u.categories.create({ name: tr['name'] })
-        tags[tr['_id']['$oid']] = c
+        begin
+          c = u.categories.first_or_create({ name: tr['name'] })
+          tags[tr['_id']['$oid']] = c
 
-        puts "\t#{c.name}"
+          puts "\t#{c.name}"
+        rescue Exception => e
+          puts "\t>> Unable to migrate: #{tr['name']} -- #{e.message} <<"
+        end
       } # tag loop
 
       # finally, the transactions
@@ -87,6 +88,12 @@ namespace :pibi do
         #   when 'withdrawal' then Withdrawal
         #   when 'deposit'    then Deposit
         # end
+        if !txr['type'] || txr['type'].empty?
+          errors << ">> ERROR: invalid TX record, missing 'type': #{txr}"
+          puts errors.last
+          next
+        end
+
         collection = a.send("#{txr['type']}s")
 
         tx = collection.create({
@@ -107,16 +114,18 @@ namespace :pibi do
         # puts "\t\tLinking tx to ##{txr['tag_ids'].size} categories"
         txr['tag_ids'].each { |tag_id|
           tx = tx.refresh
-          tx.categories << tags[ tag_id['$oid'] ]
-          tx.save
+          c = tags[ tag_id['$oid'] ]
+          if c
+            tx.categories << c
+            tx.save
+          end
         }
 
         # tx.save
 
         if tx.categories.size != txr['tag_ids'].size then
-          raise RuntimeError.new(
-            "Transaction was supposed to be attached to ##{txr['tag_ids'].size}" +
-            " categories, but was instead attached to ##{tx.categories.size}")
+          puts  ">> Transaction was supposed to be attached to ##{txr['tag_ids'].size}" +
+                " categories, but was instead attached to ##{tx.categories.size} <<"
         end
 
         a = a.refresh
@@ -129,6 +138,8 @@ namespace :pibi do
       puts "------"
     }
 
+    puts "#errors: #{errors.size}"
+    puts errors.join("\n")
     # migrate accounts
   end
 end
