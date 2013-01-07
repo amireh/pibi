@@ -77,6 +77,7 @@ feature "Signing up for a new account" do
       fill_form({}) do
         current_path.should == '/'
         should_only_flash(:notice, 'new account has been registered')
+      end
     rescue Capybara::Webkit::InvalidResponseError => e
       # ignore this, capybara-webkit is having issue with this POST
       # because of its redirection, if we got an exception, it means

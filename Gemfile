@@ -28,7 +28,8 @@ gem "pony"
 gem 'omniauth'
 gem 'omniauth-facebook'
 gem 'omniauth-github'
-gem 'omniauth-twitter', '0.0.9'
+# gem 'omniauth-twitter', '0.0.9'
+gem 'omniauth-google-oauth2'
 
 group :development do
   gem 'thin'

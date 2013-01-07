@@ -23,6 +23,13 @@ module Sinatra
     def restrict_to(roles, options = {})
       roles = [ roles ] if roles.is_a? Symbol
 
+      if roles.include?(:guest)
+        if logged_in?
+          flash[:warning] = "You're already logged in."
+          redirect '/', 303
+        end
+      end
+
       if roles.include?(:active_user)
       #   restricted!
       #   @scope = current_user
@@ -93,7 +100,20 @@ module Sinatra
     end
 
     def authorize(user)
-      session[:id] = user.id
+      if user.link
+        # reset the state vars
+        @user = nil
+        @account = nil
+
+        # mark the master account as the current user
+        session[:id] = user.link.id
+
+        # refresh the state vars
+        @user     = current_user
+        @account  = current_account
+      else
+        session[:id] = user.id
+      end
     end
 
   end

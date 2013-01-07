@@ -950,3 +950,10 @@ input:-ms-input-placeholder,
 textarea:-ms-input-placeholder {
   color: #999;
 }
+
+img + .attached {
+  margin-left: -4px;
+  margin-top: 1px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}

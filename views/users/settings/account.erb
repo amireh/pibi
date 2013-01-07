@@ -36,10 +36,30 @@
         <%= gravatar_tag @user.gravatar_email, :default, html: { style: "vertical-align: middle;" } %>
       </li>
 
+      <li><label>Link accounts</label><br />
+        <span class="hint">Linking accounts will allow you to log in using any of them.</span>
+      </li>
+      <li data-confirmable="oauth_linking">
+        <% [ 'facebook', 'google_oauth2', 'github' ].each do |p| %>
+          <img src="/images/icons/32x32/<%= p %>.png" />
+          <% if current_user.linked_to?(p) %>
+            <a href="/users/links/<%= p %>/destroy"
+              data-confirm-heading="Unlinking <%= provider_name(p) %> account"
+              data-confirm="Unlinking your current account from your <%= provider_name(p) %> one
+              will prevent you from logging in to Pibi using your <%= provider_name(p) %> account.
+              <br /><br />Are you sure you want to do this?"
+              class="button smaller attached inline bad">Unlink</a>
+            <span class="hint">Linked with <%= current_user.linked_to?(p).email %>.</span>
+          <% else %>
+            <a href="/auth/<%= p %>" class="button attached smaller inline">Link</a>
+          <% end %>
+          <br />
+          <br />
+        <% end %>
+      </li>
+
     </ol>
   </fieldset>
   <input type="submit" value="Update Account" />
 </form>
-
-<br />
 <!-- <hr /> -->

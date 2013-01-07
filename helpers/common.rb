@@ -21,6 +21,23 @@ helpers do
     session[:current_page]
   end
 
+  def provider_name(p)
+    provider = ''
+    if p.is_a?(User)
+      provider = p.provider
+    else
+      provider = p
+    end
+
+    case provider.to_s
+    when 'pibi';          'Pibi'
+    when 'facebook';      'Facebook'
+    when 'twitter';       'Twitter'
+    when 'github';        'GitHub'
+    when 'google_oauth2'; 'Google'
+    end
+  end
+
   # Loads the user's preferences merging them with the defaults
   # for any that were not overridden.
   #

@@ -36,7 +36,11 @@
 
     <%= partial "/users/_form" %>
 
-    <p>You can also <a href="/sessions/new">sign in</a> using your Facebook and Twitter accounts.</p>
+    <p>You can also <a href="/sessions/new">sign in</a> using a 3rd-party account:
+      <br />
+      <br />
+      <%= partial "static/oauth_signin" %>
+    </p>
 
   </div>
 </div>

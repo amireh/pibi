@@ -8,13 +8,10 @@
 
   <!-- <br /> -->
   <input type="submit" class="inline" value="Login" />
-  <br />
-  <br />
 </form>
 
 <h2>Or, 3rd party sign-in</h2>
-<a href="/auth/facebook"><img src="/images/54_facebook.png" /></a>
-<a href="/auth/github"><img src="/images/64_github.png" /></a>
-<a href="/auth/twitter"><img src="/images/64_twitter.png" /></a>
+<%= partial "static/oauth_signin" %>
+<p>We will only ask for the lowest level of permission from your 3rd-party account as we only need the email address and name.</p>
 
 <%= partial "/static/browser_notice" %>

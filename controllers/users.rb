@@ -3,7 +3,10 @@ module Sinatra
     module Helpers
       def create_user_from_oauth(provider, auth)
         # create the user if it's their first time
+        new_user = false
         unless u = User.first({ uid: auth.uid, provider: provider })
+          puts auth.inspect
+
           uparams = { uid: auth.uid, provider: provider, name: auth.info.name }
           uparams[:email] = auth.info.email if auth.info.email
           uparams[:oauth_token] = auth.credentials.token if auth.credentials.token
@@ -17,9 +20,10 @@ module Sinatra
 
           # puts "Creating a new user from #{provider} with params: \n#{uparams.inspect}"
           u = User.create(uparams)
+          new_user = true
         end
 
-        u
+        [ u, new_user ]
       end
 
       def build_user_from_pibi()
@@ -103,12 +107,12 @@ end
 
 route_namespace '/users' do
 
-  get '/new' do
+  get '/new', auth: :guest do
     current_page("signup")
     erb :"/users/new"
   end
 
-  post do
+  post '/', auth: :guest do
     u = build_user_from_pibi
     if !u.valid? || !u.save || !u.saved?
       flash[:error] = u.all_errors
@@ -120,5 +124,21 @@ route_namespace '/users' do
     authorize(u)
 
     redirect '/'
+  end
+
+  delete '/links/:provider', auth: :user do |provider|
+
+    if u = current_user.linked_to?(provider)
+      if u.detach_from_master
+        flash[:notice] = "Your current account is no longer linked to the #{provider_name(provider)} one" +
+                         " with the email '#{u.email}'."
+      else
+        flash[:error] = "Unable to unlink accounts: #{u.all_errors}"
+      end
+    else
+      flash[:error] = "Your current account is not linked to a #{provider_name(provider)} one!"
+    end
+
+    redirect '/settings/account'
   end
 end

@@ -12,7 +12,7 @@ class User
 
   property :email,    String, length: 255, required: true,
     format: :email_address,
-    unique: true,
+    unique: :provider,
     messages: {
       presence:   'We need your email address.',
       is_unique:  "There's already an account registered to this email address.",
@@ -28,7 +28,10 @@ class User
   property :auto_password,  Boolean, default: false
   property :created_at,     DateTime, default: lambda { |*_| DateTime.now }
   property :is_admin,       Boolean, default: false
-  property :is_public,      Boolean, default: false
+  # property :is_public,      Boolean, default: false
+
+  belongs_to :link, self, :child_key => [ :link_id ], :required => false
+  has n, :links, self, :child_key => [ :link_id ]
 
   has n, :notices, :constraint => :destroy
   has n, :accounts, :constraint => :destroy
@@ -86,6 +89,31 @@ class User
 
   def payment_method
     payment_methods.first({ default: true })
+  end
+
+  def linked_to?(provider)
+    links.first({ provider: provider.to_s })
+  end
+
+  # will link this user resource to the given 'master' user
+  # it will also link any previously linked users to this account
+  # to the master (there should be only one master account)
+  def link_to(master, soft = false)
+    master.links << self
+
+    self.link = master
+    self.links.each { |linked_user| linked_user.link_to(master, true) }
+
+    unless soft
+      return master.save
+    end
+
+    true
+  end
+
+  def detach_from_master()
+    self.link = nil
+    self.save
   end
 
   def payment_method=(new_default_pm)

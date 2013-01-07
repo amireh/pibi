@@ -93,3 +93,5 @@
 .settings form fieldset ol li:nth-of-type(even) {
   width: 69%;
 }
+
+.settings form fieldset ol img { vertical-align: middle; }
