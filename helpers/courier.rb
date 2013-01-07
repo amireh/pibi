@@ -3,11 +3,27 @@ module Sinatra
 
     module Helpers
       def dispatch_email_verification(u, &cb)
-        dispatch_email(u.email, "emails/verification", "Please verify your email '#{u.email}'", &cb)
+        dispatch_email(u.email,
+          "emails/verification",
+          "Please verify your email '#{u.email}'") do |success, msg|
+          if success
+            u.pending_notices({ type: 'email' })
+            @n.update({ dispatched: true })
+          end
+
+          cb.call(success, msg) if block_given?
+        end
       end
 
       def dispatch_temp_password(u, &cb)
-        dispatch_email(u.email, "emails/temp_password", "Temporary account password", &cb)
+        dispatch_email(u.email, "emails/temp_password", "Temporary account password") do |success, msg|
+          if success
+            u.pending_notices({ type: 'password' })
+            @n.update({ dispatched: true })
+          end
+
+          cb.call(success, msg) if block_given?
+        end
       end
     end
 
