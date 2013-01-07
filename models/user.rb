@@ -6,17 +6,14 @@ class User
   property :id, Serial
 
   property :name,     String, length: 255, required: true, message: 'We need your name.'
-  property :provider, String, length: 255, required: true, unique_index: :provider_email
+  property :provider, String, length: 255, required: true
   property :uid,      String, length: 255, default: lambda { |*u| UUID.generate }
   property :password, String, length: 64,  required: true, message: 'You must provide a password!'
 
   property :email,    String, length: 255, required: true,
     format: :email_address,
-    unique: [ :provider ],
-    unique_index: :provider_email,
     messages: {
       presence:   'We need your email address.',
-      is_unique:  "There's already an account registered to this email address.",
       format:     "Doesn't look like an email address to me..."
     }
 
@@ -46,7 +43,8 @@ class User
   validates_length_of       :password, :min => 7,
     message: 'Password is too short! It must be at least 7 characters long.'
 
-  # validates_uniqueness_of :email, :scope => :provider
+  validates_uniqueness_of :email, :scope => :provider,
+    message: "There's already an account registered to this email address."
 
   # is :locatable
 
@@ -82,9 +80,16 @@ class User
 
   after :create do
     self.accounts.create
+
     self.payment_methods.create({ name: "Cash", default: true })
     self.payment_methods.create({ name: "Cheque" })
     self.payment_methods.create({ name: "Credit Card" })
+
+    self.categories.create({ name: "Food" })
+    self.categories.create({ name: "Car Gas" })
+    self.categories.create({ name: "Utility" })
+    self.categories.create({ name: "Everyday Expenses" })
+    self.categories.create({ name: "Shopping" })
   end
 
   class << self
@@ -95,7 +100,7 @@ class User
   end
 
   def payment_method
-    pm = payment_methods.first({ default: true })
+    payment_methods.first({ default: true })
   end
 
   def linked_to?(provider)
@@ -166,7 +171,9 @@ class User
   # Note: since the password is encrypted prior to saving, the raw version
   # is kept in the notice's @data field for use when sending the notice email
   def generate_temporary_password
+
     pw = Pibi.tiny_salt
+    # puts ">> User: generating a temporary password '#{pw}' <<"
     update!({ password: User.encrypt(pw), auto_password: true })
 
     # expire all current/old temp passwords that weren't used
@@ -185,7 +192,7 @@ class User
     email_verified
   end
 
-  # dispatches an email verification notice
+  # creates an email verification notice
   def verify_email
     # remove any notice(s) for past email addresses
     pending_notices.all({ :data.not => self.email, type: 'email' }).destroy
@@ -200,11 +207,9 @@ class User
 
   # has an email notice been dispatched and is still pending?
   def awaiting_email_verification?
-    if email_verified?
-      return false
-    end
+    return false if email_verified?
 
-    return !pending_notices({ type: 'email', dispatched: true }).empty?
+    pending_notices({ type: 'email', dispatched: true }).any?
   end
 
   private

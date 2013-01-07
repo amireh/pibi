@@ -31,7 +31,7 @@ feature "Notifications: pending & accepted" do
   end
 
   scenario "Changing the auto-password, now I can go..." do
-    @user.generate_temporary_password
+    @user.update({ auto_password: true })
 
     visit "/"
     current_path.should == '/settings/password'
@@ -60,7 +60,6 @@ feature "Notifications: pending & accepted" do
     page.find('#content section ol').should have_keywords('email not yet verified')
 
     visit '/settings/account'
-
     page.find('#content fieldset').should have_keywords('Verification pending')
   end
 

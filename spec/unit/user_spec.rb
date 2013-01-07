@@ -6,13 +6,13 @@ describe User do
   end
 
   def mock_params()
-    @some_salt = Pibi.salt
+    @some_salt = Pibi.tiny_salt
     {
       name: 'Mysterious Mocker',
       email: 'very@mysterious.com',
       provider: 'pibi',
-      password: @some_salt,
-      password_confirmation: @some_salt
+      password:               @some_salt,
+      password_confirmation:  @some_salt
     }
   end
 
@@ -22,6 +22,8 @@ describe User do
 
   it "should create a user" do
     u = User.create(mock_params)
+
+    puts u.all_errors
 
     u.valid?.should be_true
     u.saved?.should be_true
@@ -86,19 +88,15 @@ describe User do
 
   it "should not create a user because of unavailable email" do
     u = User.create(mock_params)
-    u.valid?.should be_true
     u.saved?.should be_true
 
-    u = User.new(mock_params)
-    u.valid?.should be_false
+    u = User.create(mock_params)
+    u.saved?.should be_false
     u.all_errors.first.should match(/already.*registered/)
-
-    u.save.should be_false
   end
 
   it "should create a user with a registered email within a different provider scope" do
     u = User.create(mock_params)
-    u.valid?.should be_true
     u.saved?.should be_true
 
     u = User.create(mock_params.merge({ provider: 'facebook' }))

@@ -48,6 +48,7 @@ route_namespace '/settings' do
         errors << "No such payment method."
       else
         if @user.payment_method.id != params[:default_payment_method].to_i
+          @user.payment_method.update({ default: false })
           if pm.update({ default: true })
             notices << "The default payment method now is '#{@user.payment_method.name}'"
           else

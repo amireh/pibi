@@ -44,7 +44,7 @@ describe PaymentMethod do
     pm = @u.payment_methods.create({ name: 'Cash' })
     pm.valid?.should be_false
     pm.saved?.should be_false
-    pm.all_errors.first.should match(/name.*already.*exists/)
+    pm.all_errors.first.should match(/already registered/)
   end
 
   it "should not create a pm with an empty name" do
@@ -58,8 +58,11 @@ describe PaymentMethod do
     pm = @u.payment_methods.last
     pm.default.should be_false
 
-    pm.update({ default: true }).should be_true
-    pm.valid?.should be_true
+    pm.update({ default: true }).should be_false
+    pm.valid?.should be_false
+
+    @u.payment_method.update({ default: false })
+    pm.refresh.update({ default: true }).should be_true
 
     @u.payment_method.id.should == pm.id
     @u.payment_methods.all({default: true}).count.should == 1

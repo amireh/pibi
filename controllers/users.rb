@@ -5,7 +5,6 @@ module Sinatra
         # create the user if it's their first time
         new_user = false
         unless u = User.first({ uid: auth.uid, provider: provider })
-          puts auth.inspect
 
           uparams = { uid: auth.uid, provider: provider, name: auth.info.name }
           uparams[:email] = auth.info.email if auth.info.email
@@ -101,14 +100,9 @@ before do
 
     if current_user.auto_password
       # has an auto password and the code hasn't been sent yet?
-      if current_user.pending_notices({ type: 'password' }).empty?
+      if current_user.pending_notices({ type: 'password', dispatched: true }).empty?
         @n = current_user.generate_temporary_password
         dispatch_temp_password(current_user)
-      else
-        @n = current_user.pending_notices.first({ type: 'password' })
-        if !@n.dispatched
-          dispatch_temp_password(current_user)
-        end
       end
     end
 

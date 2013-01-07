@@ -6,15 +6,16 @@ class Category
   property :id, Serial
 
   property :name, String, length: 250,
-    unique: :user_id,
     required: true,
     messages: {
-      presence: 'You must provide a name for the category!',
-      is_unique: 'You already have such a category!'
+      presence: 'You must provide a name for the category!'
     }
 
   belongs_to :user, required: true
   has n, :transactions, :through => Resource, :constraint => :skip
+
+  validates_uniqueness_of :name, :scope => [ :user_id ],
+    message: 'You already have such a category!'
 
   before :destroy do
     CategoryTransaction.all({ category_id: self.id }).destroy
