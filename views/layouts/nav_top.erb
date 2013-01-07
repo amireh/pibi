@@ -18,7 +18,9 @@
           <a href="/admin">Admin</a>
         <% end %>
         <%= current_user.name %>
-        <%= gravatar_tag current_user.gravatar_email, :icon %>
+        <a href="/settings/account">
+          <%= gravatar_tag current_user.gravatar_email, :icon %>
+        </a>
         <% if current_user.notice_count > 0 %>
           <a href="/settings/notifications">
             <span class="notifications blinky" title="You have <%= current_user.notice_count %> pending notifications">

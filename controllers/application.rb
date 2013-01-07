@@ -33,6 +33,10 @@ get '/' do
   erb "welcome/index"
 end
 
+get '/manage', auth: :user do
+  erb "users/manage"
+end
+
 # static pages
 [ 'features', 'tos', 'privacy', 'oss', 'faq' ].each do |static_item|
   get "/#{static_item}" do
