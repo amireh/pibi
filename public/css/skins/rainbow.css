@@ -696,7 +696,7 @@ footer div * { margin-right: 5px; }
 .feed td:last-of-type { text-align: right; }
 
 /*.feed tr:hover td:first-of-type:before { background: rgba(0,0,0,0.05); }*/
-.feed tr:hover td:first-of-type:before { content: '\00BB  '; margin-left:  -8px; color: orange; font-weight: bold; }
+.feed tr:hover td:first-of-type:before { content: '\00BB  '; margin-left:  -12px; color: orange; font-weight: bold; }
 .feed tr:hover td:last-of-type:after { content: '  \00AB';   margin-right: -8px; color: orange; font-weight: bold; }
 
 .feed td span.tx_categories,
