@@ -100,15 +100,16 @@ nav li a {
   font-weight: bold;
   text-shadow: 0px -1px 0px rgba(0,0,0, 0.5);
   border-radius: 3px;
+  line-height: 20px;
 }
 nav li a:hover {
   color: #fff;
 }
 
-nav li > a:focus {
+/*nav li > a:focus {
   box-shadow: 0 0 15px 1px white;
   outline: none;
-}
+}*/
 
 /* Coloured buttons */
 /* Orange */
