@@ -15,4 +15,4 @@ end
 task :default => :environment do
 end
 
-Dir.glob('lib/tasks/*.rake').each { |f| import f }
+Dir.glob('lib/tasks/**/*.rake').each { |f| import f }
