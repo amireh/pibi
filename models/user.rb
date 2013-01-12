@@ -172,7 +172,7 @@ class User
   # is kept in the notice's @data field for use when sending the notice email
   def generate_temporary_password
 
-    pw = Pibi.tiny_salt
+    pw = Pibi.password_salt
     # puts ">> User: generating a temporary password '#{pw}' <<"
     update!({ password: User.encrypt(pw), auto_password: true })
 

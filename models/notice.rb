@@ -13,7 +13,7 @@ class Notice
   belongs_to  :user, required: true
 
   before :create do |ctx|
-    self.salt = Pibi.salt(self.user.email)
+    self.salt = Pibi.tiny_salt(4)#(self.user.email)
     true
   end
 
