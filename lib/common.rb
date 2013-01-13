@@ -41,8 +41,12 @@ class String
     (self =~ /^[a-zA-Z][\w\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$/u) != nil
   end
 
+  def to_plural
+    DataMapper::Inflector.pluralize(self)
+  end
+
   def pluralize(n = nil)
-    plural = DataMapper::Inflector.pluralize(self)
+    plural = to_plural
     n && n != 1 ? "#{n} #{plural}" : "1 #{self}"
   end
 
