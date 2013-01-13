@@ -1,6 +1,7 @@
 // status = ui.status;
 pibi_ui = function() {
 
+  var colors = [];
   var handlers = {
         on_entry: []
       },
@@ -90,10 +91,63 @@ pibi_ui = function() {
           $("[data-amount]").each(function() {
             $(this).addClass(parseInt($(this).html()) >= 0 ? "positive" : "negative");
           });
+        },
+
+        function() {
+          if (typeof Highcharts != 'undefined') {
+            colors = Highcharts.getOptions().colors;
+            Highcharts.setOptions({
+              credits: { enabled: false },
+              title: { text: null },
+              chart: {
+                backgroundColor: 'rgba(255,255,255, 0)',
+                borderWidth: 0,
+                borderRadius: 0,
+              },
+              tooltip: {
+                style: {
+                  'padding': '10px'
+                }
+              },
+            });
+          }
         }
 
       ]; // end of hooks
 
+
+  var month_names = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
+  var chart_options = {
+    xAxis: {
+      categories: month_names
+    },
+    // legend: false,
+    // tooltip: {
+    //   formatter: function() {
+    //     return this.x +':<b>' + this.y + '</b>';
+    //   }
+    // },
+    plotOptions: {
+      column: {
+        dataLabels: {
+          enabled: true,
+          style: {
+            fontWeight: 'normal'
+          },
+          formatter: function() {
+            // return pibi.format_balance(this.y);
+            return parseInt(this.y);
+          }
+        }
+      }
+    }
+  };
+  var color_idx = -1;
+  function next_color() {
+    if (++color_idx == colors.length)
+      color_idx = 0;
+    return colors[color_idx];
+  }
   /* the minimum amount of pixels that must be available for the
      the listlikes not to be wrapped */
   var list_offset_threshold = 120;
@@ -226,6 +280,86 @@ pibi_ui = function() {
 
     dialogs: {
     },
+
+    /*
+     * Charts:
+     *
+     * A note on arguments:
+     *
+     *  All arguments to chart plotting functions that are documented
+     *  as "data series" need to be an Array of hashes containing a 'y'
+     *  key that denotes the numerical amount of the thing the chart is visualizing.
+     *
+     *  Example:
+     *
+     *    [ { y: 123 }, { y: -50.5 } ]
+     *
+     *  When rendering a yearly chart, 123 is expected to be Jan's Y, and -50.5 is Feb's
+     *
+     *  The length of the data series would be 12 in case of Yearly charts, and
+     *  27-32 in case of Monthly charts.
+     *
+     * A @container argument is the 'id' of an element in which the chart will be rendered.
+     */
+    charts: {
+      yearly: {
+
+        /**
+         * monthly_balance must be a data series denoting the balance for the given month.
+         **/
+        plot_balance: function(monthly_balance, container) {
+          new Highcharts.Chart($.extend(chart_options,
+          {
+            chart: {
+              renderTo: container,
+              type: 'spline'
+            },
+            legend: false,
+            yAxis: { title: { text: 'Balance' }
+            },
+            series: monthly_balance
+          }));
+        }, // charts.yearly_charts.plot_balance()
+
+        /**
+         * Arguments:
+         *
+         * yearly_savings: must be a data series (see above) containing
+         * the delta of deposit and withdrawal balance of each month.
+         *
+         * yearly_withdrawals: must be a data series containing the *absolute*
+         * withdrawal balance of each month.         *
+         **/
+        plot_savings: function(yearly_savings, yearly_withdrawals, container) {
+          new Highcharts.Chart({
+            chart: {
+              renderTo: container,
+              type: 'column',
+              inverted: true
+            },
+            xAxis: { categories: month_names },
+            yAxis: {
+              title: {
+                text: null
+              }
+            },
+            plotOptions: {
+              column: {
+                stacking: 'normal',
+                dataLabels: {
+                  enabled: false,
+                  color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white'
+                }
+              }
+            },
+            series: [
+              { name: 'Savings',    data: yearly_savings,     color: '#98bf0d' },
+              { name: 'Spendings',  data: yearly_withdrawals, color: '#D54421' }
+            ]
+          });
+        }
+      } // charts.yearly_charts
+    }, // charts
 
     report_error: function(err_msg) {
       ui.status.show("A script error has occured, please try to reproduce the bug and report it.", "bad");

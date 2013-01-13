@@ -1,5 +1,6 @@
 class Account
   include DataMapper::Resource
+  include TransactionContainer
 
   property :id,           Serial
   property :label,        String, length: 48, default: "Personal"
@@ -20,14 +21,6 @@ class Account
   has n, :deposits,     :constraint => :destroy
   has n, :withdrawals, :constraint => :destroy
   has n, :recurrings,   :constraint => :destroy
-
-  [ :daily, :monthly, :yearly ].each { |period|
-    define_method(:"#{period}_expenses") {
-      expenses = 0.0
-      recurrings.all({frequency: period, active: true }).each { |t| expenses = t + expenses }
-      expenses
-    }
-  }
 
   validates_with_method :currency, :method => :check_currency
 
@@ -54,74 +47,5 @@ class Account
     true
   end
 
-  def latest_transactions(q = {}, t = nil)
-    transactions_in(nil, q)
-    # transactions.all({ :occured_on.gte => Timetastic.this.month, :occured_on.lt => Timetastic.next.month }.merge(q))
-  end
-
-  def yearly_transactions(date = Timetastic.this.year, q = {})
-    c = []
-    Timetastic.fixate(date) {
-      c = transactions_in({ :begin => Timetastic.this.year, :end => Timetastic.next.year }, q)
-    }
-    c
-  end
-
-  def monthly_transactions(date = Timetastic.this.month, q = {})
-    c = []
-    Timetastic.fixate(date) {
-      c = transactions_in({ :begin => Timetastic.this.month, :end => Timetastic.next.month }, q)
-    }
-    c
-  end
-
-  def daily_transactions(date = Timetastic.this.day, q = {})
-    c = []
-    Timetastic.fixate(date) {
-      c = transactions_in({ :begin => Timetastic.this.day, :end => Timetastic.next.day }, q)
-    }
-    c
-  end
-
-  def yearly_balance(date_or_collection, q = {})
-    c = []
-    if date_or_collection.is_a?(DataMapper::Collection)
-      c = date_or_collection
-    else
-      c = yearly_transactions(date_or_collection, q)
-    end
-
-    balance_for c
-  end
-
-  def monthly_balance(date_or_collection, q = {})
-    c = []
-    if date_or_collection.is_a?(DataMapper::Collection)
-      c = date_or_collection
-    else
-      c = monthly_transactions(date_or_collection, q)
-    end
-
-    balance_for c
-  end
-
-  def transactions_in(range = {}, q = {})
-    range ||= {
-      :begin => Timetastic.this.month,
-      :end => Timetastic.next.month
-    }
-
-    transactions.all({
-      :occured_on.gte => range[:begin],
-      :occured_on.lt => range[:end],
-      :type.not => Recurring
-    }.merge(q))
-  end
-
-  def balance_for(collection)
-    balance = 0.0
-    collection.each { |tx| balance = tx + balance }
-    balance
-  end
 
 end

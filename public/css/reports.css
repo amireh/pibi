@@ -1,0 +1,110 @@
+.segments {
+  /*width: 610px;*/
+  list-style-type: none;
+  padding: 0;
+  margin: 10px 0;
+  display: inline-block;
+  vertical-align: middle;
+}
+.segments.yearly {
+  width: 320px;
+}
+
+.segments a {
+  text-decoration: none;
+  /*color: #fff;*/
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.segments + p {
+  display: inline-block;
+  vertical-align: middle;
+  width: 420px;
+  line-height: 28px;
+  font-style: italic;
+  color: #777;
+  text-shadow: 1px 1px 0 white;
+}
+.segment {
+  position: relative;
+  width: 75px;
+  border: 1px solid #ddd;
+  display: inline-block;
+  text-align: center;
+  margin: 0 0 5px 0;
+  background: rgba(255,255,255,0.75);
+}
+
+.segments.yearly .segment {
+  width: 72px;
+}
+.segments.yearly .segment:last-child {
+  /*width: 77px;*/
+}
+.segment span {
+  display: inline-block;
+}
+
+.segment span:first-child {
+  font-size: 11px;
+  color: #333;
+  border-bottom: 1px solid #ddd;
+  padding: 5px;
+  margin: 0;
+  display: block;
+  background: rgba(0,0,0,0.05);
+}
+/* the amount */
+.segment span:last-child {
+  min-height: 20px;
+  padding: 20px 0;
+}
+.segment:hover {
+  background: rgba(0,0,0,0.05);
+}
+.segment.large {
+  width: auto;
+}
+.segment.large span {
+  padding: 10px 20px;
+}
+.segment.large span:last-child {
+  padding: 30px 0 45px 0;
+  min-width: 160px;
+}
+
+.segment span.tx_count {
+  position: absolute;
+  padding: 3px 5px;
+  bottom: -1px; right: -1px;
+  /*background: rgba(0,0,0,0.05);*/
+  width: 100%;
+  font-size: 0.75em;
+  border: 1px solid #ddd;
+  /*border-radius: 5px 0 0 0;*/
+}
+.chart {
+  padding: 10px;
+  border: 1px solid #DDD;
+  border-top: none;
+  margin-bottom: 10px;
+}
+
+.chart > h3:first-child {
+  background: rgba(255, 255, 255, 0.75);
+  padding: 10px;
+  width: 918px;
+  position: relative;
+  top: -12px;
+  border: 1px solid #DDD;
+  border-left: none;
+  border-right: none;
+  left: -10px;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.chart span.hint {
+  font-style: italic;
+
+}

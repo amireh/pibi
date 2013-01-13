@@ -1,0 +1,164 @@
+<% content_for :css do %>
+  <link href="/css/reports.css" rel="stylesheet" type="text/css" />
+<% end %>
+
+<h1 class="framed"><%= params[:year] %> activity report
+  <span style="float: right;" data-amount>
+    <%= current_account.balance_for(@transies).to_f.round(2) %>
+    <%= current_account.currency %>
+  </span>
+</h1>
+
+<h2 class="framed">Drilldown</h2>
+
+<ol class="segments yearly">
+  <% @segments.each_pair do |month, s| %>
+    <li class="segment">
+      <span><%= Time.new(params[:year], month).strftime("%B") %></span>
+      <span data-amount><%= s[:balance].to_i %></span>
+    </li>
+  <% end %>
+</ol>
+
+<p>&larr; You can "drill down" into any month of the year to view its report by clicking its block above.</p>
+
+<h2 class="framed">Insights</h2>
+
+<section class="chart stats">
+  <h3>Stats</h3>
+
+  <ol>
+    <li>
+      On a monthly average throughout <%= params[:year] %>, you have:
+      <ol>
+        <li>
+          <span>Spent: </span>
+          <em>
+            <%= (current_account.balance_for(@transies.all({ :type.not => [ Deposit ] }))/12).to_f.round(2).abs %>
+            <%= current_account.currency %>
+          </em>
+        </li>
+
+        <li>
+          <span>Earned: </span>
+          <em>
+            <%= (current_account.balance_for(@transies.all({ :type.not => [ Withdrawal ] }))/12).to_f.round(2).abs %>
+            <%= current_account.currency %>
+          </em>
+        </li>
+
+        <li>
+          <span>Saved: </span>
+          <em>
+            <% savings_mean = (current_account.yearly_balance(@transies)/12) %>
+            <% if savings_mean > 0 %>
+              <%= savings_mean.to_f.round(2) %>
+              <%= current_account.currency %>
+            <% else %>
+              0
+            <% end %>
+          </em>
+        </li>
+      </ol>
+    </li>
+
+    <% if @user.payment_methods.any? && @transies.count > 0 %>
+      <%
+        pm_stats = []
+        @user.payment_methods.each do |pm|
+          pm_stats << {
+            pm: pm,
+            ratio: pm.transactions.count.to_f / @transies.count * 100.0,
+            count: pm.transactions.count
+          }
+        end
+      %>
+      <li>
+        <span>Transactions were done using: </span>
+        <ol>
+          <% pm_stats.each do |pms| %>
+            <li><%= colored_pm(pms[:pm]) %> <%= pms[:ratio].to_i %>% of the time (<%= pms[:count] %> times)</li>
+          <% end %>
+        </ol>
+      </li>
+    <% end %>
+
+    <% if @user.categories.any? && @transies.count > 0 %>
+      <li>
+        <%
+          category_stats = []
+          top_spenders = @user.top_spending_categories
+          top_earners = @user.top_earning_categories
+        %>
+        You spent money most on
+        <%= natural_join(top_spenders[0..2].collect { |c| c.name }, ', ', ', and ', [ '<b>', '</b>' ]) %>.
+      </li>
+      <li>
+        While you earned money most from
+        <%= natural_join(top_earners[0..2].collect { |c| c.name }, ', ', ', and ', [ '<b>', '</b>' ]) %>.
+      </li>
+    <% end %>
+  </ol>
+
+  <span class="small hidden hint">This chart has been hidden, click the header to display it again.</span>
+</section>
+
+<section class="chart">
+  <h3>Balance &amp; Activity</h3>
+
+  <p>This chart gives you an insight into your spending and saving patterns
+  across the seasons.</p>
+
+  <div id="chart_pmb"></div>
+
+  <p>This chart shows the number of transactions that were committed during each month.</p>
+  <div id="chart_pmnt"></div>
+
+  <span class="small hidden hint">This chart has been hidden, click the header to display it again.</span>
+</section>
+
+<section class="chart">
+  <h3>Savings</h3>
+
+  <p>This chart represents the <i>ratio</i> of money saved each month which appears in <span class="green">green</span>.
+    The total amount spent
+    is shown in <span class="red">red</span>.
+  </p>
+
+  <div id="chart_ms"></div>
+  <span class="small hidden hint">This chart has been hidden, click the header to display it again.</span>
+</section>
+
+
+<%
+  year_savings = Array.new(12, 0)
+  year_withdrawals = Array.new(12, 0)
+  for i in 1..12
+    m = Time.new(params[:year], i, 1)
+    d_balance = current_account.balance_for(current_account.monthly_transactions(m, { type: Deposit }))
+    w_balance = current_account.balance_for(current_account.monthly_transactions(m, { type: Withdrawal }))
+    year_savings[i-1] = 0
+    if d_balance >= w_balance.abs
+      year_savings[i-1] = (d_balance - w_balance.abs).to_f
+    end
+    year_withdrawals[i-1] = w_balance.to_f.abs
+  end
+%>
+
+<% content_for :deferred_js do %>
+  <script type="text/javascript" src="/js/highcharts/js/highcharts.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      var series = [{ name: 'Balance', data: [] }];
+      <% @segments.each_pair do |month, s| %>
+        series[0].data.push({
+          y: <%= s[:balance].to_f %>
+        });
+      <% end %>
+
+      ui.charts.yearly.plot_balance(series, 'chart_pmb');
+      ui.charts.yearly.plot_savings(<%= year_savings.to_json %>, <%= year_withdrawals.to_json %>, 'chart_ms');
+
+    });
+  </script>
+<% end %>

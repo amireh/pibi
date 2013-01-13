@@ -43,7 +43,7 @@ class String
 
   def pluralize(n = nil)
     plural = DataMapper::Inflector.pluralize(self)
-    n ? "#{n} #{plural}" : plural
+    n && n != 1 ? "#{n} #{plural}" : "1 #{self}"
   end
 
   def vowelize

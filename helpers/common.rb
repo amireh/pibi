@@ -76,8 +76,31 @@ helpers do
     datetime.strftime("%D")
   end
 
+  def colored_pm(pm)
+    "<span style=\"color: ##{pm.color};\">#{pm.name}</span>"
+  end
+
   def tx_to_html(t)
     "[ #{t.withdrawal? ? '-' : '+'} ] #{t.currency} #{t.amount.to_f} #{t.categories.collect { |c| c.name }} on #{pretty_time t.occured_on} - #{t.note}"
+  end
+
+  def natural_join(ary, delim, last_delim, affixes = [])
+    c = ''
+    ary.each_with_index { |s, i|
+      affixed_s = case affixes.empty?
+      when true;  s
+      when false; "#{affixes.first}#{s}#{affixes.last}"
+      end
+
+      d = case i
+      when 0; ''
+      when ary.length - 1; last_delim
+      else; delim
+      end
+
+      c << "#{d}#{affixed_s}"
+    }
+    c
   end
 
   def natural_recurrence_date(recurring_tx)

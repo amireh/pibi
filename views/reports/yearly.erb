@@ -1,0 +1,18 @@
+<% content_for :css do %>
+  <link href="/css/reports.css" rel="stylesheet" type="text/css" />
+<% end %>
+
+<h1 class="framed">Yearly reports</h1>
+
+<p>The yearly reports go back as long ago as the date of your first transaction. Click the year block to go to its report page.</p>
+<ol class="segments">
+  <% @segments.each_pair do |year, s| %>
+    <li class="segment large">
+      <a href="/reports/<%= year %>">
+        <span><%= year %></span>
+        <span class="tx_count"><%= s[:nr_transies].to_i %> transactions</span>
+        <span data-amount><%= s[:balance].to_i %></span>
+      </a>
+    </li>
+  <% end %>
+</ol>

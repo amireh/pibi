@@ -212,6 +212,17 @@ class User
     pending_notices({ type: 'email', dispatched: true }).any?
   end
 
+  def top_spending_categories
+    top_categories({ type: Withdrawal })
+  end
+  def top_earning_categories
+    top_categories({ type: Deposit })
+  end
+
+  def top_categories(q = {})
+    categories.sort { |a,b| a.transactions(q).count <=> b.transactions(q).count }.reverse
+  end
+
   private
 
   # Validates an email domain using Ruby's DNS resolver.
