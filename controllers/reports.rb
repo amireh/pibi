@@ -73,23 +73,11 @@ route_namespace '/reports' do
     }
 
     @stats = {
-      pm: [],
       categories: {
         top_spending: [],
         top_earning: []
       }
     }
-
-    # Payment Method stats
-    if @user.payment_methods.any? && @transies.count > 0
-      @user.payment_methods.each do |pm|
-        @stats[:pm] << {
-          pm: pm,
-          ratio: pm.transactions.count.to_f / @transies.count * 100.0,
-          count: pm.transactions.count
-        }
-      end
-    end
 
     # Category stats
     if @user.categories.any? && @transies.count > 0

@@ -55,11 +55,12 @@ class String
   end
 
   # expected format: "MM/DD/YYYY"
-  def to_date
-    m,d,y = self.split('/')
+  def to_date(graceful = true)
+    m,d,y = self.split(/\/|\-/)
     begin
       DateTime.new(y.to_i,m.to_i,d.to_i)
     rescue ArgumentError => e
+      raise e unless graceful
       DateTime.now
     end
   end

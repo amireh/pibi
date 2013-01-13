@@ -23,8 +23,6 @@
   <% end %>
 </ol>
 
-
-
 <h2 class="framed">Insights</h2>
 
 <section class="chart stats">
@@ -78,16 +76,15 @@
       </ol>
     </li>
 
-    <% if @stats[:pm].any? %>
       <li>
         <span>Transactions were done using: </span>
-        <ol>
-          <% @stats[:pm].each do |s| %>
-            <li><span class="big"><%= colored_pm(s[:pm]) %> &rarr; <%= s[:ratio].to_i %>%</span> of the time (<%= s[:count] %> times)</li>
-          <% end %>
+        <ol id="pm_ratio">
+          <li data-dyn-entity="pm_ratio">
+            <span class="big" style="color: #{{color}};">{{name}} &rarr; {{ratio}}%</span>
+            of the time ({{count}} times)
+          </li>
         </ol>
       </li>
-    <% end %>
 
     <% if @stats[:categories][:top_spending].any? %>
       <li>You spent money most on <%= format_top_categories(@stats[:categories][:top_spending]) %>.</li>
@@ -140,6 +137,14 @@
     $(function() {
       ui.account_currency = "<%= current_account.currency %>";
 
+      $.ajax({
+        url: "/users/<%= current_user.id %>/stats/payment_methods/ratio.json",
+        data: { begin: '1-1-2013', end: '1-1-2014' },
+        success: function(stats) {
+          dynamism.inject(stats, $("#pm_ratio"));
+        }
+      })
+
       var series = [{ name: 'Balance', data: [] }];
       <% @segments.each_pair do |month, s| %>
         series[0].data.push({
@@ -147,8 +152,8 @@
         });
       <% end %>
 
-      ui.charts.yearly.plot_balance(series, 'chart_balance');
-      ui.charts.yearly.plot_savings(<%= @drilled[:savings].to_json %>, <%= @drilled[:spendings].to_json %>, 'chart_savings');
+      // ui.charts.yearly.plot_balance(series, 'chart_balance');
+      // ui.charts.yearly.plot_savings(<%= @drilled[:savings].to_json %>, <%= @drilled[:spendings].to_json %>, 'chart_savings');
 
       <% if @stats[:categories][:top_spending].any? %>
         var series = [{ name: 'Spendings', data: [] }];
@@ -160,7 +165,7 @@
           series[0].data.push({ y: <%= spendings %> });
         <% end %>
 
-        ui.charts.yearly.plot_category_spendings(series, names, 'chart_category_spendings');
+        // ui.charts.yearly.plot_category_spendings(series, names, 'chart_category_spendings');
       <% end %>
     });
   </script>

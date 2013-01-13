@@ -1,5 +1,6 @@
 class PaymentMethod
   include DataMapper::Resource
+  include TransactionContainer
 
   default_scope(:default).update(:order => [ :name.asc ])
 
@@ -18,6 +19,9 @@ class PaymentMethod
   property :color, String, length: 6, default: lambda { |*| Colors[rand(Colors.size)] }
 
   has n, :transactions, :constraint => :set_nil
+  has n, :deposits,     :constraint => :set_nil
+  has n, :withdrawals,  :constraint => :set_nil
+  has n, :recurrings,   :constraint => :set_nil
 
   validates_uniqueness_of :name, :scope => :user_id,
     message: "You have already registered that payment method."
