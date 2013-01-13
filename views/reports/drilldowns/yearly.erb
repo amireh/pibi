@@ -1,26 +1,29 @@
 <% content_for :css do %>
   <link href="/css/reports.css" rel="stylesheet" type="text/css" />
 <% end %>
+<% content_for :title do %><%= @year %> Report | <%= AppName %><% end %>
 
-<h1 class="framed"><%= params[:year] %> activity report
+
+<h1 class="framed"><%= @year %> activity report
   <span style="float: right;" data-amount>
-    <%= current_account.balance_for(@transies).to_f.round(2) %>
+    <%= @balance %>
     <%= current_account.currency %>
   </span>
 </h1>
 
 <h2 class="framed">Drilldown</h2>
 
+<p>You can "drill down" into any month of the year to view its report by clicking its block above.</p>
 <ol class="segments yearly">
   <% @segments.each_pair do |month, s| %>
     <li class="segment">
-      <span><%= Time.new(params[:year], month).strftime("%B") %></span>
+      <span><%= Time.new(@year, month).strftime("%B") %></span>
       <span data-amount><%= s[:balance].to_i %></span>
     </li>
   <% end %>
 </ol>
 
-<p>&larr; You can "drill down" into any month of the year to view its report by clicking its block above.</p>
+
 
 <h2 class="framed">Insights</h2>
 
@@ -29,92 +32,84 @@
 
   <ol>
     <li>
-      On a monthly average throughout <%= params[:year] %>, you have:
+      On a monthly average throughout <%= @year %>, you have:
       <ol>
         <li>
           <span>Spent: </span>
-          <em>
-            <%= (current_account.balance_for(@transies.all({ :type.not => [ Deposit ] }))/12).to_f.round(2).abs %>
+          <b class="bigger">
+            <%= @spendings.round(0).abs %>
             <%= current_account.currency %>
+          </b>
+          <em class="big">
+          -
+            <%= (@spendings / 12).to_f.round(0).abs %>
+            <%= current_account.currency %>
+            per month
           </em>
         </li>
 
         <li>
           <span>Earned: </span>
-          <em>
-            <%= (current_account.balance_for(@transies.all({ :type.not => [ Withdrawal ] }))/12).to_f.round(2).abs %>
+          <b class="bigger">
+            <%= @earnings.round(0).abs %>
             <%= current_account.currency %>
+          </b>
+          <em class="big">
+          -
+            <%= (@earnings / 12).to_f.round(0).abs %>
+            <%= current_account.currency %>
+            per month
           </em>
         </li>
 
         <li>
           <span>Saved: </span>
-          <em>
-            <% savings_mean = (current_account.yearly_balance(@transies)/12) %>
-            <% if savings_mean > 0 %>
-              <%= savings_mean.to_f.round(2) %>
-              <%= current_account.currency %>
-            <% else %>
-              0
-            <% end %>
+          <b class="bigger">
+            <%= @savings.round(0).abs %>
+            <%= current_account.currency %>
+          </b>
+          <em class="big">
+          -
+            <%= (@savings / 12).to_f.round(0).abs %>
+            <%= current_account.currency %>
+            per month
           </em>
         </li>
       </ol>
     </li>
 
-    <% if @user.payment_methods.any? && @transies.count > 0 %>
-      <%
-        pm_stats = []
-        @user.payment_methods.each do |pm|
-          pm_stats << {
-            pm: pm,
-            ratio: pm.transactions.count.to_f / @transies.count * 100.0,
-            count: pm.transactions.count
-          }
-        end
-      %>
+    <% if @stats[:pm].any? %>
       <li>
         <span>Transactions were done using: </span>
         <ol>
-          <% pm_stats.each do |pms| %>
-            <li><%= colored_pm(pms[:pm]) %> <%= pms[:ratio].to_i %>% of the time (<%= pms[:count] %> times)</li>
+          <% @stats[:pm].each do |s| %>
+            <li><span class="big"><%= colored_pm(s[:pm]) %> &rarr; <%= s[:ratio].to_i %>%</span> of the time (<%= s[:count] %> times)</li>
           <% end %>
         </ol>
       </li>
     <% end %>
 
-    <% if @user.categories.any? && @transies.count > 0 %>
-      <li>
-        <%
-          category_stats = []
-          top_spenders = @user.top_spending_categories
-          top_earners = @user.top_earning_categories
-        %>
-        You spent money most on
-        <%= natural_join(top_spenders[0..2].collect { |c| c.name }, ', ', ', and ', [ '<b>', '</b>' ]) %>.
-      </li>
-      <li>
-        While you earned money most from
-        <%= natural_join(top_earners[0..2].collect { |c| c.name }, ', ', ', and ', [ '<b>', '</b>' ]) %>.
-      </li>
+    <% if @stats[:categories][:top_spending].any? %>
+      <li>You spent money most on <%= format_top_categories(@stats[:categories][:top_spending]) %>.</li>
+    <% end %>
+
+    <% if @stats[:categories][:top_earning].any? %>
+      <li>While you earned money most from <%= format_top_categories(@stats[:categories][:top_earning]) %>.</li>
     <% end %>
   </ol>
 
-  <span class="small hidden hint">This chart has been hidden, click the header to display it again.</span>
+  <span class="small hidden hint">This section has been hidden, click the header to display it again.</span>
 </section>
 
 <section class="chart">
-  <h3>Balance &amp; Activity</h3>
+  <h3>Balance</h3>
 
   <p>This chart gives you an insight into your spending and saving patterns
   across the seasons.</p>
 
-  <div id="chart_pmb"></div>
+  <div id="chart_balance"></div>
 
-  <p>This chart shows the number of transactions that were committed during each month.</p>
-  <div id="chart_pmnt"></div>
-
-  <span class="small hidden hint">This chart has been hidden, click the header to display it again.</span>
+  <p class="small hidden hint">This chart has been hidden, click the header to display it again.</p>
 </section>
 
 <section class="chart">
@@ -125,30 +120,26 @@
     is shown in <span class="red">red</span>.
   </p>
 
-  <div id="chart_ms"></div>
-  <span class="small hidden hint">This chart has been hidden, click the header to display it again.</span>
+  <div id="chart_savings"></div>
+  <p class="small hidden hint">This chart has been hidden, click the header to display it again.</p>
 </section>
 
+<section class="chart">
+  <h3>Spendings by Category</h3>
 
-<%
-  year_savings = Array.new(12, 0)
-  year_withdrawals = Array.new(12, 0)
-  for i in 1..12
-    m = Time.new(params[:year], i, 1)
-    d_balance = current_account.balance_for(current_account.monthly_transactions(m, { type: Deposit }))
-    w_balance = current_account.balance_for(current_account.monthly_transactions(m, { type: Withdrawal }))
-    year_savings[i-1] = 0
-    if d_balance >= w_balance.abs
-      year_savings[i-1] = (d_balance - w_balance.abs).to_f
-    end
-    year_withdrawals[i-1] = w_balance.to_f.abs
-  end
-%>
+  <p>This shows how much money was spent on each category.</p>
+
+  <div id="chart_category_spendings"></div>
+  <p class="small hidden hint">This chart has been hidden, click the header to display it again.</p>
+</section>
+
 
 <% content_for :deferred_js do %>
   <script type="text/javascript" src="/js/highcharts/js/highcharts.js"></script>
   <script type="text/javascript">
     $(function() {
+      ui.account_currency = "<%= current_account.currency %>";
+
       var series = [{ name: 'Balance', data: [] }];
       <% @segments.each_pair do |month, s| %>
         series[0].data.push({
@@ -156,9 +147,21 @@
         });
       <% end %>
 
-      ui.charts.yearly.plot_balance(series, 'chart_pmb');
-      ui.charts.yearly.plot_savings(<%= year_savings.to_json %>, <%= year_withdrawals.to_json %>, 'chart_ms');
+      ui.charts.yearly.plot_balance(series, 'chart_balance');
+      ui.charts.yearly.plot_savings(<%= @drilled[:savings].to_json %>, <%= @drilled[:spendings].to_json %>, 'chart_savings');
 
+      <% if @stats[:categories][:top_spending].any? %>
+        var series = [{ name: 'Spendings', data: [] }];
+        var names  = [];
+
+        <% @stats[:categories][:top_spending].each do |c| %>
+          <% spendings = c.yearly_spendings(Time.new(@year, 1,1)).to_f.abs.round(0) %>
+          names.push("<%= c.name %>");
+          series[0].data.push({ y: <%= spendings %> });
+        <% end %>
+
+        ui.charts.yearly.plot_category_spendings(series, names, 'chart_category_spendings');
+      <% end %>
     });
   </script>
 <% end %>

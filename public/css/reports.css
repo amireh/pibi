@@ -4,10 +4,10 @@
   padding: 0;
   margin: 10px 0;
   display: inline-block;
-  vertical-align: middle;
+  vertical-align: top;
 }
 .segments.yearly {
-  width: 320px;
+  /*width: 320px;*/
 }
 
 .segments a {
@@ -17,15 +17,6 @@
   font-weight: bold;
 }
 
-.segments + p {
-  display: inline-block;
-  vertical-align: middle;
-  width: 420px;
-  line-height: 28px;
-  font-style: italic;
-  color: #777;
-  text-shadow: 1px 1px 0 white;
-}
 .segment {
   position: relative;
   width: 75px;
@@ -37,28 +28,25 @@
 }
 
 .segments.yearly .segment {
-  width: 72px;
-}
-.segments.yearly .segment:last-child {
-  /*width: 77px;*/
+  width: 125px;
 }
 .segment span {
   display: inline-block;
 }
 
-.segment span:first-child {
+.segments .segment span:first-of-type {
   font-size: 11px;
   color: #333;
   border-bottom: 1px solid #ddd;
-  padding: 5px;
+  padding: 2px;
   margin: 0;
   display: block;
   background: rgba(0,0,0,0.05);
 }
 /* the amount */
-.segment span:last-child {
+.segments.yearly .segment span[data-amount] {
   min-height: 20px;
-  padding: 20px 0;
+  padding: 10px 0;
 }
 .segment:hover {
   background: rgba(0,0,0,0.05);
@@ -66,15 +54,15 @@
 .segment.large {
   width: auto;
 }
-.segment.large span {
+.segments .segment.large span {
   padding: 10px 20px;
 }
-.segment.large span:last-child {
+.segments .segment.large span:last-of-type {
   padding: 30px 0 45px 0;
   min-width: 160px;
 }
 
-.segment span.tx_count {
+.segments .segment span.tx_count {
   position: absolute;
   padding: 3px 5px;
   bottom: -1px; right: -1px;
@@ -85,7 +73,7 @@
   /*border-radius: 5px 0 0 0;*/
 }
 .chart {
-  padding: 10px;
+  padding: 10px 10px 0 10px;
   border: 1px solid #DDD;
   border-top: none;
   margin-bottom: 10px;
@@ -102,9 +90,45 @@
   border-right: none;
   left: -10px;
   margin-top: 0;
-  margin-bottom: 0;
+  margin-bottom: -12px;
 }
 .chart span.hint {
   font-style: italic;
 
+}
+
+.reports h2.framed {
+  position: relative; left: -10px; padding-left: 30px; width: 969px; border-radius: 2px 0 0 1px;
+}
+
+.reports h2.framed:before {
+  content: '';
+  display: block;
+  position: absolute;
+  bottom: -10px;
+  width: 0px;
+  height: 0px;
+  border-style: solid;
+  left: 0;
+  border-width: 0 10px 10px 0;
+  border-color: transparent rgba(255,255,255, 0.5) transparent transparent;
+  z-index: 10;
+}
+
+.stats {
+  line-height: 24px;
+}
+.stats ol {
+  list-style-type: none;
+}
+.stats > ol { padding-left: 0;}
+.stats > ol > li {
+  margin-bottom: 10px;
+}
+
+.stats .bigger {
+  font-size: 1.5em;
+}
+.stats .big {
+  font-size: 1.25em;
 }

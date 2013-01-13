@@ -990,5 +990,3 @@ section > .togglable:after {
 section > .togglable.toggled:after {
   content: ' +';
 }
-
-

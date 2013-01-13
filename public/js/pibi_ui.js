@@ -95,7 +95,6 @@ pibi_ui = function() {
 
         function() {
           if (typeof Highcharts != 'undefined') {
-            colors = Highcharts.getOptions().colors;
             Highcharts.setOptions({
               credits: { enabled: false },
               title: { text: null },
@@ -142,12 +141,7 @@ pibi_ui = function() {
       }
     }
   };
-  var color_idx = -1;
-  function next_color() {
-    if (++color_idx == colors.length)
-      color_idx = 0;
-    return colors[color_idx];
-  }
+
   /* the minimum amount of pixels that must be available for the
      the listlikes not to be wrapped */
   var list_offset_threshold = 120;
@@ -335,7 +329,7 @@ pibi_ui = function() {
             chart: {
               renderTo: container,
               type: 'column',
-              inverted: true
+              inverted: false
             },
             xAxis: { categories: month_names },
             yAxis: {
@@ -357,7 +351,31 @@ pibi_ui = function() {
               { name: 'Spendings',  data: yearly_withdrawals, color: '#D54421' }
             ]
           });
+        },
+
+        plot_category_spendings: function(spendings, categories, container) {
+          new Highcharts.Chart({
+            chart: {
+              renderTo: container,
+              type: 'bar',
+              inverted: true
+            },
+            plotOptions: {
+              bar: {
+                colorByPoint: true
+              }
+            },
+            legend: false,
+            xAxis: { categories: categories },
+            yAxis: {
+              title: {
+                text: 'Money spent'
+              }
+            },
+            series: spendings
+          });
         }
+
       } // charts.yearly_charts
     }, // charts
 

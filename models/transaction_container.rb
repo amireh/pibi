@@ -1,9 +1,19 @@
+class Transaction; end
+class Deposit < Transaction; end
+class Withdrawal < Transaction; end
+
 module TransactionContainer
 
   def latest_transactions(q = {}, t = nil)
     transactions_in(nil, q)
     # transactions.all({ :occured_on.gte => Timetastic.this.month, :occured_on.lt => Timetastic.next.month }.merge(q))
   end
+
+  PeriodToDomainMap = {
+    daily:    :day,
+    monthly:  :month,
+    yearly:   :year
+  }
 
   [ :daily, :monthly, :yearly ].each { |period|
     # Defines three methods that return the transactions for each time domain;
@@ -18,7 +28,7 @@ module TransactionContainer
     # => yearly_transactions(d,q)
     # => monthly_transactions(d,q)
     # => daily_transactions(d,q)
-    domain = period.to_s.gsub('ly', '')
+    domain = PeriodToDomainMap[period].to_s
     define_method(:"#{period}_transactions") { |d = Time.now, q = {}|
       transies = []
       # is this thread-safe?
@@ -29,6 +39,20 @@ module TransactionContainer
         }, q)
       }
       transies
+    }
+
+    [ Deposit, Withdrawal ].each do |tx_type|
+      plural_type = tx_type.name.to_s.to_plural.downcase
+      define_method(:"#{period}_#{plural_type}") { |d = Time.now, q = {}|
+        self.send(:"#{period}_transactions", d, q.merge({ :type.not => nil, :type => tx_type }))
+      }
+    end
+
+    define_method(:"#{period}_spendings") { |d = Time.now, q = {}|
+      balance_for(self.send(:"#{period}_withdrawals", d, q))
+    }
+    define_method(:"#{period}_earnings") { |d = Time.now, q = {}|
+      balance_for(self.send(:"#{period}_deposits", d, q))
     }
 
     # Defines three methods that return the amount of recurring expenses
