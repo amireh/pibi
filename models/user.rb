@@ -212,11 +212,11 @@ class User
     pending_notices({ type: 'email', dispatched: true }).any?
   end
 
-  def top_spending_categories
-    top_categories({ type: Withdrawal })
+  def top_spending_categories(q = {})
+    top_categories(q.merge({ type: Withdrawal }))
   end
-  def top_earning_categories
-    top_categories({ type: Deposit })
+  def top_earning_categories(q = {})
+    top_categories(q.merge({ type: Deposit }))
   end
 
   def top_categories(q = {})

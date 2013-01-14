@@ -96,7 +96,7 @@ dynamism = function(options) {
    * contain any bracket
    */
   $.escape = function(str) {
-    return str.replace(/\[/g, '\\\[').replace(/\]/g, '\\\]');
+    return (str || '').replace(/\[/g, '\\\[').replace(/\]/g, '\\\]');
   }
   // alias
   var escape_indexes = $.escape;
@@ -223,9 +223,13 @@ dynamism = function(options) {
       return $(this).attr("data-dyn-inject").trim().match(RegExp('@\\\S+,\\\s*' + reference));
     });
 
-    var inline_matcher = RegExp('\{\{' + key + '\}\}', 'g');
-    el.children().each(function() {
+    var inline_matcher = RegExp('\{\{' + key + '\}\}', 'g'),
+        inline_matched = false;
+
+    el.children().add(el).each(function() {
       if (el.html().match(inline_matcher)) {
+        inline_matched = true;
+
         el.html(el.html().replace(inline_matcher, value));
 
         $.each(el.get(0).attributes, function(i, pair) {
@@ -311,8 +315,8 @@ dynamism = function(options) {
       } // injection parts loop
     }); // targets loop
 
-    if (targets.length == 0) {
-      log("Could not find any entity referencing: " + reference, "E");
+    if (targets.length == 0 && !inline_matched) {
+      log("Could not find any entity referencing: " + reference + '(' + key + ')', "E");
     }
   } // dynamism::substitute()
 

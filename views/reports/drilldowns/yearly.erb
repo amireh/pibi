@@ -86,13 +86,9 @@
         </ol>
       </li>
 
-    <% if @stats[:categories][:top_spending].any? %>
-      <li>You spent money most on <%= format_top_categories(@stats[:categories][:top_spending]) %>.</li>
-    <% end %>
+    <li id="tsc">You spent money most on <span></span>.</li>
+    <li id="tec">While you earned money most from <span></span>.</li>
 
-    <% if @stats[:categories][:top_earning].any? %>
-      <li>While you earned money most from <%= format_top_categories(@stats[:categories][:top_earning]) %>.</li>
-    <% end %>
   </ol>
 
   <span class="small hidden hint">This section has been hidden, click the header to display it again.</span>
@@ -136,37 +132,63 @@
   <script type="text/javascript">
     $(function() {
       ui.account_currency = "<%= current_account.currency %>";
+      var date_range = {
+        begin: "<%= to_jQueryUI_date(@this_year) %>)",
+        end:   "<%= to_jQueryUI_date(@next_year) %>)"
+      }
 
       $.ajax({
         url: "/users/<%= current_user.id %>/stats/payment_methods/ratio.json",
-        data: { begin: '1-1-2013', end: '1-1-2014' },
+        data: date_range,
         success: function(stats) {
           dynamism.inject(stats, $("#pm_ratio"));
         }
-      })
+      });
 
-      var series = [{ name: 'Balance', data: [] }];
-      <% @segments.each_pair do |month, s| %>
-        series[0].data.push({
-          y: <%= s[:balance].to_f %>
-        });
-      <% end %>
+      $.ajax({
+        url: "/users/<%= current_user.id %>/stats/categories/top_spending.json",
+        data: date_range,
+        success: function(stats) {
+          $("#tsc span").html(pibi.natural_join(stats, ', ', ', and ', [ '<span class="big">', '</span>' ]));
+        }
+      });
 
-      // ui.charts.yearly.plot_balance(series, 'chart_balance');
-      // ui.charts.yearly.plot_savings(<%= @drilled[:savings].to_json %>, <%= @drilled[:spendings].to_json %>, 'chart_savings');
+      $.ajax({
+        url: "/users/<%= current_user.id %>/stats/categories/top_earning.json",
+        data: date_range,
+        success: function(stats) {
+          $("#tec span").html(pibi.natural_join(stats, ', ', ', and ', [ '<span class="big">', '</span>' ]));
+        }
+      });
 
-      <% if @stats[:categories][:top_spending].any? %>
-        var series = [{ name: 'Spendings', data: [] }];
-        var names  = [];
+      $.ajax({
+        url: "/users/<%= current_user.id %>/stats/accounts/<%= current_account.id %>/monthly/balance.json",
+        data: date_range,
+        success: function(stats) {
+          ui.charts.yearly.plot_balance([{ name: 'Balance', data: stats }], 'chart_balance');
+        }
+      });
 
-        <% @stats[:categories][:top_spending].each do |c| %>
-          <% spendings = c.yearly_spendings(Time.new(@year, 1,1)).to_f.abs.round(0) %>
-          names.push("<%= c.name %>");
-          series[0].data.push({ y: <%= spendings %> });
-        <% end %>
+      $.ajax({
+        url: "/users/<%= current_user.id %>/stats/accounts/<%= current_account.id %>/monthly/savings.json",
+        data: date_range,
+        success: function(stats) {
+          console.log(stats)
+          ui.charts.yearly.plot_savings(stats.savings, stats.spendings, 'chart_savings');
+        }
+      });
 
-        // ui.charts.yearly.plot_category_spendings(series, names, 'chart_category_spendings');
-      <% end %>
+      $.ajax({
+        url: "/users/<%= current_user.id %>/stats/categories/yearly/spendings.json",
+        data: date_range,
+        success: function(stats) {
+          console.log(stats)
+          // ui.charts.yearly.plot_balance([{ name: 'Balance', data: stats }], 'chart_balance');
+          ui.charts.yearly.
+            plot_category_spendings([{ name: 'Money spent', data: stats.spendings }], stats.names, 'chart_category_spendings');
+        }
+      });
+
     });
   </script>
 <% end %>

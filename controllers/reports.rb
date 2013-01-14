@@ -27,7 +27,8 @@ route_namespace '/reports' do
 
     # make sure the given date is sane
     begin
-      @date = Time.new(year, month == 0 ? 1 : month, day == 0 ? 1 : day)
+      @this_year = @date = Time.new(year, month == 0 ? 1 : month, day == 0 ? 1 : day)
+      @next_year = Timetastic.next(1, @date).year
     rescue ArgumentError => e
       halt 400, "Invalid transaction period YYYY/MM/DD: '#{year}/#{month}/#{day}'"
     end
@@ -44,26 +45,8 @@ route_namespace '/reports' do
     @savings      = 0 if @savings < 0
     @segments     = {}
 
-    @drilled = {
-      savings:   Array.new(12,0.0),
-      spendings: Array.new(12,0.0)
-    }
-
     for i in 1..12 do
       @segments[i] = { balance: 0.0, nr_transies: 0 }
-
-      # calculate the month's savings
-      d = Time.new(@year, i, 1)
-      earnings = current_account.monthly_earnings(d)
-      spendings = current_account.monthly_spendings(d)
-
-      # saved anything?
-      savings = earnings - spendings.abs
-      if savings > 0
-        @drilled[:savings][i-1] = savings.to_f.round(0)
-      end
-
-      @drilled[:spendings][i-1] = spendings.to_f.round(0).abs
     end
 
     @transies.each { |tx|
@@ -71,19 +54,6 @@ route_namespace '/reports' do
       s[:balance] = tx + s[:balance]
       s[:nr_transies] += 1
     }
-
-    @stats = {
-      categories: {
-        top_spending: [],
-        top_earning: []
-      }
-    }
-
-    # Category stats
-    if @user.categories.any? && @transies.count > 0
-      @stats[:categories][:top_spending] = @user.top_spending_categories
-      @stats[:categories][:top_earning]  = @user.top_earning_categories
-    end
 
     erb :"/reports/drilldowns/yearly"
   end

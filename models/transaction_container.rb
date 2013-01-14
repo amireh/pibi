@@ -94,11 +94,16 @@ module TransactionContainer
       :end => Timetastic.next.month
     }
 
-    transactions.all({
+    f = {
       :occured_on.gte => range[:begin],
-      :occured_on.lt => range[:end],
-      :type.not => Recurring
-    }.merge(q))
+      :occured_on.lt => range[:end]
+    }
+
+    unless q[:type]
+      f.merge!({:type.not => Recurring})
+    end
+
+    transactions.all(f.merge(q))
   end
 
   def balance_for(collection)

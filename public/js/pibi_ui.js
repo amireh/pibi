@@ -58,8 +58,8 @@ pibi_ui = function() {
 
           $("section > .togglable").click(function() {
             // $(this).parent().toggle();
-            $(this).siblings(":not([data-untogglable])").toggle();
-            $(this).toggleClass("toggled")
+            $(this).siblings(":not([data-untogglable])").toggle(500);
+            $(this).toggleClass("toggled");
           })
         },
 
