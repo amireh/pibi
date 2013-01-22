@@ -15,6 +15,7 @@ gem "dm-migrations", ">=1.2.0", :require => [
   'dm-migrations',
   'dm-migrations/migration_runner'
 ]
+gem "dm-aggregates", ">=1.2.0"
 gem "dm-validations", ">=1.2.0"
 gem "dm-constraints", ">=1.2.0"
 gem "dm-types", ">=1.2.0"

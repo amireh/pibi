@@ -19,7 +19,8 @@
 
   <form method="GET" action="/transactions">
     <select name="year">
-      <% (@user.created_at.year..@date.year+3).each do |y| %>
+
+      <% (@user.accounts.first.transactions.min(:occured_on).year..@date.year+3).each do |y| %>
         <% next if Time.now.year < y %>
         <option <%= 'selected="selected"' if @date.year == y %> value="<%= y %>">
           <%= y %>
