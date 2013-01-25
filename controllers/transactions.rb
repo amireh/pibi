@@ -96,7 +96,8 @@
 
     def attach_transie_categories(tx, category_ids)
       if category_ids && category_ids.is_a?(Array) && category_ids.any?
-        category_ids.each { |cid| tx.categories << @user.categories.get(cid) }
+        tx.categories = category_ids.map { |cid| @user.categories.get(cid.to_i) }
+        # category_ids.each { |cid| tx.categories << @user.categories.get(cid) }
       end
 
       tx

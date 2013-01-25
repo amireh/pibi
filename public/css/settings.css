@@ -95,3 +95,6 @@
 }
 
 .settings form fieldset ol img { vertical-align: middle; }
+.settings .settings_nav [data-amount] {
+  font-weight: normal;
+}

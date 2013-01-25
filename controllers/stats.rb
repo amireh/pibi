@@ -53,6 +53,8 @@ route_namespace '/users/:user_id/stats' do
           ratio: pm_transies.count.to_f / transies.count * 100.0,
           count: pm_transies.count
         }
+
+        s.last[:ratio] = s.last[:ratio].round(0) if params[:round]
       end
     end
 

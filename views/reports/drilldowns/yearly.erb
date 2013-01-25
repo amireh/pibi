@@ -86,8 +86,8 @@
         </ol>
       </li>
 
-    <li id="tsc">You spent money most on <span></span>.</li>
-    <li id="tec">While you earned money most from <span></span>.</li>
+    <li id="tsc">You spent money most on <img class="loader" src="/images/loaders/oscilloscope.gif" /> <span></span></li>
+    <li id="tec">While you earned money most from <img class="loader" src="/images/loaders/oscilloscope.gif" /> <span></span></li>
 
   </ol>
 
@@ -134,9 +134,15 @@
       ui.account_currency = "<%= current_account.currency %>";
       var date_range = {
         begin: "<%= to_jQueryUI_date(@this_year) %>)",
-        end:   "<%= to_jQueryUI_date(@next_year) %>)"
+        end:   "<%= to_jQueryUI_date(@next_year) %>)",
+        round: true
       }
-
+      var ajax_tgt = null;
+      $(document).ajaxComplete(function() {
+        if (ajax_tgt) {
+          ajax_tgt.find("img.loader").hide();
+        }
+      })
       $.ajax({
         url: "/users/<%= current_user.id %>/stats/payment_methods/ratio.json",
         data: date_range,
@@ -149,6 +155,7 @@
         url: "/users/<%= current_user.id %>/stats/categories/top_spending.json",
         data: date_range,
         success: function(stats) {
+          ajax_tgt = $("#tsc");
           $("#tsc span").html(pibi.natural_join(stats, ', ', ', and ', [ '<span class="big">', '</span>' ]));
         }
       });
@@ -157,6 +164,7 @@
         url: "/users/<%= current_user.id %>/stats/categories/top_earning.json",
         data: date_range,
         success: function(stats) {
+          ajax_tgt = $("#tec");
           $("#tec span").html(pibi.natural_join(stats, ', ', ', and ', [ '<span class="big">', '</span>' ]));
         }
       });

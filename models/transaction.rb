@@ -137,7 +137,7 @@ class Transaction
   end
 
   def url
-    "/transactions/#{self.type.to_s.downcase.pluralize}/#{self.id}"
+    "/transactions/#{self.type.to_s.downcase.to_plural}/#{self.id}"
   end
 
   protected

@@ -1,4 +1,4 @@
 AppName = "Pibi"
-AppURL  = "http://pibi.algollabs.com"
+AppURL  = "http://www.pibibot.com"
 AppGithubURL = "https://github.com/amireh/pibi"
 AppIssueURL = "#{AppGithubURL}/issues"

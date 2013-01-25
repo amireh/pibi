@@ -1,6 +1,4 @@
-<% content_for :css do %>
-  <link type="text/css" rel="stylesheet" href="/css/settings.css" />
-<% end %>
+<% content_for :css do %><link type="text/css" rel="stylesheet" href="/css/settings.css" /><% end %>
 
 <% content_for :scripts do %>
   <script>
@@ -20,7 +18,7 @@
     <li><a data-placement="right" title="Default currency, and other application settings" href="/settings/preferences">Preferences</a></li>
     <li><a data-placement="right" title="Notifications you should accept" href="/settings/notifications">Notifications
       <% if current_user.pending_notices.any? %>
-        <span data-amount>(<%= current_user.pending_notices.size %>)</span>
+        <span data-amount>[<%= current_user.pending_notices.size %>]</span>
       <% end %>
       </a>
     </li>
