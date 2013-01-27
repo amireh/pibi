@@ -1,0 +1,66 @@
+
+.guest img.logo {
+  display: inline-block;
+  vertical-align: middle;
+}
+.guest .column { display: inline-block; vertical-align: top;
+  width: 430px;
+}
+.guest .column:last-of-type {
+  padding-left: 10px;
+  margin-left: 50px;
+}
+.guest ul {  padding: 0 0 0 20px;}
+.guest ul li {
+  margin-bottom: 10px;
+}
+.guest #content { text-shadow: 0 1px 0 white;}
+
+.guest #content form input { margin-bottom: 5px; }
+.guest #content form label { display: block; }
+
+.guest.welcome #content .emphasized {
+  font-size: 30px;
+}
+
+.guest.welcome .emphasized u {
+  position: relative;
+}
+.guest.welcome .emphasized .hint {
+  position: absolute;
+  top: 40px;
+  left: -20px;
+  font-size: 22px;
+  width: 180px;
+  display: block;
+}
+
+.logo {
+  /*-webkit-transform: rotate(-90deg);*/
+  /*position: relative;*/
+  /*left: -48px;*/
+  /*top: -48px;*/
+}
+
+.guest #content h2 { border-bottom: 1px solid #ddd; padding-bottom: 5px;}
+
+.guest.sessions img { vertical-align: middle; }
+/*.guest nav { height: 106px;}*/
+.guest .stuff { margin-top: 20px;}
+.guest.welcome #content p,
+.guest.welcome #content li { font-size: 13px;}
+
+.guest.sessions .browser_notice {
+  margin-top: 10px;
+  /*background: rgba(0,0,0, 0.05);*/
+  border-top: 1px solid #ddd;
+  /*padding: 1px 20px 10px 20px;*/
+  /*border-radius: 3px;*/
+  position: relative;
+  width: 220px;
+  font-size: small;
+  padding-right: 40px;
+}
+.guest.sessions .browser_notice img {
+  position: absolute; right: 0; top: 10px;
+}

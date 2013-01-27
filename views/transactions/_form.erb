@@ -38,7 +38,7 @@
       <li>Note*</li>
       <li><textarea name="note" rows="3" cols="80" placeholder="Something to remind you of this transaction"><%= @tx.note %></textarea></li>
 
-      <li>Paid with<br />
+      <li><%= @tx.deposit? ? 'Collected via' : 'Paid with' %><br />
         <span class="hint">You can manage your payment methods in your
           <a href="/settings/preferences" target="_blank">preferences</a>
           section.

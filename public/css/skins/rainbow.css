@@ -19,16 +19,7 @@ h1,h2,h3,h4,h5,h6 {
 a { color: #007399;}
 a:hover { color: #B147A3;}
 
-footer {
-  border-top: none;
-  padding: 15px;
-  width: 962px;
-  margin-left: -1px;
-  border-bottom-right-radius: 5px;
-  border-bottom-left-radius:  5px;
-  color: white;
-  margin-bottom: 10px;
-}
+
 
 footer, nav {
   background: #383438;
@@ -147,7 +138,8 @@ nav li:nth-child(1) > a {
   border-color: #ef7901; /* Old browsers */
 }
 .orange { color: #EF7901; }
-.flashes.warning {
+.flashes.warning,
+.orange-bg {
   background-color: #ef7901; /* Old browsers */
   background-color: -moz-linear-gradient(top, #ef7901 0%, #c66401 100%); /* FF3.6+ */
   background-color: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ef7901), color-stop(100%,#c66401)); /* Chrome,Safari4+ */
@@ -161,7 +153,8 @@ nav li:nth-child(2) > a {
   border-color: #98bf0d;
 }
 .green { color: #98bf0d; }
-.flashes.notice {
+.flashes.notice,
+.green-bg {
   background-color: #98bf0d; /* Old browsers */
   background-color: -moz-linear-gradient(top, #98bf0d 0%, #78960a 100%); /* FF3.6+ */
   background-color: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#98bf0d), color-stop(100%,#78960a)); /* Chrome,Safari4+ */
@@ -174,7 +167,8 @@ nav li:nth-child(2) > a {
 /* Red */
 .red { color: #D54421; }
 nav li:nth-child(3) > a { border-color: #d54421; }
-.flashes.error {
+.flashes.error,
+.red-bg {
   background-color: #d54421; /* Old browsers */
   background-color: -moz-linear-gradient(top, #d54421 0%, #a5341a 100%); /* FF3.6+ */
   background-color: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#d54421), color-stop(100%,#a5341a)); /* Chrome,Safari4+ */
@@ -185,7 +179,7 @@ nav li:nth-child(3) > a { border-color: #d54421; }
   }
 /* Blue */
 nav li:nth-child(4) > a { border-color: #01b0ec; }
-.blue {
+.blue-bg {
   background-color: #01b0ec; /* Old browsers */
   background-color: -moz-linear-gradient(top, #01b0ec 0%, #0193c4 100%); /* FF3.6+ */
   background-color: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#01b0ec), color-stop(100%,#0193c4)); /* Chrome,Safari4+ */
@@ -197,7 +191,7 @@ nav li:nth-child(4) > a { border-color: #01b0ec; }
 
 /* Purple */
 nav li:nth-child(5) > a { border-color: #7449f1; }
-.purple {
+.purple-bg {
   background-color: #7449f1; /* Old browsers */
   background-color: -moz-linear-gradient(top, #7449f1 0%, #613ec9 100%); /* FF3.6+ */
   background-color: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#7449f1), color-stop(100%,#613ec9)); /* Chrome,Safari4+ */
@@ -208,7 +202,7 @@ nav li:nth-child(5) > a { border-color: #7449f1; }
 }
 /* Pink */
 nav li:nth-child(6) > a { border-color: #b147a3; }
-.pink {
+.pink-bg {
   background-color: #b147a3; /* Old browsers */
   background-color: -moz-linear-gradient(top, #b147a3 0%, #89387e 100%); /* FF3.6+ */
   background-color: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#b147a3), color-stop(100%,#89387e)); /* Chrome,Safari4+ */
@@ -654,52 +648,42 @@ nav a.listlike {
 nav a.listlike + ol { display: none; }
 
 footer {
+  border-top: none;
+  padding: 15px 15px 5px 15px;
+  width: 962px;
+  /*margin-left: -1px;*/
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius:  5px;
+  color: white;
+  margin-bottom: 10px;
   font-size: 0.75em;
   line-height: inherit;
+  text-align: center;
+  /*background-image: url(/images/pibi/Icons/32.png);*/
+  /*background-repeat: no-repeat;*/
+  /*background-position: 99% center;*/
+
   /*text-align: center;*/
 }
-footer p > strong:first-child {
-  clear: both;
-  display: block;
-  text-decoration: underline;
-  margin-bottom: 5px;
-}
-footer p {
-  max-width: 235px;
-  display: inline-block;
-  vertical-align: top;
-  margin-right: 110px;
-  /*margin: 0 6% 0 0;*/
-  text-align: left;
-}
-/*footer p:nth-child(2) {
-  margin-left: 1%;
-}*/
-footer p:last-of-type {
-  width: 100%;
-  margin-right: 0;
-  /*margin-left: 4%;*/
-}
 
-footer span.site_validations {
-  position: absolute;
-  right: -5px;
-  /*bottom: -35px;*/
-  margin: 0;
-}
 footer img {
   border: none;
-  margin: 10px 0 0 0;
+  vertical-align: middle;
+  margin-top: -7px;
 }
 
-footer div.static_links {
+footer div {
   /*margin-top: 5px;*/
   /*border-top: 1px solid rgba(255,255,255, 0.125);*/
   /*padding-top: 10px;*/
-  position: relative;
+  /*position: relative;*/
+  display: inline-block;
+  text-align: left;
 }
+footer div.left   { float: left; }
+footer div.right  { float: right; }
 
-footer p { line-height: 14px; }
+/*footer p { line-height: 14px; }*/
 footer div * { margin-right: 5px; }
 
 .feed { font-size: 90%; margin-bottom: 10px; }
@@ -863,27 +847,6 @@ a.bad { font-size: 0.75em; }
 }
 .snowman:after { content: '\2603'; font-size: 256px; }
 
-.guest img.logo {
-  display: inline-block;
-  vertical-align: middle;
-}
-.guest .column { display: inline-block; vertical-align: top;
-  width: 430px;
-}
-.guest .column:last-of-type {
-  /*border-left: 1px solid #ddd;*/
-  padding-left: 10px;
-  margin-left: 50px;
-}
-.guest ul {  padding: 0 0 0 20px;}
-.guest ul li {
-  margin-bottom: 10px;
-}
-.guest #content { text-shadow: 0 1px 0 white;}
-
-.guest #content form input { margin-bottom: 5px; }
-.guest #content form label { display: block; }
-
 .guest #content h1:first-of-type,
 h1.framed {
   background: white;
@@ -900,28 +863,7 @@ h2.framed {
   box-shadow: 0 0 3px 0px #CCC;
   text-shadow: 0 1px 0 white;
 }
-.guest #content h2 { border-bottom: 1px solid #ddd; padding-bottom: 5px;}
 
-.guest.sessions img { vertical-align: middle; }
-/*.guest nav { height: 106px;}*/
-.guest .stuff { margin-top: 20px;}
-.guest.welcome #content p,
-.guest.welcome #content li { font-size: 13px;}
-
-.guest.sessions .browser_notice {
-  margin-top: 10px;
-  /*background: rgba(0,0,0, 0.05);*/
-  border-top: 1px solid #ddd;
-  /*padding: 1px 20px 10px 20px;*/
-  /*border-radius: 3px;*/
-  position: relative;
-  width: 220px;
-  font-size: small;
-  padding-right: 40px;
-}
-.guest.sessions .browser_notice img {
-  position: absolute; right: 0; top: 10px;
-}
 
 nav .tri.right { right: 0; }
 nav .tri.left { left: 0;
@@ -1023,18 +965,3 @@ section > .togglable.toggled:after {
   content: ' +';
 }
 
-
-.guest.welcome #content .emphasized {
-  font-size: 30px;
-}
-
-.guest.welcome .emphasized u {
-  position: relative;
-}
-.guest.welcome .emphasized .hint {
-  position: absolute;
-  top: 40px;
-  font-size: 22px;
-  width: 180px;
-  display: block;
-}
