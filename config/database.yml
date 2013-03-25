@@ -2,7 +2,7 @@ development:
   database: &common
     host: 'localhost'
     un:   'root'
-    pw:   'tuonela'
+    pw:   ''
     db:   'pibi'
 
 test:
