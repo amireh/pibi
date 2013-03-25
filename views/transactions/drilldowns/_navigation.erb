@@ -8,6 +8,7 @@
 
 <% jump_by_months = true if jump_by_months.nil? %>
 <% jump_by_days = true if jump_by_days.nil? %>
+<% jump_target ||= "/transactions" %>
 
 <div class="navigation">
   <% last_period = Timetastic.last(1, @date).send(period) # 1.send(period).ago(@date) %>
@@ -17,10 +18,11 @@
     <%= labeller.call(last_period) %>
   </a>
 
-  <form method="GET" action="/transactions">
+  <form method="GET" action="<%= jump_target %>">
     <select name="year">
-
-      <% (@user.accounts.first.transactions.min(:occured_on).year..@date.year+3).each do |y| %>
+      <% first_year = @user.accounts.first.transactions.min(:occured_on) %>
+      <% first_year = first_year ? first_year.year : DateTime.now.year %>
+      <% (first_year..@date.year+3).each do |y| %>
         <% next if Time.now.year < y %>
         <option <%= 'selected="selected"' if @date.year == y %> value="<%= y %>">
           <%= y %>

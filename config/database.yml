@@ -1,8 +1,8 @@
-production:
+development:
   database: &common
     host: 'localhost'
     un:   'root'
-    pw:   ''
+    pw:   'tuonela'
     db:   'pibi'
 
 test:
@@ -10,6 +10,7 @@ test:
     <<: *common
     db: 'pibi_test'
 
-development:
+production:
   database:
     <<: *common
+    db: 'pibi_production'

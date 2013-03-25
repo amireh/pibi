@@ -1,3 +1,5 @@
+require 'models/transaction_container'
+
 class PaymentMethod
   include DataMapper::Resource
   include TransactionContainer

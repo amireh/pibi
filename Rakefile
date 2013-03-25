@@ -9,6 +9,12 @@ require 'rake'
 
 # replace this with however your app configures DataMapper repositor(ies)
 task :environment do
+  if ARGV
+    if ARGV.include?('db:create') || ARGV.include?('db:setup')
+      $DB_BOOTSTRAPPING = true
+    end
+  end
+
   require File.expand_path('app', File.dirname(__FILE__))
 end
 

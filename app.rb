@@ -40,17 +40,22 @@ configure do
   DataMapper.setup(:default, "mysql://#{dbc[:un]}:#{dbc[:pw]}@#{dbc[:host]}/#{dbc[:db]}")
 
   # load everything
-  [ 'lib', 'helpers', 'models', 'controllers' ].each { |d|
+  [ 'lib', 'helpers', 'controllers' ].each { |d|
     Dir.glob("#{d}/**/*.rb").each { |f| require f }
   }
 
+  require 'models/transaction'
+  require 'models/transaction_container'
+
+  Dir.glob("models/**/*.rb").each { |f| require f }
+
   DataMapper.finalize
-  DataMapper.auto_upgrade!
+  DataMapper.auto_upgrade! unless $DB_BOOTSTRAPPING
 
   set :config_path, File.join($ROOT, "config")
   set :default_preferences, JSON.parse(File.read(File.join(settings.config_path, "preferences.json")))
 
-  Currencies = Currency.all_names
+  Currencies = Currency.all_names unless $DB_BOOTSTRAPPING
 
   helpers Gravatarify::Helper
 

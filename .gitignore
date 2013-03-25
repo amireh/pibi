@@ -4,3 +4,4 @@ dumps
 *.tar.bz2
 *.tar.gz
 public/images/pibi
+.bundle

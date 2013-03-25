@@ -1,38 +1,29 @@
 <% content_for :css do %>
   <link href="/css/reports.css" rel="stylesheet" type="text/css" />
 <% end %>
-<% content_for :title do %><%= @year %> Report | <%= AppName %><% end %>
 
+<% time_segment = @date.strftime('%B - %Y') %>
+<% content_for :title do %><%= time_segment %> Report | <%= AppName %><% end %>
 
-<h1 class="framed"><%= @year %> activity report
+<h1 class="framed"><%= @date.strftime('%B') %>
+  - <a href="/reports/<%= @date.year %>"><%= @date.year %></a>
+  Activity Report
   <span style="float: right;" data-amount>
     <%= @balance %>
     <%= current_account.currency %>
   </span>
 </h1>
 
-<h2 class="framed">Drilldown</h2>
-
-<p>You can "drill down" into any month of the year to view its report by clicking its block.</p>
-<ol class="segments yearly">
-  <% @segments.each_pair do |month, s| %>
-    <li class="segment">
-      <a href="/reports/<%= @date.year %>/<%= month %>">
-        <span><%= Time.new(@year, month).strftime("%B") %></span>
-        <span data-amount><%= s[:balance].to_i %></span>
-      </a>
-    </li>
-  <% end %>
-</ol>
+<p># transies: <%= @transies.count %> (<%= @deposits.count %> deposits, <%= @withdrawals.count %> withdrawals)</p>
 
 <h2 class="framed">Insights</h2>
 
 <section class="chart stats">
   <h3>Stats</h3>
-
+  <% nr_days = Timetastic.days_in_month(@date.year, @date.month) %>
   <ol>
     <li>
-      Throughout <%= @year %>, you have:
+      Throughout the month you have:
       <ol>
         <li>
           <span>Spent: </span>
@@ -42,9 +33,9 @@
           </b>
           <em class="big">
           -
-            <%= (@spendings / 12).to_f.round(0).abs %>
+            <%= (@spendings / nr_days).to_f.round(0).abs %>
             <%= current_account.currency %>
-            per month
+            per day
           </em>
         </li>
 
@@ -56,9 +47,9 @@
           </b>
           <em class="big">
           -
-            <%= (@earnings / 12).to_f.round(0).abs %>
+            <%= (@earnings / nr_days).to_f.round(0).abs %>
             <%= current_account.currency %>
-            per month
+            per day
           </em>
         </li>
 
@@ -70,9 +61,9 @@
           </b>
           <em class="big">
           -
-            <%= (@savings / 12).to_f.round(0).abs %>
+            <%= (@savings / nr_days).to_f.round(0).abs %>
             <%= current_account.currency %>
-            per month
+            per day
           </em>
         </li>
       </ol>
@@ -96,47 +87,13 @@
   <span class="small hidden hint">This section has been hidden, click the header to display it again.</span>
 </section>
 
-<section class="chart">
-  <h3>Balance</h3>
-
-  <p>This chart gives you an insight into your spending and saving patterns
-  across the seasons.</p>
-
-  <div id="chart_balance"></div>
-
-  <p class="small hidden hint">This chart has been hidden, click the header to display it again.</p>
-</section>
-
-<section class="chart">
-  <h3>Savings</h3>
-
-  <p>This chart represents the <i>ratio</i> of money saved each month which appears in <span class="green">green</span>.
-    The total amount spent
-    is shown in <span class="red">red</span>.
-  </p>
-
-  <div id="chart_savings"></div>
-  <p class="small hidden hint">This chart has been hidden, click the header to display it again.</p>
-</section>
-
-<section class="chart">
-  <h3>Spendings by Category</h3>
-
-  <p>This shows how much money was spent on each category.</p>
-
-  <div id="chart_category_spendings"></div>
-  <p class="small hidden hint">This chart has been hidden, click the header to display it again.</p>
-</section>
-
-
 <% content_for :deferred_js do %>
-  <script type="text/javascript" src="/js/highcharts/js/highcharts.js"></script>
   <script type="text/javascript">
     $(function() {
       ui.account_currency = "<%= current_account.currency %>";
       var date_range = {
-        begin: "<%= to_jQueryUI_date(@this_year) %>)",
-        end:   "<%= to_jQueryUI_date(@next_year) %>)",
+        begin: "<%= to_jQueryUI_date(@this_month) %>)",
+        end:   "<%= to_jQueryUI_date(@next_month) %>)",
         round: true
       }
       var ajax_tgt = null;
@@ -170,35 +127,17 @@
           $("#tec span").html(pibi.natural_join(stats, ', ', ', and ', [ '<span class="big">', '</span>' ]));
         }
       });
-
-      $.ajax({
-        url: "/users/<%= current_user.id %>/stats/accounts/<%= current_account.id %>/monthly/balance.json",
-        data: date_range,
-        success: function(stats) {
-          ui.charts.yearly.plot_balance([{ name: 'Balance', data: stats }], 'chart_balance');
-        }
-      });
-
-      $.ajax({
-        url: "/users/<%= current_user.id %>/stats/accounts/<%= current_account.id %>/monthly/savings.json",
-        data: date_range,
-        success: function(stats) {
-          console.log(stats)
-          ui.charts.yearly.plot_savings(stats.savings, stats.spendings, 'chart_savings');
-        }
-      });
-
-      $.ajax({
-        url: "/users/<%= current_user.id %>/stats/categories/yearly/spendings.json",
-        data: date_range,
-        success: function(stats) {
-          console.log(stats)
-          // ui.charts.yearly.plot_balance([{ name: 'Balance', data: stats }], 'chart_balance');
-          ui.charts.yearly.
-            plot_category_spendings([{ name: 'Money spent', data: stats.spendings }], stats.names, 'chart_category_spendings');
-        }
-      });
-
     });
   </script>
 <% end %>
+
+
+<%= partial "/transactions/drilldowns/_navigation",
+  locals: {
+    period: :month,
+    uri_generator: lambda { |d| "/reports/#{d.year}/#{d.month}" },
+    labeller: lambda { |d| d.strftime("%B, %Y") },
+    jump_target: "/reports",
+    jump_by_days: false
+  }
+%>
