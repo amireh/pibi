@@ -16,9 +16,19 @@ class Category
 
   belongs_to :user, required: true
   has n, :transactions, :through => Resource, :constraint => :skip
-  has n, :deposits,     :through => Resource, :constraint => :skip
-  has n, :withdrawals,  :through => Resource, :constraint => :skip
-  has n, :recurrings,   :through => Resource, :constraint => :skip
+  # has n, :deposits,     :through => Resource, :constraint => :skip
+  # has n, :withdrawals,  :through => Resource, :constraint => :skip
+  # has n, :recurrings,   :through => Resource, :constraint => :skip
+
+  def deposits(q = {})
+    transactions.all(q.merge({ type: Deposit }))
+  end
+  def withdrawals(q = {})
+    transactions.all(q.merge({ type: Withdrawal }))
+  end
+  def recurrings
+    transactions.all(q.merge({ type: Recurring }))
+  end
 
   validates_uniqueness_of :name, :scope => [ :user_id ],
     message: 'You already have such a category!'
